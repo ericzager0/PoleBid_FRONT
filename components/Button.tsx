@@ -10,8 +10,8 @@ export function Button({ label, onPress, variant = "primary" }: Props) {
   return (
     <Pressable
       onPress={onPress}
-      className={`px-4 py-3 rounded-xl active:opacity-70 ${
-        variant === "primary" ? "bg-[#E8B439]" : "bg-gray-100"
+      className={`w-full px-4 py-3 rounded-xl active:opacity-70 ${
+        variant === "primary" ? "bg-[#E8B439]" : "bg-white"
       }`}
     >
       <Text

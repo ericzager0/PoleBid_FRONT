@@ -5,5 +5,5 @@ type Props = {
 };
 
 export default function Message({ message }: Props) {
-  return <Text className="text-5xl font-semibold">{message}</Text>;
+  return <Text className="text-white text-5xl font-semibold">{message}</Text>;
 }
