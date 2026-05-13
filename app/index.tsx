@@ -1,12 +1,40 @@
-import { View } from "react-native";
+import { router } from "expo-router";
+import { Image, View } from "react-native";
+import logo from "../assets/images/landing.png";
 import { Button } from "../components/Button";
 import Message from "../components/Message";
 
 export default function Index() {
   return (
-    <View className="flex-1 justify-center items-center p-4 bg-[#14191C]">
-      <Message message="Descubrí oportunidades y empezá a pujar." />
-      <Button label="Pujar" onPress={() => {}} variant="secondary" />
+    <View className="flex-1 justify-between items-center p-4 bg-[#14191C]">
+      <Image
+        source={logo}
+        resizeMode="contain"
+        style={{ width: 256, height: 256 }}
+      />
+      <View className="gap-8">
+        <Message message="Descubrí oportunidades y empezá a pujar." />
+        <Button
+          label="Ya tengo una cuenta"
+          onPress={() => {
+            router.push("/(auth)/login");
+          }}
+          variant="secondary"
+        />
+        <Button
+          label="Crear cuenta"
+          onPress={() => {
+            router.push("/(auth)/register");
+          }}
+          variant="secondary"
+        />
+      </View>
+
+      <Button
+        label="Continuar como invitado"
+        onPress={() => {}}
+        variant="ghost"
+      />
     </View>
   );
 }
