@@ -24,7 +24,7 @@ export default function Index() {
         <Button
           label="Crear cuenta"
           onPress={() => {
-            router.push("/(auth)/register");
+            router.push("/(auth)/register/country");
           }}
           variant="secondary"
         />
