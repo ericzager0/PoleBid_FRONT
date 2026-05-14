@@ -1,4 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { Tabs } from "expo-router";
 
 export default function AppLayout() {
@@ -9,7 +10,7 @@ export default function AppLayout() {
         options={{
           title: "Inicio",
           tabBarIcon: ({ color }) => (
-            <Ionicons name="home-outline" size={24} color={color} />
+            <Ionicons name="home" size={24} color={color} />
           ),
         }}
       />
@@ -18,7 +19,7 @@ export default function AppLayout() {
         options={{
           title: "Polls",
           tabBarIcon: ({ color }) => (
-            <Ionicons name="home-outline" size={24} color={color} />
+            <MaterialCommunityIcons name="gavel" size={24} color={color} />
           ),
         }}
       />
@@ -27,7 +28,7 @@ export default function AppLayout() {
         options={{
           title: "Perfil",
           tabBarIcon: ({ color }) => (
-            <Ionicons name="home-outline" size={24} color={color} />
+            <Ionicons name="person" size={24} color={color} />
           ),
         }}
       />
