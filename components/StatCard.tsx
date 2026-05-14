@@ -5,9 +5,10 @@ interface StatCardProps {
   icono: React.ReactNode; 
   texto: string;
   numero: number | string; 
+  price?: boolean;
 }
 
-export default function StatCard({ icono, texto, numero }: StatCardProps) {
+export default function StatCard({ icono, texto, numero, price = false }: StatCardProps) {
   return (
     <View className="w-full bg-[#1C1C1E] rounded-2xl flex-row items-center p-3">
       
@@ -21,7 +22,7 @@ export default function StatCard({ icono, texto, numero }: StatCardProps) {
         </Text>
     
         <Text className="text-white text-2xl font-bold text-center">
-          {numero}
+          {price ? `$${numero}` : numero}
         </Text>
       </View>
 

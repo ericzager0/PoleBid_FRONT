@@ -83,8 +83,9 @@ return (
               <View className="flex-1">
                 <StatCard 
                   icono={<FontAwesome6 name="money-check-dollar" size={24} color="#FFD874" />}
-                  texto="Pujas Realizadas"
+                  texto="Total invertido"
                   numero={500}
+                  price={true}
                 />
               </View>
           </View>
