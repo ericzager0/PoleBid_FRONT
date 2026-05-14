@@ -32,7 +32,9 @@ export default function Index() {
 
       <Button
         label="Continuar como invitado"
-        onPress={() => {}}
+        onPress={() => {
+          router.replace("/home");
+        }}
         variant="ghost"
       />
     </View>
