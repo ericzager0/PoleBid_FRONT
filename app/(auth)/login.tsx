@@ -2,10 +2,11 @@ import { Button } from "@/components/Button";
 import { Input } from "@/components/Input";
 import { router } from "expo-router";
 import { Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Login() {
   return (
-    <View className="h-full items-center justify-center gap-5 p-8 bg-[#14191C]">
+    <SafeAreaView className="h-full items-center justify-center gap-5 p-8 bg-[#14191C]">
       <Text className="text-4xl font-bold text-white mb-6">
         Ingresa a PoleBid
       </Text>
@@ -24,6 +25,6 @@ export default function Login() {
           }}
         />
       </View>
-    </View>
+    </SafeAreaView>
   );
 }

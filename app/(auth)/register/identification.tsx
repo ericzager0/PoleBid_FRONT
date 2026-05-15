@@ -1,11 +1,12 @@
 import { Button } from "@/components/Button";
 import { router } from "expo-router";
 import { Image, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import identification from "../../../assets/images/identification.png";
 
 export default function Identifiction() {
   return (
-    <View className="bg-[#14191C] flex-1 justify-between p-8">
+    <SafeAreaView className="bg-[#14191C] flex-1 justify-between p-8">
       <Image source={identification} style={{ width: 250, height: 250 }} />
       <View className="gap-6">
         <Text className="text-white text-[45px] font-bold">
@@ -22,6 +23,6 @@ export default function Identifiction() {
         variant="secondary"
         onPress={() => router.push("/(auth)/register/documentation")}
       />
-    </View>
+    </SafeAreaView>
   );
 }

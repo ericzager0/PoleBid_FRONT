@@ -1,11 +1,12 @@
 import { Button } from "@/components/Button";
 import { router } from "expo-router";
 import { Image, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import verifyEmail from "../../../assets/images/verify-email.png";
 
 export default function VerifyEmail() {
   return (
-    <View className="bg-[#14191C] flex-1 justify-between p-8">
+    <SafeAreaView className="bg-[#14191C] flex-1 justify-between p-8">
       <Image source={verifyEmail} style={{ width: 250, height: 250 }} />
       <View className="gap-6">
         <Text className="text-white text-5xl font-bold">
@@ -21,6 +22,6 @@ export default function VerifyEmail() {
         variant="secondary"
         onPress={() => router.push("/(auth)/register/verify-email-ok")}
       />
-    </View>
+    </SafeAreaView>
   );
 }
