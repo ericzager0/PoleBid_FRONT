@@ -1,12 +1,13 @@
 import { router } from "expo-router";
 import { Image, View } from "react-native";
-import logo from "../assets/images/landing.png";
+import { SafeAreaView } from "react-native-safe-area-context";
+import logo from "../assets/images/icon.png";
 import { Button } from "../components/Button";
 import Message from "../components/Message";
 
 export default function Index() {
   return (
-    <View className="flex-1 justify-between items-center p-4 bg-[#14191C]">
+    <SafeAreaView className="flex-1 justify-between items-center p-4 bg-[#14191C]">
       <Image
         source={logo}
         resizeMode="contain"
@@ -37,6 +38,6 @@ export default function Index() {
         }}
         variant="ghost"
       />
-    </View>
+    </SafeAreaView>
   );
 }
