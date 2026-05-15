@@ -64,7 +64,7 @@ export default function Home() {
           el.pinta.colas@email.com
         </Text>
         <View className="flex">
-          <CategoryText categoryId={3} />
+          <CategoryText categoryId={1} />
         </View>
       </View>
 
@@ -75,8 +75,16 @@ export default function Home() {
         showsVerticalScrollIndicator={false}
       >
         <View className="w-full items-center gap-y-4 mt-2">
-          <CustomProgressBar nombre="Subastas asistidas" porcentaje={75} onPress={() => setAssistModalVisible(true)} />
-          <CustomProgressBar nombre="Subastas ganadas" porcentaje={30} onPress={() => setWonModalVisible(true)}/>
+          <CustomProgressBar
+            nombre="Subastas asistidas"
+            porcentaje={75}
+            onPress={() => setAssistModalVisible(true)}
+          />
+          <CustomProgressBar
+            nombre="Subastas ganadas"
+            porcentaje={30}
+            onPress={() => setWonModalVisible(true)}
+          />
         </View>
 
         <View className="w-full px-6 mt-4 gap-y-6">
@@ -134,18 +142,17 @@ export default function Home() {
           <BidLog date="2023-10-15" name="Alpine" won={true} />
         </View>
 
-        <SimpleModal 
-          visible={modalAssistVisible} 
-          onClose={() => setAssistModalVisible(false)} 
-          texto="Te faltan 25 subastas asistidas para alcanzar el próximo nivel y obtener beneficios exclusivos!" 
+        <SimpleModal
+          visible={modalAssistVisible}
+          onClose={() => setAssistModalVisible(false)}
+          texto="Te faltan 25 subastas asistidas para alcanzar el próximo nivel y obtener beneficios exclusivos!"
         />
 
-        <SimpleModal 
-          visible={modalWonVisible} 
-          onClose={() => setWonModalVisible(false)} 
-          texto="Te faltan 30 subastas ganadas para alcanzar el próximo nivel y obtener beneficios exclusivos!" 
+        <SimpleModal
+          visible={modalWonVisible}
+          onClose={() => setWonModalVisible(false)}
+          texto="Te faltan 30 subastas ganadas para alcanzar el próximo nivel y obtener beneficios exclusivos!"
         />
-
       </ScrollView>
     </SafeAreaView>
   );

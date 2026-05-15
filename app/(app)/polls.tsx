@@ -50,23 +50,15 @@ export default function Home() {
   );
 
   return (
-    // 1. Centramos todo el contenido de la pantalla desde el padre principal
     <SafeAreaView className="flex-1 bg-[#14191C] items-center">
-      
-      {/* 2. ÚNICA COLUMNA: Le damos un ancho fijo del 90% (sin padding). 
-          Todo lo que esté acá adentro va a estar perfectamente alineado. */}
       <View className="w-[90%] flex-1 pt-4">
-        
+    
         <View className="gap-y-5">
-          {/* Buscador alineado al 90% */}
           <SearchBar 
             value={searchQuery}
             onChangeText={setSearchQuery}
             placeholder="Buscar subastas, items, categorías" 
           />
-
-          {/* 3. FILTROS EN EL MEDIO: Sacamos el ScrollView. 
-              Usamos flex-row y justify-center para que queden centrados en la pantalla. */}
           <View className="flex-row justify-center gap-x-3 w-full">
             {categorias.map((cat) => (
               <FilterButton 
@@ -79,8 +71,6 @@ export default function Home() {
           </View>
         </View>
         
-        {/* 4. LISTA ALINEADA: Como está adentro del View del 90%, 
-            los bordes de las tarjetas van a coincidir milimétricamente con los bordes del buscador */}
         <View className="flex-1 w-full mt-6">
           <FlatList
             data={f1AuctionsData} 
