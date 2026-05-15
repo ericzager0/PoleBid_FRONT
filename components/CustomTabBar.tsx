@@ -5,7 +5,7 @@ import { Platform, Pressable, Text, View } from "react-native";
 
 export default function CustomTabBar({ state, navigation }: BottomTabBarProps) {
   return (
-    <View className="relative" style={{ overflow: "visible" }}>
+    <View className="relative bg-[#14191C]" style={{ overflow: "visible" }}>
       <View
         className="flex-row items-center px-6 rounded-t-3xl"
         style={{
