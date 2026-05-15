@@ -15,19 +15,9 @@ export default function Home() {
     console.log("Abrir selector de imágenes o cámara...");
   };
 
-return (
+  return (
     <SafeAreaView className="flex-1 bg-[#14191C]">
-      <View className="items-center pt-4 pb-8 bg-[#14191C]">
-        <Pressable className="absolute top-4 left-4 p-2 z-10">
-          {({ pressed }) => (
-            <Ionicons 
-              name="arrow-back" 
-              color={pressed ? "white" : "gray"} 
-              size={28} 
-            />
-          )}
-        </Pressable>
-        
+      <View className="items-center pt-4 pb-4 bg-[#14191C]">
         <Pressable className="absolute top-4 right-4 p-2 z-10">
           {({ pressed }) => (
             <Ionicons 
@@ -47,7 +37,6 @@ return (
                 resizeMode="cover"
               />
             ) : (
-              // Placeholder (No foto)
               <View className="flex-1 items-center justify-center">
                 <Ionicons name="person" color="#9ca3af" size={64} /> 
               </View>
@@ -56,7 +45,7 @@ return (
 
           <TouchableOpacity 
             onPress={handleEditPhoto}
-            className="absolute bottom-0 right-0 bg-[#FFD874] p-3 rounded-full  border-2 border-white"
+            className="absolute bottom-0 right-0 bg-[#FFD874] p-3 rounded-full border-2 border-white"
             activeOpacity={0.8}
           >
             <Ionicons name="pencil" color="black" size={18} />
@@ -66,13 +55,24 @@ return (
         <Text className="text-2xl font-bold text-white mt-5">
           Franco Colapinto
         </Text>
-        <Text className="text-base text-gray-600 mt-1">
+        <Text className="text-base text-gray-400 mt-1">
           el.pinta.colas@email.com
         </Text>
-        <CustomProgressBar nombre="Subastas asistidas" porcentaje={75} />
-        <CustomProgressBar nombre="Subastas ganadas" porcentaje={30} />
+      </View>
+
+      <View className="h-[1px] w-[98%] bg-white/10 self-center mb-4" />
+      <ScrollView 
+        className="flex-1" 
+        contentContainerStyle={{ paddingBottom: 40 }}
+        showsVerticalScrollIndicator={false}
+      >
+        <View className="w-full items-center gap-y-4 mt-2">
+          <CustomProgressBar nombre="Subastas asistidas" porcentaje={75} />
+          <CustomProgressBar nombre="Subastas ganadas" porcentaje={30} />
+        </View>
+
         <View className="w-full px-6 mt-4 gap-y-6">
-          <View className="flex-row gap-x-4 mt-4">
+          <View className="flex-row gap-x-4">
               <View className="flex-1">
                 <StatCard 
                   icono={<AntDesign name="unordered-list" size={24} color="#FFD874" />}
@@ -89,31 +89,34 @@ return (
                 />
               </View>
           </View>
-          <View className="">
+          <View>
             <StatCard 
               icono={<Feather name="box" size={24} color="#FFD874" />}
-              texto="Mis Articulos"
+              texto="Mis Artículos"
               numero={0}
             />
           </View>
-      </View>  
-      </View>
+        </View>  
 
-      <ScrollView 
-        className="flex-1 w-[95%] self-center my-2 bg-[#1C1C1E] rounded-3xl p-4" 
-        contentContainerStyle={{ paddingBottom: 40, paddingTop: 24 }}
-        showsVerticalScrollIndicator={false}
-      >
-        <View className="px-6 gap-y-4">
-          <View className="flex-row items-center gap-x-2">
+        <View className="w-[95%] self-center mt-8 bg-[#1C1C1E] rounded-3xl p-5 gap-y-4">
+          <View className="flex-row items-center gap-x-2 mb-2">
             <Octicons name="history" size={17} color="white" />
             <Text className="text-lg font-semibold text-white px-1">Historial</Text>
           </View>
           
           <BidLog date="2023-10-15" name="Alpine" won={true} />
+          <BidLog date="2023-10-15" name="Alpine" won={false} />
+          <BidLog date="2023-10-15" name="Alpine" won={true} />
+          <BidLog date="2023-10-15" name="Alpine" won={false} />
+          <BidLog date="2023-10-15" name="Alpine" won={false} />
+          <BidLog date="2023-10-15" name="Alpine" won={true} />
+          <BidLog date="2023-10-15" name="Alpine" won={false} />
+          <BidLog date="2023-10-15" name="Alpine" won={false} />
+          <BidLog date="2023-10-15" name="Alpine" won={false} />
+          <BidLog date="2023-10-15" name="Alpine" won={true} />
         </View>
-      </ScrollView>
 
+      </ScrollView>
     </SafeAreaView>
   );
 }
