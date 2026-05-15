@@ -4,22 +4,10 @@ import CustomProgressBar from "@/components/CustomProgressBar";
 import SimpleModal from "@/components/SimpleModal";
 import StatCard from "@/components/StatCard";
 import { Ionicons, Octicons } from "@expo/vector-icons";
-<<<<<<< HEAD
-import AntDesign from '@expo/vector-icons/AntDesign';
-import Feather from '@expo/vector-icons/Feather';
-import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
-import React, { useState } from "react";
-import { Image, Pressable, ScrollView, Text, TouchableOpacity, View } from "react-native";
-import { SafeAreaView } from 'react-native-safe-area-context';
-
-export default function Home() {
-  const [modalAssistVisible, setAssistModalVisible] = useState(false);
-  const [modalWonVisible, setWonModalVisible] = useState(false);
-  const fotoPerfilUri = "https://imgs.search.brave.com/RDwKYJg2LhcrG7laQyxMEXLJ-B3EATZrNYkTHuMxWaM/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9tZWRp/YS5ncS5jb20ubXgv/cGhvdG9zLzY2ZGNi/MDY2MzRlZmJjOWRk/ZDc2YzAxNC9tYXN0/ZXIvd18xNjAwLGNf/bGltaXQvRnJhbmNv/JTIwQ29sYXBpbnRv/LmpwZw";
-=======
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Feather from "@expo/vector-icons/Feather";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
+import React, { useState } from "react";
 import {
   Image,
   Pressable,
@@ -31,9 +19,10 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Home() {
+  const [modalAssistVisible, setAssistModalVisible] = useState(false);
+  const [modalWonVisible, setWonModalVisible] = useState(false);
   const fotoPerfilUri =
     "https://imgs.search.brave.com/RDwKYJg2LhcrG7laQyxMEXLJ-B3EATZrNYkTHuMxWaM/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9tZWRp/YS5ncS5jb20ubXgv/cGhvdG9zLzY2ZGNi/MDY2MzRlZmJjOWRk/ZDc2YzAxNC9tYXN0/ZXIvd18xNjAwLGNf/bGltaXQvRnJhbmNv/JTIwQ29sYXBpbnRv/LmpwZw";
->>>>>>> dc94100801a143e28c1100d762c698e54a4b5195
 
   const handleEditPhoto = () => {
     console.log("Abrir selector de imágenes o cámara...");
@@ -83,7 +72,7 @@ export default function Home() {
           el.pinta.colas@email.com
         </Text>
         <View className="flex">
-          <CategoryText categoryId={3} />
+          <CategoryText categoryId={1} />
         </View>
       </View>
 
@@ -94,8 +83,16 @@ export default function Home() {
         showsVerticalScrollIndicator={false}
       >
         <View className="w-full items-center gap-y-4 mt-2">
-          <CustomProgressBar nombre="Subastas asistidas" porcentaje={75} onPress={() => setAssistModalVisible(true)} />
-          <CustomProgressBar nombre="Subastas ganadas" porcentaje={30} onPress={() => setWonModalVisible(true)}/>
+          <CustomProgressBar
+            nombre="Subastas asistidas"
+            porcentaje={75}
+            onPress={() => setAssistModalVisible(true)}
+          />
+          <CustomProgressBar
+            nombre="Subastas ganadas"
+            porcentaje={30}
+            onPress={() => setWonModalVisible(true)}
+          />
         </View>
 
         <View className="w-full px-6 mt-4 gap-y-6">
@@ -152,22 +149,18 @@ export default function Home() {
           <BidLog date="2023-10-15" name="Alpine" won={false} />
           <BidLog date="2023-10-15" name="Alpine" won={true} />
         </View>
-<<<<<<< HEAD
 
-        <SimpleModal 
-          visible={modalAssistVisible} 
-          onClose={() => setAssistModalVisible(false)} 
-          texto="Te faltan 25 subastas asistidas para alcanzar el próximo nivel y obtener beneficios exclusivos!" 
+        <SimpleModal
+          visible={modalAssistVisible}
+          onClose={() => setAssistModalVisible(false)}
+          texto="Te faltan 25 subastas asistidas para alcanzar el próximo nivel y obtener beneficios exclusivos!"
         />
 
-        <SimpleModal 
-          visible={modalWonVisible} 
-          onClose={() => setWonModalVisible(false)} 
-          texto="Te faltan 30 subastas ganadas para alcanzar el próximo nivel y obtener beneficios exclusivos!" 
+        <SimpleModal
+          visible={modalWonVisible}
+          onClose={() => setWonModalVisible(false)}
+          texto="Te faltan 30 subastas ganadas para alcanzar el próximo nivel y obtener beneficios exclusivos!"
         />
-
-=======
->>>>>>> dc94100801a143e28c1100d762c698e54a4b5195
       </ScrollView>
     </SafeAreaView>
   );
