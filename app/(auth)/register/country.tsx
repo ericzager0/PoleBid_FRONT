@@ -1,10 +1,11 @@
 import { Button } from "@/components/Button";
 import { router } from "expo-router";
 import { Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Country() {
   return (
-    <View className="bg-[#14191C] flex-1 justify-between p-8">
+    <SafeAreaView className="bg-[#14191C] flex-1 justify-between p-8">
       <View className="gap-6">
         <Text className="text-white text-5xl font-bold">País de origen</Text>
         <Text className="text-white text-2xl">
@@ -18,6 +19,6 @@ export default function Country() {
         variant="secondary"
         onPress={() => router.push("/(auth)/register/name")}
       />
-    </View>
+    </SafeAreaView>
   );
 }
