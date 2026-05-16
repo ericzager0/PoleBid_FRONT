@@ -3,10 +3,7 @@ import CategoryText from "@/components/CategoryText";
 import CustomProgressBar from "@/components/CustomProgressBar";
 import SimpleModal from "@/components/SimpleModal";
 import StatCard from "@/components/StatCard";
-import { Ionicons, Octicons } from "@expo/vector-icons";
-import AntDesign from '@expo/vector-icons/AntDesign';
-import Feather from '@expo/vector-icons/Feather';
-import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
+import { AntDesign, Feather, FontAwesome6, Ionicons, Octicons } from "@expo/vector-icons";
 import React, { useState } from "react";
 import { Image, Pressable, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -14,6 +11,11 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 export default function Home() {
   const [modalAssistVisible, setAssistModalVisible] = useState(false);
   const [modalWonVisible, setWonModalVisible] = useState(false);
+  
+  // VARIABLES SIMULADA
+  const isBanned = false;
+  const adeudado = 15000;
+
   const fotoPerfilUri = "https://imgs.search.brave.com/RDwKYJg2LhcrG7laQyxMEXLJ-B3EATZrNYkTHuMxWaM/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9tZWRp/YS5ncS5jb20ubXgv/cGhvdG9zLzY2ZGNi/MDY2MzRlZmJjOWRk/ZDc2YzAxNC9tYXN0/ZXIvd18xNjAwLGNf/bGltaXQvRnJhbmNv/JTIwQ29sYXBpbnRv/LmpwZw";
 
   const handleEditPhoto = () => {
@@ -25,22 +27,16 @@ export default function Home() {
       <View className="items-center pt-4 pb-4 bg-[#14191C]">
         <Pressable className="absolute top-4 right-4 p-2 z-10">
           {({ pressed }) => (
-            <Ionicons
-              name="settings"
-              color={pressed ? "white" : "gray"}
-              size={28}
-            />
+            <Ionicons name="settings" color={pressed ? "white" : "gray"} size={28} />
           )}
         </Pressable>
 
         <View className="relative w-32 h-32 mt-6">
-          <View className="w-32 h-32 rounded-full border-4 border-[#FFD874] shadow-lg shadow-gray-300 overflow-hidden bg-gray-200">
+          <View className={`w-32 h-32 rounded-full border-4 shadow-lg overflow-hidden bg-gray-200 ${
+            isBanned ? 'border-[#E83C3C]' : 'border-[#FFD874]'
+          }`}>
             {fotoPerfilUri ? (
-              <Image
-                source={{ uri: fotoPerfilUri }}
-                className="w-full h-full"
-                resizeMode="cover"
-              />
+              <Image source={{ uri: fotoPerfilUri }} className="w-full h-full" resizeMode="cover" />
             ) : (
               <View className="flex-1 items-center justify-center">
                 <Ionicons name="person" color="#9ca3af" size={64} />
@@ -48,43 +44,65 @@ export default function Home() {
             )}
           </View>
 
-          <TouchableOpacity
-            onPress={handleEditPhoto}
-            className="absolute bottom-0 right-0 bg-[#FFD874] p-3 rounded-full border-2 border-white"
-            activeOpacity={0.8}
-          >
-            <Ionicons name="pencil" color="black" size={18} />
-          </TouchableOpacity>
+          {!isBanned ? (
+            <TouchableOpacity
+              onPress={handleEditPhoto}
+              className="absolute bottom-0 right-0 bg-[#FFD874] p-3 rounded-full border-2 border-white"
+              activeOpacity={0.8}
+            >
+              <Ionicons name="pencil" color="black" size={18} />
+            </TouchableOpacity>
+          ) : (
+            <View className="absolute -bottom-3 left-0 right-0 items-center">
+              <View className="bg-[#14191C] rounded-full p-1">
+                <Ionicons name="warning" color="#E83C3C" size={28} />
+              </View>
+            </View>
+          )}
         </View>
 
-        <Text className="text-2xl font-bold text-white mt-5">
-          Franco Colapinto
-        </Text>
-        <Text className="text-base text-gray-400 mt-1">
-          el.pinta.colas@email.com
-        </Text>
-        <View className="flex">
-          <CategoryText categoryId={1} />
-        </View>
+        <Text className="text-2xl font-bold text-white mt-5">Franco Colapinto</Text>
+        <Text className="text-base text-gray-400 mt-1">el.pinta.colas@email.com</Text>
+        
+        {!isBanned && (
+          <View className="flex">
+            <CategoryText categoryId={1} />
+          </View>
+        )}
       </View>
 
       <View className="h-[1px] w-[98%] bg-white/10 self-center mb-4" />
+
+      {isBanned ? (
+        // VISTA DE CUENTA BANEADA
+        <View className="flex-1 px-6 pt-10 items-center">
+          <View className="w-full bg-[#1E1E1E] rounded-3xl p-8 items-center border border-[#E83C3C]/30">
+            <Ionicons name="lock-closed" size={48} color="#E83C3C" className="mb-4" />
+            <Text className="text-white text-center text-lg font-medium mb-8">
+              Para seguir utilizando la aplicación deberá abonar un total de ARS ${adeudado}
+            </Text>
+            
+            <TouchableOpacity 
+              className="bg-[#E83C3C] w-full py-4 rounded-full items-center"
+              activeOpacity={0.8}
+            >
+              <Text className="text-black font-bold text-lg uppercase tracking-wider">
+                Pagar Ahora
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+      ) : (
+
       <ScrollView
         className="flex-1"
         contentContainerStyle={{ paddingBottom: 40 }}
         showsVerticalScrollIndicator={false}
       >
         <View className="w-full items-center gap-y-4 mt-2">
-          <CustomProgressBar
-            nombre="Subastas asistidas"
-            porcentaje={75}
-            onPress={() => setAssistModalVisible(true)}
-          />
-          <CustomProgressBar
-            nombre="Subastas ganadas"
-            porcentaje={30}
-            onPress={() => setWonModalVisible(true)}
-          />
+          <CustomProgressBar nombre="Subastas asistidas" porcentaje={75} onPress={() => setAssistModalVisible(true)} />
+          <CustomProgressBar nombre="Subastas ganadas" porcentaje={30} onPress={() => setWonModalVisible(true)}/>
         </View>
 
         <View className="w-full px-6 mt-4 gap-y-6">
@@ -143,17 +161,21 @@ export default function Home() {
         </View>
 
         <SimpleModal
-          visible={modalAssistVisible}
-          onClose={() => setAssistModalVisible(false)}
-          texto="Te faltan 25 subastas asistidas para alcanzar el próximo nivel y obtener beneficios exclusivos!"
+          visible={modalAssistVisible} 
+          onClose={() => setAssistModalVisible(false)} 
+          texto="Te faltan 25 subastas asistidas para alcanzar el próximo nivel y obtener beneficios exclusivos!" 
         />
 
         <SimpleModal
-          visible={modalWonVisible}
-          onClose={() => setWonModalVisible(false)}
-          texto="Te faltan 30 subastas ganadas para alcanzar el próximo nivel y obtener beneficios exclusivos!"
+          visible={modalWonVisible} 
+          onClose={() => setWonModalVisible(false)} 
+          texto="Te faltan 30 subastas ganadas para alcanzar el próximo nivel y obtener beneficios exclusivos!" 
         />
+
       </ScrollView>
+
+      )}
+
     </SafeAreaView>
   );
 }
