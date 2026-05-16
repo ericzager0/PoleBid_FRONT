@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, Text, View } from 'react-native';
+import { Image, Text, TouchableOpacity, View } from 'react-native';
 
 const categories = [
     { id: 1, name: 'Silver', hex: '#B6BABD' },
@@ -14,6 +14,7 @@ interface AuctionProps {
     fecha: string;
     hora: string;
     owner: string;
+    onPress?: () => void;
 }
 
 export default function Auction({ 
@@ -22,12 +23,17 @@ export default function Auction({
     title, 
     fecha, 
     hora, 
-    owner 
+    owner,
+    onPress 
 }: AuctionProps) {
     const category = categories.find((c) => c.id === categoryId) || categories[0];
 
     return (
-        <View className="w-[100%] bg-[#2C2D32] rounded-[8px] p-3 flex-row mb-4">
+        <TouchableOpacity 
+            onPress={onPress}
+            activeOpacity={0.8} 
+            className="w-[100%] bg-[#2C2D32] rounded-[8px] p-3 flex-row mb-4"
+        >
             <View className="relative w-32 h-20 rounded-[8px] overflow-hidden">
                 <Image 
                     source={{ uri: imageSrc }} 
@@ -58,6 +64,6 @@ export default function Auction({
                 </Text>
             </View>
 
-        </View>
+        </TouchableOpacity>
     );
 }
