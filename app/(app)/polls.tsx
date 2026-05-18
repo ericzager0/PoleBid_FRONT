@@ -33,7 +33,7 @@ export default function Home() {
       fecha={item.fecha}
       hora={item.hora}
       owner={item.owner}
-      onPress={() => router.push(`/auction/${item.id}`)}
+      onPress={() => router.push(`/auctionStarted/${item.id}`)}
     />
   );
 
