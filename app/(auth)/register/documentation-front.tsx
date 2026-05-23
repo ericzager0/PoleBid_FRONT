@@ -9,6 +9,8 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import documentFront from "../../../assets/images/document-front.png";
+
 export default function DocumentationFront() {
   const [permission, requestPermission] = useCameraPermissions();
   const [capturedPhoto, setCapturedPhoto] = useState<string | null>(null);
@@ -59,7 +61,7 @@ export default function DocumentationFront() {
 
   return (
     <SafeAreaView className="flex-1 bg-black items-center justify-center gap-12 p-4">
-      <View className="border border-white rounded-xl overflow-hidden">
+      <View className="border border-white rounded-xl overflow-hidden w-full">
         {capturedPhoto ? (
           <Image
             source={{ uri: capturedPhoto }}
@@ -75,37 +77,46 @@ export default function DocumentationFront() {
             />
           </View>
         )}
-        <View className="bg-white items-center py-2">
-          <Text>Centra toda tu identificacion en el marco.</Text>
+        <View className="bg-white flex-row items-center justify-center gap-4 px-10">
+          <Image
+            source={documentFront}
+            style={{ width: 65, height: 65 }}
+            resizeMode="contain"
+          />
+          <Text className="flex-1">
+            Centrá toda tu identificación en el marco.
+          </Text>
         </View>
       </View>
 
       {/* ── Botones ── */}
-      {capturedPhoto ? (
-        <View>
+      <View className="w-full h-[100px] justify-center">
+        {capturedPhoto ? (
+          <View>
+            <TouchableOpacity
+              className="bg-white mx-5 my-2 py-4 rounded-xl items-center"
+              onPress={handleRetake}
+            >
+              <Text className="text-black text-lg font-semibold">
+                Utilizar esta foto
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              className="bg-white mx-5 my-2 py-4 rounded-xl items-center"
+              onPress={handleRetake}
+            >
+              <Text className="text-black text-lg font-semibold">
+                Volver a tomar la foto
+              </Text>
+            </TouchableOpacity>
+          </View>
+        ) : (
           <TouchableOpacity
-            className="bg-white mx-5 my-5 py-4 rounded-xl items-center"
-            onPress={handleRetake}
-          >
-            <Text className="text-black text-lg font-semibold">
-              Utiliza esta foto
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            className="bg-white mx-5 my-5 py-4 rounded-xl items-center"
-            onPress={handleRetake}
-          >
-            <Text className="text-black text-lg font-semibold">
-              Volver a tomar la foto
-            </Text>
-          </TouchableOpacity>
-        </View>
-      ) : (
-        <TouchableOpacity
-          className="bg-white h-14 w-14 rounded-full"
-          onPress={handleCapture}
-        ></TouchableOpacity>
-      )}
+            className="bg-white h-14 w-14 rounded-full self-center"
+            onPress={handleCapture}
+          />
+        )}
+      </View>
     </SafeAreaView>
   );
 }

@@ -7,7 +7,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 export default function Email() {
   return (
     <SafeAreaView className="bg-[#14191C] flex-1 justify-between p-8">
-      <View className="gap-6">
+      <View className="gap-12">
         <Text className="text-white text-5xl font-bold">
           Correo electrónico
         </Text>
@@ -15,6 +15,7 @@ export default function Email() {
           ¿Cómo podemos estar en contacto?
         </Text>
         <Input
+          variant="register"
           label="Correo electrónico"
           placeholder="Ingresá tu correo electrónico"
         />

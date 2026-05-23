@@ -4,11 +4,18 @@ interface Props {
   label: string;
   onPress: () => void;
   variant?: "primary" | "secondary" | "ghost" | "anchor";
+  disabled?: boolean;
 }
 
-export function Button({ label, onPress, variant = "primary" }: Props) {
+export function Button({
+  label,
+  onPress,
+  variant = "primary",
+  disabled,
+}: Props) {
   return (
     <Pressable
+      disabled={disabled}
       onPress={onPress}
       className={`px-4 py-3 rounded-[16px] active:opacity-70 ${
         variant === "primary"

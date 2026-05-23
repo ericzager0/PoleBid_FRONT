@@ -7,11 +7,19 @@ import { SafeAreaView } from "react-native-safe-area-context";
 export default function Name() {
   return (
     <SafeAreaView className="bg-[#14191C] flex-1 justify-between p-8">
-      <View className="gap-6">
+      <View className="gap-12">
         <Text className="text-white text-5xl font-bold">Nombre</Text>
         <Text className="text-white text-2xl">¿Cómo te llamás?</Text>
-        <Input label="Nombre" placeholder="Ingresá tu nombre" />
-        <Input label="Apellido" placeholder="Ingresá tu apellido" />
+        <Input
+          variant="register"
+          label="Nombre"
+          placeholder="Ingresá tu nombre"
+        />
+        <Input
+          variant="register"
+          label="Apellido"
+          placeholder="Ingresá tu apellido"
+        />
       </View>
 
       <Button
