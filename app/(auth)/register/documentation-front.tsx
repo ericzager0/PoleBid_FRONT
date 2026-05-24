@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { router } from "expo-router";
 import documentFront from "../../../assets/images/document-front.png";
 
 export default function DocumentationFront() {
@@ -77,14 +78,16 @@ export default function DocumentationFront() {
             />
           </View>
         )}
-        <View className="bg-white flex-row items-center justify-center gap-4 px-10">
+        <View className="bg-white flex-row items-center justify-center gap-4 px-8">
           <Image
             source={documentFront}
             style={{ width: 65, height: 65 }}
             resizeMode="contain"
           />
-          <Text className="flex-1">
-            Centrá toda tu identificación en el marco.
+          <Text className="flex-1 text-sm">
+            {capturedPhoto
+              ? "Asegúrate de que la iluminación sea buena y las letras claras."
+              : "Colocá la parte frontal de tu identificación en el marco."}
           </Text>
         </View>
       </View>
@@ -95,7 +98,7 @@ export default function DocumentationFront() {
           <View>
             <TouchableOpacity
               className="bg-white mx-5 my-2 py-4 rounded-xl items-center"
-              onPress={handleRetake}
+              onPress={() => router.push("/(auth)/register/documentation-back")}
             >
               <Text className="text-black text-lg font-semibold">
                 Utilizar esta foto
