@@ -1,12 +1,69 @@
-import { Text, View } from "react-native";
+import { BlurView } from "expo-blur";
+import { router } from "expo-router";
+import { useEffect, useRef } from "react";
+import { Animated, Easing, Image, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import documentFront from "../../../assets/images/document-front.png";
+
+const IMG_HEIGHT = 250;
+const RECT_HEIGHT = 60;
+const COUNTDOWN = 15;
 
 export default function VerifyingDocuments() {
+  const translateY = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(translateY, {
+          toValue: IMG_HEIGHT - RECT_HEIGHT,
+          duration: 2000,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }),
+        Animated.timing(translateY, {
+          toValue: 0,
+          duration: 2000,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }),
+      ]),
+    ).start();
+
+    const timer = setTimeout(() => {
+      router.replace("/(auth)/register/documents-success");
+    }, COUNTDOWN * 1000);
+
+    return () => clearTimeout(timer);
+  }, [translateY]);
+
   return (
-    <SafeAreaView className="bg-[#14191C] flex-1 justify-between p-8">
-      <View className="gap-12">
+    <SafeAreaView className="bg-[#14191C] justify-center flex-1 gap-12 p-8">
+      <View
+        className="self-center relative overflow-hidden rounded-xl"
+        style={{ width: 250, height: IMG_HEIGHT }}
+      >
+        <Image
+          source={documentFront}
+          style={{ width: 250, height: IMG_HEIGHT }}
+          resizeMode="contain"
+        />
+
+        <Animated.View
+          className="absolute inset-x-0 overflow-hidden border rounded-full border-green-400/50"
+          style={{ height: RECT_HEIGHT, top: 0, transform: [{ translateY }] }}
+        >
+          <BlurView intensity={15} tint="light" className="absolute inset-0" />
+          <View className="absolute inset-0 bg-green-500/25" />
+        </Animated.View>
+      </View>
+      <View className="gap-8">
         <Text className="text-white text-5xl font-bold">
           Estamos verificando tus documentos
+        </Text>
+        <Text className="text-white text-2xl">
+          Te enviaremos un correo cuando los resultados estén disponibles para
+          que finalices tu registro.
         </Text>
       </View>
     </SafeAreaView>
