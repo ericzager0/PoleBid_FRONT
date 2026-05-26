@@ -1,27 +1,76 @@
+import { onboardingService } from "@/api/services/onboarding";
 import { Button } from "@/components/Button";
-import { router } from "expo-router";
-import { Image, Text, View } from "react-native";
+import { Input } from "@/components/Input";
+import { router, useLocalSearchParams } from "expo-router";
+import { useState } from "react";
+import {
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  Text,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import verifyEmail from "../../../assets/images/verify-email.png";
 
 export default function VerifyEmail() {
-  return (
-    <SafeAreaView className="bg-[#14191C] flex-1 justify-between p-8">
-      <Image source={verifyEmail} style={{ width: 250, height: 250 }} />
-      <View className="gap-6">
-        <Text className="text-white text-5xl font-bold">
-          Hacé click en el enlace que enviamos a tu correo electrónico.
-        </Text>
-        <Text className="text-white text-2xl">
-          Te enviamos un correo electrónico de verificación a usuario@gmail.com.
-        </Text>
-      </View>
+  const { data: rawData } = useLocalSearchParams();
+  const prevData = JSON.parse(rawData as string);
 
-      <Button
-        label="Continuar"
-        variant="secondary"
-        onPress={() => router.push("/(auth)/register/verify-email-ok")}
-      />
+  const [code, setCode] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleNext = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      await onboardingService.verifyEmail({ email: prevData.email, code });
+      const data = { ...prevData, code };
+      router.push({
+        pathname: "/(auth)/register/verify-email-ok",
+        params: { data: JSON.stringify(data) },
+      });
+    } catch (e: any) {
+      setError(e.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <SafeAreaView className="bg-[#14191C] flex-1">
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        className="flex-1 justify-between p-8"
+      >
+        <Image source={verifyEmail} style={{ width: 250, height: 250 }} />
+        <View className="gap-6">
+          <Text className="text-white text-5xl font-bold">
+            Ingresá el código que te enviamos.
+          </Text>
+          <Text className="text-white text-2xl">
+            Te enviamos un código de verificación a {prevData.email}.
+          </Text>
+          <Input
+            variant="register"
+            label="Código"
+            placeholder="Ingresá el código"
+            value={code}
+            onChangeText={setCode}
+            keyboardType="number-pad"
+          />
+          {error && <Text className="text-red-500">{error}</Text>}
+        </View>
+
+        <Button
+          label="Continuar"
+          variant="secondary"
+          disabled={!code}
+          loading={loading}
+          onPress={handleNext}
+        />
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }

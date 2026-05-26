@@ -121,7 +121,12 @@ export default function Country() {
         label="Comenzar"
         variant="secondary"
         disabled={!selected}
-        onPress={() => router.push("/(auth)/register/name")}
+        onPress={() =>
+          router.push({
+            pathname: "/(auth)/register/name",
+            params: { data: JSON.stringify({ country: selected?.code }) },
+          })
+        }
       />
     </SafeAreaView>
   );
