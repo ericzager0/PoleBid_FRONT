@@ -4,11 +4,13 @@ import CustomProgressBar from "@/components/CustomProgressBar";
 import SimpleModal from "@/components/SimpleModal";
 import StatCard from "@/components/StatCard";
 import { AntDesign, Feather, FontAwesome6, Ionicons, Octicons } from "@expo/vector-icons";
+import { useRouter } from 'expo-router';
 import React, { useState } from "react";
 import { Image, Pressable, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Home() {
+  const router = useRouter();
   const [modalAssistVisible, setAssistModalVisible] = useState(false);
   const [modalWonVisible, setWonModalVisible] = useState(false);
   
@@ -25,7 +27,7 @@ export default function Home() {
   return (
     <SafeAreaView className="flex-1 bg-[#14191C]">
       <View className="items-center pt-4 pb-4 bg-[#14191C]">
-        <Pressable className="absolute top-4 right-4 p-2 z-10">
+        <Pressable className="absolute top-4 right-4 p-2 z-10" onPress={() => router.push('/(settings)/settings')}>
           {({ pressed }) => (
             <Ionicons name="settings" color={pressed ? "white" : "gray"} size={28} />
           )}

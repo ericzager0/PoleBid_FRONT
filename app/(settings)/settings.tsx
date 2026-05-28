@@ -1,0 +1,89 @@
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
+import React from 'react';
+import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+
+import MethodsSettings from '../../components/MethodsSettings';
+import RoundedButton from '../../components/RoundedButton';
+import UserInfoCard from '../../components/UserInfoCard';
+import UserStatusCard from '../../components/UserStatusCard';
+
+export default function AjustesScreen() {
+  const router = useRouter();
+
+  return (
+    <SafeAreaView className="bg-[#0A0A0A] flex-1">
+      
+      <View className="flex-row items-center justify-between px-4 pt-4 pb-6">
+        <View className="flex-row items-center">
+          <TouchableOpacity onPress={() => router.back()} className="p-1">
+            <MaterialCommunityIcons name="arrow-left" size={24} color="#FACC15" />
+          </TouchableOpacity>
+          <Text className="text-gray-100 text-2xl font-bold ml-4">
+            Ajustes
+          </Text>
+        </View>
+
+        <RoundedButton onPress={() => console.log('Cerrando sesión...')} />
+      </View>
+
+      <ScrollView 
+        className="flex-1 px-4" 
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 40 }}
+      >
+        
+        <View className="mb-4">
+          <MethodsSettings 
+            text="Administrar métodos de pago"
+            frontalIcon="credit-card-outline"
+            backgroundIcon="cash-multiple"
+            onPress={() => router.push('/(settings)/payments')}
+          />
+        </View>
+        
+        <View className="mb-8">
+          <MethodsSettings 
+            text="Administrar cuenta de vendedor"
+            frontalIcon="gavel"
+            backgroundIcon="storefront-outline"
+            onPress={() => console.log('Cuenta de vendedor')}
+          />
+        </View>
+
+        <View className="flex-row items-center mb-6">
+          <View className="w-1 h-4 bg-[#FACC15] mr-2 rounded-full" />
+          <Text className="text-[#FACC15] uppercase tracking-widest text-sm font-bold" style={{ fontFamily: 'SpaceMono-Bold' }}>
+            DATOS PERSONALES:
+          </Text>
+        </View>
+
+        <UserInfoCard 
+          title="D.N.I." 
+          value="89752147" 
+        />
+        
+        <UserInfoCard 
+          title="Nombre completo" 
+          value="Alejandro Martínez Silva" 
+        />
+        
+        <UserInfoCard 
+          title="Dirección" 
+          value="Calle Ejemplo 123, 4B" 
+        />
+        
+        <UserInfoCard 
+          title="Pais" 
+          value="España" 
+        />
+
+        <View className="mt-8 mb-4">
+          <UserStatusCard status="verificado" />
+        </View>
+
+      </ScrollView>
+    </SafeAreaView>
+  );
+}
