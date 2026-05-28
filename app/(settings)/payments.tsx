@@ -18,7 +18,7 @@ export default function PaymentsScreen() {
   const router = useRouter();
 
   const userCards = [
-    { bankName: 'BNA', titular: 'Alejandro Martínez', number: '5282 3456 7890 1289', expiry: '09/25' }, 
+    { bankName: 'Banco Nación', titular: 'Alejandro Martínez', number: '5282 3456 7890 1289', expiry: '09/25' }, 
     { bankName: 'Santander', titular: 'Alejandro Martínez', number: '4539 8765 4321 5678', expiry: '11/24' }
   ];
   const userChecks = [{ bankName: 'BANCO NACIONAL', titular: 'Martin Mazini', checkNumber: '00482931', currency: '$', monto: '125.000,00', emision: '16/04/2026' }];

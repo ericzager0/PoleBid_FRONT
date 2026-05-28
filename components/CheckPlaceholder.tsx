@@ -21,7 +21,7 @@ export default function CheckPlaceholder({
 }: CheckPlaceholderProps) {
 
   const getLogo = (name: string) => {
-    const normalizedName = name.toLowerCase().trim();
+    const normalizedName = name.toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g, "");
     return LOGOS_DICT[normalizedName] || LOGOS_DICT['mastercard'];
   };
 
@@ -39,7 +39,7 @@ export default function CheckPlaceholder({
         <View className="flex-row items-center">
           <Image 
             source={getLogo(bankName)} 
-            style={{ width: 28, height: 28, resizeMode: 'contain', marginRight: 8 }} 
+            style={{ width: 80, height: 80, resizeMode: 'contain', marginRight: 8 }} 
           />
           <Text className="text-white text-lg font-bold uppercase tracking-wide">
             {bankName}

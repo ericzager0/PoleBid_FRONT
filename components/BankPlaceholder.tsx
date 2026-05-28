@@ -17,7 +17,7 @@ export default function BankPlaceholder({
 }: BankPlaceholderProps) {
 
   const getLogo = (name: string) => {
-    const normalizedName = name.toLowerCase().trim();
+    const normalizedName = name.toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g, "");
     return LOGOS_DICT[normalizedName] || LOGOS_DICT['mastercard'];
   };
 
@@ -44,7 +44,7 @@ export default function BankPlaceholder({
         <View className="items-center justify-center h-8">
           <Image 
             source={getLogo(bankName)} 
-            style={{ width: 48, height: 32, resizeMode: 'contain' }} 
+            style={{ width: 80, height: 80, resizeMode: 'contain' }} 
           />
         </View>
       </View>
