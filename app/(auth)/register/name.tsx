@@ -9,11 +9,11 @@ export default function Name() {
   const { data: rawData } = useLocalSearchParams();
   const prevData = JSON.parse(rawData as string);
 
-  const [name, setName] = useState("");
+  const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
 
   const handleNext = () => {
-    const data = { ...prevData, name, lastName };
+    const data = { ...prevData, firstName, lastName };
     router.push({
       pathname: "/(auth)/register/email",
       params: { data: JSON.stringify(data) },
@@ -29,8 +29,8 @@ export default function Name() {
           variant="register"
           label="Nombre"
           placeholder="Ingresá tu nombre"
-          value={name}
-          onChangeText={setName}
+          value={firstName}
+          onChangeText={setFirstName}
         />
         <Input
           variant="register"
@@ -44,7 +44,7 @@ export default function Name() {
       <Button
         label="Continuar"
         variant="secondary"
-        disabled={!name || !lastName}
+        disabled={!firstName || !lastName}
         onPress={handleNext}
       />
     </SafeAreaView>

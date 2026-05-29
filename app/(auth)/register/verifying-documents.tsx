@@ -15,6 +15,8 @@ export default function VerifyingDocuments() {
   const prevData = JSON.parse(rawData as string);
   const translateY = useRef(new Animated.Value(0)).current;
 
+  console.log("VerifyingDocuments params:", prevData);
+
   useEffect(() => {
     const animation = Animated.loop(
       Animated.sequence([
