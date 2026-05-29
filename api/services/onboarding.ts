@@ -40,6 +40,10 @@ export const onboardingService = {
       type: "image/jpeg",
     } as any);
 
-    return client.post("/onboarding/documents", formData, {});
+    return client.post("/onboarding/documents", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
   },
 };
