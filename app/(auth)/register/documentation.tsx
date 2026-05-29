@@ -1,10 +1,12 @@
 import { Button } from "@/components/Button";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { Image, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import documentation from "../../../assets/images/documentation.png";
 
 export default function Documentation() {
+  const { data } = useLocalSearchParams();
+
   return (
     <SafeAreaView className="bg-[#14191C] flex-1 justify-between p-8">
       <View className="gap-6">
@@ -20,7 +22,12 @@ export default function Documentation() {
       <Button
         label="Continuar"
         variant="secondary"
-        onPress={() => router.push("/(auth)/register/documentation-front")}
+        onPress={() =>
+          router.push({
+            pathname: "/(auth)/register/documentation-front",
+            params: { data },
+          })
+        }
       />
     </SafeAreaView>
   );

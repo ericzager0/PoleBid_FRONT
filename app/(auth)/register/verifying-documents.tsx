@@ -1,5 +1,6 @@
+import { onboardingService } from "@/api/services/onboarding";
 import { BlurView } from "expo-blur";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useRef } from "react";
 import { Animated, Easing, Image, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -7,13 +8,15 @@ import documentFront from "../../../assets/images/document-front.png";
 
 const IMG_HEIGHT = 250;
 const RECT_HEIGHT = 60;
-const COUNTDOWN = 15;
+const POLL_INTERVAL = 5000;
 
 export default function VerifyingDocuments() {
+  const { data: rawData } = useLocalSearchParams();
+  const prevData = JSON.parse(rawData as string);
   const translateY = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    Animated.loop(
+    const animation = Animated.loop(
       Animated.sequence([
         Animated.timing(translateY, {
           toValue: IMG_HEIGHT - RECT_HEIGHT,
@@ -28,14 +31,28 @@ export default function VerifyingDocuments() {
           useNativeDriver: true,
         }),
       ]),
-    ).start();
+    );
+    animation.start();
 
-    const timer = setTimeout(() => {
-      router.replace("/(auth)/register/documents-success");
-    }, COUNTDOWN * 1000);
+    onboardingService.documents({ ...prevData });
 
-    return () => clearTimeout(timer);
-  }, [translateY]);
+    const interval = setInterval(async () => {
+      try {
+        const response = await onboardingService.status(prevData.email);
+
+        if (response.data?.status === "documents_approved") {
+          router.replace("/(auth)/register/documents-success");
+        }
+      } catch {
+        // Seguimos polling ante un error puntual
+      }
+    }, POLL_INTERVAL);
+
+    return () => {
+      animation.stop();
+      clearInterval(interval);
+    };
+  }, []);
 
   return (
     <SafeAreaView className="bg-[#14191C] justify-center flex-1 gap-12 p-8">

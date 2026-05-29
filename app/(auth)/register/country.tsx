@@ -12,12 +12,12 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const COUNTRIES = [
-  { code: "AR", name: "Argentina", flag: "🇦🇷" },
-  { code: "BO", name: "Bolivia", flag: "🇧🇴" },
-  { code: "BR", name: "Brasil", flag: "🇧🇷" },
-  { code: "CL", name: "Chile", flag: "🇨🇱" },
-  { code: "PY", name: "Paraguay", flag: "🇵🇾" },
-  { code: "UY", name: "Uruguay", flag: "🇺🇾" },
+  { code: 1, name: "Argentina", flag: "🇦🇷" },
+  { code: 2, name: "Bolivia", flag: "🇧🇴" },
+  { code: 3, name: "Brasil", flag: "🇧🇷" },
+  { code: 4, name: "Chile", flag: "🇨🇱" },
+  { code: 5, name: "Paraguay", flag: "🇵🇾" },
+  { code: 6, name: "Uruguay", flag: "🇺🇾" },
 ];
 
 type Country = (typeof COUNTRIES)[number];
@@ -87,7 +87,7 @@ export default function Country() {
               </Text>
               <FlatList
                 data={COUNTRIES}
-                keyExtractor={(item) => item.code}
+                keyExtractor={(item) => item.code.toString()}
                 scrollEnabled={false}
                 renderItem={({ item }) => {
                   const isSelected = selected?.code === item.code;

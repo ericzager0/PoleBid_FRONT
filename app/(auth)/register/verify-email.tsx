@@ -7,6 +7,7 @@ import {
   Image,
   KeyboardAvoidingView,
   Platform,
+  ScrollView,
   Text,
   View,
 } from "react-native";
@@ -26,7 +27,7 @@ export default function VerifyEmail() {
       setLoading(true);
       setError(null);
       await onboardingService.verifyEmail({ email: prevData.email, code });
-      const data = { ...prevData, code };
+      const data = { ...prevData };
       router.push({
         pathname: "/(auth)/register/verify-email-ok",
         params: { data: JSON.stringify(data) },
@@ -42,34 +43,40 @@ export default function VerifyEmail() {
     <SafeAreaView className="bg-[#14191C] flex-1">
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        className="flex-1 justify-between p-8"
+        className="flex-1"
       >
-        <Image source={verifyEmail} style={{ width: 250, height: 250 }} />
-        <View className="gap-6">
-          <Text className="text-white text-5xl font-bold">
-            Ingresá el código que te enviamos.
-          </Text>
-          <Text className="text-white text-2xl">
-            Te enviamos un código de verificación a {prevData.email}.
-          </Text>
-          <Input
-            variant="register"
-            label="Código"
-            placeholder="Ingresá el código"
-            value={code}
-            onChangeText={setCode}
-            keyboardType="number-pad"
-          />
-          {error && <Text className="text-red-500">{error}</Text>}
-        </View>
+        <ScrollView
+          contentContainerStyle={{ flexGrow: 1, padding: 32, gap: 24 }}
+          keyboardShouldPersistTaps="handled"
+        >
+          <Image source={verifyEmail} style={{ width: 250, height: 250 }} />
 
-        <Button
-          label="Continuar"
-          variant="secondary"
-          disabled={!code}
-          loading={loading}
-          onPress={handleNext}
-        />
+          <View className="gap-6 flex-1">
+            <Text className="text-white text-5xl font-bold">
+              Ingresá el código que te enviamos.
+            </Text>
+            <Text className="text-white text-2xl">
+              Te enviamos un código de verificación a {prevData.email}.
+            </Text>
+            <Input
+              variant="register"
+              label="Código"
+              placeholder="Ingresá el código"
+              value={code}
+              onChangeText={setCode}
+              keyboardType="number-pad"
+            />
+            {error && <Text className="text-red-500">{error}</Text>}
+          </View>
+
+          <Button
+            label="Continuar"
+            variant="secondary"
+            disabled={!code}
+            loading={loading}
+            onPress={handleNext}
+          />
+        </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );

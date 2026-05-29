@@ -9,13 +9,27 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import documentBack from "../../../assets/images/document-back.png";
 
 export default function DocumentationBack() {
+  const { data: rawData } = useLocalSearchParams();
+  const prevData = JSON.parse(rawData as string);
   const [permission, requestPermission] = useCameraPermissions();
   const [capturedPhoto, setCapturedPhoto] = useState<string | null>(null);
   const cameraRef = useRef<CameraView>(null);
+
+  const handleNext = async () => {
+    const data = {
+      ...prevData,
+      documentBack: capturedPhoto,
+    };
+
+    router.push({
+      pathname: "/(auth)/register/verifying-documents",
+      params: { data: JSON.stringify(data) },
+    });
+  };
 
   if (!permission) {
     return (
@@ -98,9 +112,7 @@ export default function DocumentationBack() {
           <View>
             <TouchableOpacity
               className="bg-white mx-5 my-2 py-4 rounded-xl items-center"
-              onPress={() =>
-                router.push("/(auth)/register/verifying-documents")
-              }
+              onPress={handleNext}
             >
               <Text className="text-black text-lg font-semibold">
                 Utilizar esta foto

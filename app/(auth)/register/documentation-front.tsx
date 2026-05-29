@@ -9,10 +9,12 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import documentFront from "../../../assets/images/document-front.png";
 
 export default function DocumentationFront() {
+  const { data: rawData } = useLocalSearchParams();
+  const prevData = JSON.parse(rawData as string);
   const [permission, requestPermission] = useCameraPermissions();
   const [capturedPhoto, setCapturedPhoto] = useState<string | null>(null);
   const cameraRef = useRef<CameraView>(null);
@@ -24,6 +26,18 @@ export default function DocumentationFront() {
       </SafeAreaView>
     );
   }
+
+  const handleNext = async () => {
+    const data = {
+      ...prevData,
+      documentFront: capturedPhoto,
+    };
+
+    router.push({
+      pathname: "/(auth)/register/documentation-back",
+      params: { data: JSON.stringify(data) },
+    });
+  };
 
   // Sin permiso concedido
   if (!permission.granted) {
@@ -98,7 +112,7 @@ export default function DocumentationFront() {
           <View>
             <TouchableOpacity
               className="bg-white mx-5 my-2 py-4 rounded-xl items-center"
-              onPress={() => router.push("/(auth)/register/documentation-back")}
+              onPress={handleNext}
             >
               <Text className="text-black text-lg font-semibold">
                 Utilizar esta foto
