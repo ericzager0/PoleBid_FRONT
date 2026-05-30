@@ -14,6 +14,7 @@ interface AuctionProps {
     fecha: string;
     hora: string;
     owner: string;
+    isActive?: boolean; 
     onPress?: () => void;
 }
 
@@ -24,6 +25,7 @@ export default function Auction({
     fecha, 
     hora, 
     owner,
+    isActive = false, 
     onPress 
 }: AuctionProps) {
     const category = categories.find((c) => c.id === categoryId) || categories[0];
@@ -32,7 +34,9 @@ export default function Auction({
         <TouchableOpacity 
             onPress={onPress}
             activeOpacity={0.8} 
-            className="w-[100%] bg-[#2C2D32] rounded-[8px] p-3 flex-row mb-4"
+            className={`w-[100%] bg-[#2C2D32] rounded-[8px] p-3 flex-row mb-4 ${
+              isActive ? 'border border-[#E8B83C]' : ''
+            }`}
         >
             <View className="relative w-32 h-20 rounded-[8px] overflow-hidden">
                 <Image 
@@ -55,9 +59,19 @@ export default function Auction({
                     <Text className="text-white text-lg font-bold leading-tight" numberOfLines={1}>
                         {title}
                     </Text>
-                    <Text className="text-[#ACB0B3] text-sm mt-1">
-                        {fecha}, {hora}
-                    </Text>
+                    
+                    {isActive ? (
+                        <View className="flex-row items-center mt-1">
+                            <View className="w-2 h-2 bg-red-500 rounded-full mr-1.5" />
+                            <Text className="text-red-500 text-sm font-bold tracking-widest">
+                                EN VIVO
+                            </Text>
+                        </View>
+                    ) : (
+                        <Text className="text-[#ACB0B3] text-sm mt-1">
+                            {fecha}, {hora}
+                        </Text>
+                    )}
                 </View>
                 <Text className="text-[#E8B83C] text-sm font-medium mt-2">
                     {owner}
