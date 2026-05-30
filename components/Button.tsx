@@ -3,7 +3,7 @@ import { ActivityIndicator, Pressable, Text, View } from "react-native";
 interface Props {
   label: string;
   onPress: () => void;
-  variant?: "primary" | "secondary" | "ghost" | "anchor";
+  variant?: "primary" | "secondary" | "ghost" | "anchor" | "blocked";
   disabled?: boolean;
   loading?: boolean;
 }
@@ -19,7 +19,7 @@ export function Button({
 
   return (
     <Pressable
-      disabled={disabled || loading}
+      disabled={disabled || loading || variant === "blocked"}
       onPress={onPress}
       className={`px-4 py-3 rounded-[16px] active:opacity-70 ${
         variant === "primary"
@@ -28,7 +28,9 @@ export function Button({
             ? "bg-white"
             : variant === "ghost"
               ? "bg-transparent"
-              : "bg-transparent self-start px-0 py-0"
+              : variant === "blocked"
+                ? "bg-[#2A2B30] opacity-80" 
+                : "bg-transparent self-start px-0 py-0"
       }`}
     >
       <View className="flex-row items-center justify-center gap-2">
@@ -38,7 +40,9 @@ export function Button({
               ? "text-black"
               : variant === "ghost"
                 ? "text-white"
-                : "text-blue-500 text-sm"
+                : variant === "blocked"
+                  ? "text-[#757575]" 
+                  : "text-blue-500 text-sm"
           }`}
         >
           {label}

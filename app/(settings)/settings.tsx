@@ -25,7 +25,7 @@ export default function AjustesScreen() {
           </Text>
         </View>
 
-        <RoundedButton onPress={() => console.log('Cerrando sesión...')} />
+        <RoundedButton variant="primary" onPress={() => console.log('Cerrando sesión...')} />
       </View>
 
       <ScrollView 

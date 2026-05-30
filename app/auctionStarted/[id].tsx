@@ -16,7 +16,7 @@ export default function AuctionDetailScreen() {
   const [modalVisible, setModalVisible] = useState(false);
 
   const auction = f1AuctionsData.find((item) => item.id === id);
-  //NO Id
+  
   if (!auction) {
     return (
       <SafeAreaView className="flex-1 bg-[#14191C] items-center justify-center">
@@ -37,7 +37,7 @@ export default function AuctionDetailScreen() {
       </View>
 
       <View className="flex-1 items-center gap-y-4 py-5">
-        <Text className="font-bold text-[32px] text-white">{auction.title}</Text>
+        <Text className="font-bold text-[32px] text-white text-center px-4">{auction.title}</Text>
         <AuctionDetailCard 
           fecha={auction.fecha}
           estado={auction.state}
@@ -45,28 +45,32 @@ export default function AuctionDetailScreen() {
           images={auction.images}
         />
 
-        <View className='flex-row gap-x-4 w-full justify-center'>
+        <View className='flex-row gap-x-4 w-full justify-center px-4'>
           <Button
             label="Ingresar a la subasta"
             onPress={() => {
               if (auction.categoryId !== categoryIdUser) {
                 setModalVisible(true);
               } else {
-                alert('Función de ingresar no implementada');
+                // Navegamos a la ruta en vivo pasando el ID
+                router.push(`/auctionStarted/live/${auction.id}`);
               }
             }}
             variant='primary'
           />
           <Button
             label="Solo vengo a ver"
-            onPress={() => alert('Función de ver no implementada')}
+            onPress={() => {
+              // Navegamos pero enviamos readonly=true para bloquear botones
+              router.push(`/auctionStarted/live/${auction.id}?readonly=true`);
+            }}
             variant='secondary'
           />
         </View>
       </View>
 
       <SimpleModal
-        visible = {modalVisible}
+        visible={modalVisible}
         texto="Su categoria no corresponde a esta subasta. Aun asi puede verla"
         onClose={() => setModalVisible(false)}
       />

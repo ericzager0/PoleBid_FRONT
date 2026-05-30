@@ -26,9 +26,7 @@ export default function CreditCard({ bankName, titular, number, expiry }: Credit
         elevation: 10,
       }}
     >
-      {/* Onda inferior oscura */}
       <View className="absolute -bottom-32 -left-10 w-[120%] h-64 bg-[#047857] rounded-[100px] opacity-80" />
-      {/* Onda superior clara */}
       <View className="absolute -top-24 -right-16 w-80 h-80 bg-[#34D399] rounded-full opacity-50" />
 
       <View className="flex-row justify-between items-start">
