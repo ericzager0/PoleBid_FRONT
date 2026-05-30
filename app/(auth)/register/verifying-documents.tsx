@@ -15,8 +15,6 @@ export default function VerifyingDocuments() {
   const prevData = JSON.parse(rawData as string);
   const translateY = useRef(new Animated.Value(0)).current;
 
-  console.log("VerifyingDocuments params:", prevData);
-
   useEffect(() => {
     const animation = Animated.loop(
       Animated.sequence([
@@ -36,7 +34,12 @@ export default function VerifyingDocuments() {
     );
     animation.start();
 
-    onboardingService.documents({ ...prevData });
+    onboardingService
+      .documents({ ...prevData })
+      .then(() => {})
+      .catch((error) => {
+        console.error("Error documents:", error.message); // ← acá
+      });
 
     const interval = setInterval(async () => {
       try {
@@ -45,8 +48,9 @@ export default function VerifyingDocuments() {
         if (response.data?.status === "documents_approved") {
           router.replace("/(auth)/register/documents-success");
         }
-      } catch {
+      } catch (error) {
         // Seguimos polling ante un error puntual
+        console.error("Error status:", error); // ← acá
       }
     }, POLL_INTERVAL);
 
