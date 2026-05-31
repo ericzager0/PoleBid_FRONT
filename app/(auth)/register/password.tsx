@@ -32,10 +32,20 @@ export default function Name() {
     try {
       setLoading(true);
       setError(null);
+
+      // Registramos al usuario
       await authService.register({
         email: JSON.parse(data as string).email,
         password,
       });
+
+      // Luego, lo logueamos automáticamente
+      await authService.login({
+        email: JSON.parse(data as string).email,
+        password,
+      });
+
+      // Redirigimos al home
       router.replace("/(app)/home");
     } catch (e: any) {
       setError("Ocurrió un error al registrarse. Intentá de nuevo.");
