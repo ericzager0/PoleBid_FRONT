@@ -46,7 +46,10 @@ export default function VerifyingDocuments() {
         const response = await onboardingService.status(prevData.email);
 
         if (response.data?.status === "documents_approved") {
-          router.replace("/(auth)/register/documents-success");
+          router.replace({
+            pathname: "/(auth)/register/documents-success",
+            params: { data: JSON.stringify(prevData) },
+          });
         }
       } catch (error) {
         // Seguimos polling ante un error puntual

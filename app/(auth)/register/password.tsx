@@ -1,10 +1,49 @@
+import { authService } from "@/api/services/auth";
 import { Button } from "@/components/Button";
 import { Input } from "@/components/Input";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
+import { useState } from "react";
 import { Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Name() {
+  const { data } = useLocalSearchParams();
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleSubmit = async () => {
+    if (!password || !confirmPassword) {
+      setError("Por favor completá todos los campos.");
+      return;
+    }
+
+    if (password.length < 8) {
+      setError("La clave debe tener al menos 8 caracteres.");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setError("Las claves no coinciden.");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setError(null);
+      await authService.register({
+        email: JSON.parse(data as string).email,
+        password,
+      });
+      router.replace("/(app)/home");
+    } catch (e: any) {
+      setError("Ocurrió un error al registrarse. Intentá de nuevo.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <SafeAreaView className="bg-[#14191C] flex-1 justify-between p-8">
       <View className="gap-8">
@@ -17,19 +56,36 @@ export default function Name() {
           label="Clave"
           placeholder="Ingresá tu clave"
           isPassword
+          value={password}
+          onChangeText={(text) => {
+            setPassword(text);
+            setError(null);
+          }}
         />
-        <Input
-          variant="register"
-          label="Repetir clave"
-          placeholder="Ingresá tu clave nuevamente"
-          isPassword
-        />
+        <View>
+          <Input
+            variant="register"
+            label="Repetir clave"
+            placeholder="Ingresá tu clave nuevamente"
+            isPassword
+            value={confirmPassword}
+            onChangeText={(text) => {
+              setConfirmPassword(text);
+              setError(null);
+            }}
+          />
+          {error ? (
+            <Text className="text-red-500 text-sm mt-2">{error}</Text>
+          ) : null}
+        </View>
       </View>
 
       <Button
         label="Completar registro"
         variant="secondary"
-        onPress={() => router.replace("/(app)/home")}
+        disabled={!password || !confirmPassword}
+        loading={loading}
+        onPress={handleSubmit}
       />
     </SafeAreaView>
   );

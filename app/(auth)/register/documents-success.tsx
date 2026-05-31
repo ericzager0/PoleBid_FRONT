@@ -1,9 +1,11 @@
 import { Button } from "@/components/Button";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-export default function Name() {
+export default function DocumentsSuccess() {
+  const { data } = useLocalSearchParams();
+
   return (
     <SafeAreaView className="bg-[#14191C] flex-1 p-6 justify-between">
       <View className="gap-8 mt-32">
@@ -31,7 +33,12 @@ export default function Name() {
       <Button
         label="Hecho"
         variant="secondary"
-        onPress={() => router.push("/(auth)/register/password")}
+        onPress={() =>
+          router.push({
+            pathname: "/(auth)/register/password",
+            params: { data },
+          })
+        }
       />
     </SafeAreaView>
   );

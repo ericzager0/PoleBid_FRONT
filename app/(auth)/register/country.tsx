@@ -1,7 +1,8 @@
 import { Button } from "@/components/Button";
 import { router } from "expo-router";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
+  Animated,
   FlatList,
   Modal,
   Pressable,
@@ -26,9 +27,47 @@ export default function Country() {
   const [selected, setSelected] = useState<Country | null>(null);
   const [open, setOpen] = useState(false);
 
+  const slideAnim = useRef(new Animated.Value(300)).current;
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+
+  const openSheet = () => {
+    setOpen(true);
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 250,
+        useNativeDriver: true,
+      }),
+      Animated.spring(slideAnim, {
+        toValue: 0,
+        tension: 65,
+        friction: 11,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  };
+
+  const closeSheet = (callback?: () => void) => {
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 0,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+      Animated.timing(slideAnim, {
+        toValue: 300,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+    ]).start(() => {
+      setOpen(false);
+      callback?.();
+    });
+  };
+
   const handleSelect = (country: Country) => {
     setSelected(country);
-    setOpen(false);
+    closeSheet();
   };
 
   return (
@@ -40,15 +79,11 @@ export default function Country() {
           cuenta.
         </Text>
 
-        {/* Select trigger */}
+        {/* Trigger */}
         <TouchableOpacity
-          onPress={() => setOpen(true)}
+          onPress={openSheet}
           activeOpacity={0.8}
-          className={`flex-row items-center justify-between border rounded-2xl px-4 py-4 mt-2 ${
-            selected
-              ? "border-white/40 bg-white/5"
-              : "border-white/20 bg-white/5"
-          }`}
+          className="flex-row items-center justify-between border border-white/20 bg-white/5 rounded-2xl px-5 py-4 mt-2"
         >
           {selected ? (
             <View className="flex-row items-center gap-3">
@@ -60,61 +95,67 @@ export default function Country() {
           ) : (
             <Text className="text-white/40 text-lg">Seleccioná tu país</Text>
           )}
-          {/* Chevron */}
-          <Text className={`text-white/50 text-lg ${open ? "rotate-180" : ""}`}>
-            ▾
-          </Text>
+          <Text className="text-white/40 text-base">▾</Text>
         </TouchableOpacity>
       </View>
 
-      {/* Dropdown modal */}
-      <Modal
-        visible={open}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setOpen(false)}
-      >
-        <Pressable
-          className="flex-1 bg-black/60 justify-end"
-          onPress={() => setOpen(false)}
+      {/* Bottom sheet manual */}
+      <Modal visible={open} transparent onRequestClose={() => closeSheet()}>
+        {/* Backdrop */}
+        <Animated.View
+          style={{ opacity: fadeAnim }}
+          className="absolute inset-0 bg-black/70"
         >
-          <Pressable onPress={() => {}}>
-            <View className="bg-[#1E2528] rounded-t-3xl px-4 pt-3 pb-8">
-              {/* Handle */}
-              <View className="w-10 h-1 rounded-full bg-white/20 self-center mb-4" />
-              <Text className="text-white/50 text-sm font-semibold uppercase tracking-widest mb-3 px-2">
-                Países disponibles
-              </Text>
-              <FlatList
-                data={COUNTRIES}
-                keyExtractor={(item) => item.code.toString()}
-                scrollEnabled={false}
-                renderItem={({ item }) => {
-                  const isSelected = selected?.code === item.code;
-                  return (
-                    <TouchableOpacity
-                      onPress={() => handleSelect(item)}
-                      activeOpacity={0.7}
-                      className={`flex-row items-center justify-between px-4 py-4 rounded-2xl mb-1 ${
-                        isSelected ? "bg-white/10" : ""
+          <Pressable className="flex-1" onPress={() => closeSheet()} />
+        </Animated.View>
+
+        {/* Sheet */}
+        <Animated.View
+          style={{ transform: [{ translateY: slideAnim }] }}
+          className="absolute bottom-0 left-0 right-0 bg-[#1E2528] rounded-t-3xl pt-3 pb-10"
+        >
+          {/* Handle */}
+          <View className="w-10 h-1 rounded-full bg-white/20 self-center mb-5" />
+
+          <Text className="text-white/40 text-xs font-semibold uppercase tracking-widest mb-2 px-6">
+            Países disponibles
+          </Text>
+
+          <FlatList
+            data={COUNTRIES}
+            keyExtractor={(item) => item.code.toString()}
+            scrollEnabled={false}
+            contentContainerStyle={{ paddingHorizontal: 16 }}
+            renderItem={({ item }) => {
+              const isSelected = selected?.code === item.code;
+              return (
+                <TouchableOpacity
+                  onPress={() => handleSelect(item)}
+                  activeOpacity={0.6}
+                  className={`flex-row items-center justify-between px-4 py-4 rounded-2xl mb-1 ${
+                    isSelected ? "bg-white/10" : ""
+                  }`}
+                >
+                  <View className="flex-row items-center gap-4">
+                    <Text className="text-3xl">{item.flag}</Text>
+                    <Text
+                      className={`text-lg font-medium ${
+                        isSelected ? "text-white" : "text-white/70"
                       }`}
                     >
-                      <View className="flex-row items-center gap-4">
-                        <Text className="text-3xl">{item.flag}</Text>
-                        <Text className="text-white text-lg font-medium">
-                          {item.name}
-                        </Text>
-                      </View>
-                      {isSelected && (
-                        <Text className="text-white text-lg">✓</Text>
-                      )}
-                    </TouchableOpacity>
-                  );
-                }}
-              />
-            </View>
-          </Pressable>
-        </Pressable>
+                      {item.name}
+                    </Text>
+                  </View>
+                  {isSelected && (
+                    <View className="w-6 h-6 rounded-full bg-white/20 items-center justify-center">
+                      <Text className="text-white text-xs">✓</Text>
+                    </View>
+                  )}
+                </TouchableOpacity>
+              );
+            }}
+          />
+        </Animated.View>
       </Modal>
 
       <Button
