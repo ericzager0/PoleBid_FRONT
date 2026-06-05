@@ -9,9 +9,11 @@ interface PaymentCarouselProps {
   renderItem: (item: any) => React.ReactNode;
   showAddIcon?: boolean;
   showArrows?: boolean; 
+  onPressAdd?: () => void;
+  onPressEdit?: () => void;
 }
 
-export default function PaymentCarousel({ title, data, placeholderData, renderItem, showAddIcon = true, showArrows = true }: PaymentCarouselProps) {
+export default function PaymentCarousel({ title, data, placeholderData, renderItem, showAddIcon = true, showArrows = true, onPressAdd, onPressEdit}: PaymentCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const isEmpty = data.length === 0;
@@ -38,12 +40,12 @@ export default function PaymentCarousel({ title, data, placeholderData, renderIt
         </Text>
         <View className="flex-row items-center">
           {showAddIcon && (
-            <TouchableOpacity className="mr-3 bg-white rounded-full">
+            <TouchableOpacity className="mr-3 bg-white rounded-full" onPress={onPressAdd}>
               <MaterialCommunityIcons name="plus-circle" size={24} color="#1A1A1A" />
             </TouchableOpacity>
           )}
           <TouchableOpacity>
-            <MaterialCommunityIcons name="pencil" size={24} color="white" />
+            <MaterialCommunityIcons name="pencil" size={24} color="white" onPress={onPressEdit}/>
           </TouchableOpacity>
         </View>
       </View>

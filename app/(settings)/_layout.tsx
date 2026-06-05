@@ -5,6 +5,7 @@ export default function SettingsLayout() {
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="settings" />
       <Stack.Screen name="payments" />
+      <Stack.Screen name="sellerOptions" />
     </Stack>
   );
 }

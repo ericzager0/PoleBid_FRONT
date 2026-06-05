@@ -48,7 +48,7 @@ export default function AjustesScreen() {
             text="Administrar cuenta de vendedor"
             frontalIcon="gavel"
             backgroundIcon="storefront-outline"
-            onPress={() => console.log('Cuenta de vendedor')}
+            onPress={() => router.push('/(settings)/sellerOptions')}
           />
         </View>
 

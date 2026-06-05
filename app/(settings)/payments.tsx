@@ -1,8 +1,12 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import React from 'react';
+import React, { useState } from 'react';
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+
+import CardDetailsModal, { CardData } from '@/components/CardDetailsModal';
+import CheckDetailsModal, { CheckData } from '@/components/CheckDetailsModal';
+import BankDetailsModal, { BankData } from '../../components/BankDetailsModal';
 
 import BankPlaceholder from '../../components/BankPlaceholder';
 import CheckPlaceholder from '../../components/CheckPlaceholder';
@@ -10,20 +14,54 @@ import CreditCard from '../../components/CreditCard';
 import PaymentCarousel from '../../components/PaymentCarousel';
 import RoundedButton from '../../components/RoundedButton';
 
-const CardPlaceholderData = { bankName: '---', titular: '---', number: '**** **** **** ****', expiry: '--/--' };
+const CardPlaceholderData = { bankName: '---', titular: '---', cardNumber: '**** **** **** ****', expiry: '--/--' };
 const CheckPlaceholderData = { bankName: '---', titular: '---', checkNumber: '---', currency: '$', monto: '0,00', emision: '--/--/----' };
 const BankPlaceholderData = { bankName: '---', titular: '---', cuil: '--', accountNumber: '*** ----' };
 
 export default function PaymentsScreen() {
   const router = useRouter();
+  
+  const [showCardModal, setShowCardModal] = useState(false);
+  const [showCheckModal, setShowCheckModal] = useState(false);
+  const [showBankModal, setShowBankModal] = useState(false);
+
+  const [cardToEdit, setCardToEdit] = useState<CardData | null>(null);
+  const [checkToEdit, setCheckToEdit] = useState<CheckData | null>(null);
+  const [bankToEdit, setBankToEdit] = useState<BankData | null>(null);
 
   const userCards = [
-    { bankName: 'Banco Nación', titular: 'Alejandro Martínez', number: '5282 3456 7890 1289', expiry: '09/25' }, 
-    { bankName: 'Santander', titular: 'Alejandro Martínez', number: '4539 8765 4321 5678', expiry: '11/24' }
+    { bankName: 'Banco Nación', titular: 'Alejandro Martínez', cardNumber: '5282 3456 7890 1289', expiry: '09/25', cvv: '123' }, 
+    { bankName: 'Santander', titular: 'Alejandro Martínez', cardNumber: '4539 8765 4321 5678', expiry: '11/24', cvv: '456' }
   ];
-  const userChecks = [{ bankName: 'BANCO NACIONAL', titular: 'Martin Mazini', checkNumber: '00482931', currency: '$', monto: '125.000,00', emision: '16/04/2026' }];
-  const userBankAccounts = [{ bankName: 'Banco Santander', titular: 'Alejandro Martínez Silva', cuil: '20-12345678-9', accountNumber: '*** 4567' }];
-  const userCobroAccounts: any[] = []; 
+  const userChecks = [{ bankName: 'BANCO NACIONAL', titular: 'Martin Mazini', checkNumber: '00482931', currency: '$', monto: '125000', emision: '16/04/2026' }];
+  const userBankAccounts = [{ bankName: 'Banco Santander', titular: 'Alejandro Martínez Silva', cuil: '20123456789', accountNumber: '123456789' }];
+
+  const handleAddCard = () => {
+    setCardToEdit(null); 
+    setShowCardModal(true);
+  };
+  const handleEditCard = (card: CardData) => {
+    setCardToEdit(card); 
+    setShowCardModal(true);
+  };
+
+  const handleAddCheck = () => {
+    setCheckToEdit(null);
+    setShowCheckModal(true);
+  };
+  const handleEditCheck = (check: CheckData) => {
+    setCheckToEdit(check);
+    setShowCheckModal(true);
+  };
+
+  const handleAddBank = () => {
+    setBankToEdit(null);
+    setShowBankModal(true);
+  };
+  const handleEditBank = (bank: BankData) => {
+    setBankToEdit(bank);
+    setShowBankModal(true);
+  };
 
   return (
     <SafeAreaView className="bg-[#121212] flex-1">
@@ -45,12 +83,13 @@ export default function PaymentsScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 40 }}
       >
-        
         <PaymentCarousel 
           title="Administrar Tarjetas:"
           data={userCards}
           placeholderData={CardPlaceholderData}
           renderItem={(item) => <CreditCard {...item} />}
+          onPressAdd={handleAddCard}
+          onPressEdit={() => handleEditCard(userCards[0])} 
         />
 
         <PaymentCarousel 
@@ -58,27 +97,44 @@ export default function PaymentsScreen() {
           data={userChecks}
           placeholderData={CheckPlaceholderData}
           renderItem={(item) => <CheckPlaceholder {...item} />}
+          onPressAdd={handleAddCheck}
+          onPressEdit={() => handleEditCheck(userChecks[0])}
         />
 
         <PaymentCarousel 
-          title="Administrar cuenta a Bancaria:"
+          title="Administrar cuenta Bancaria:"
           data={userBankAccounts}
           placeholderData={BankPlaceholderData}
           renderItem={(item) => <BankPlaceholder {...item} />}
+          onPressAdd={handleAddBank}
+          onPressEdit={() => handleEditBank(userBankAccounts[0])}
         />
-
-        <View className="h-[1px] bg-[#333333] mx-4 mb-8" />
-
-        <PaymentCarousel 
-          title="Administrar cuenta de Cobro:"
-          data={userCobroAccounts}
-          placeholderData={BankPlaceholderData}
-          showAddIcon={false}
-          showArrows={false}
-          renderItem={(item) => <BankPlaceholder {...item} />}
-        />
-
       </ScrollView>
+
+      {/* MODALES */}
+      <CardDetailsModal
+        visible={showCardModal}
+        initialData={cardToEdit} 
+        onClose={() => setShowCardModal(false)}
+        onConfirm={(data) => {
+          console.log('Tarjeta confirmada:', data);
+        }}
+      />
+
+      <CheckDetailsModal
+        visible={showCheckModal}
+        initialData={checkToEdit}
+        onClose={() => setShowCheckModal(false)}
+        onConfirm={(data) => console.log('Cheque confirmado:', data)}
+      />
+
+      <BankDetailsModal
+        visible={showBankModal}
+        initialData={bankToEdit}
+        onClose={() => setShowBankModal(false)}
+        onConfirm={(data) => console.log('Banco confirmado:', data)}
+      />
+
     </SafeAreaView>
   );
 }
