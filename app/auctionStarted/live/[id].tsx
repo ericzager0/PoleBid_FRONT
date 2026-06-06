@@ -4,14 +4,14 @@ import React, { useState } from 'react';
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import AuctionDisplayCard from '@/components/AuctionDisplayCard';
-import BidHistoryLog, { BidEvent } from '@/components/BidHistoryLog';
-import BidInput from '@/components/BidInput';
-import { Button } from '@/components/Button';
-import DetailsList from '@/components/DetailList';
-import ImageCarousel from '@/components/ImageCarousel';
-import LiveButton from '@/components/LiveButton';
-import RoundedButton from '@/components/RoundedButton';
+import AuctionDisplayCard from '@/components/common/AuctionDisplayCard';
+import BidInput from '@/components/common/BidInput';
+import { Button } from '@/components/common/Button';
+import DetailsList from '@/components/common/DetailList';
+import ImageCarousel from '@/components/common/ImageCarousel';
+import RoundedButton from '@/components/common/RoundedButton';
+import LiveButton from '@/components/home/LiveButton';
+import BidHistoryLog, { BidEvent } from '@/components/profile/BidHistoryLog';
 
 import { f1AuctionsData } from "../../data/auctions";
 

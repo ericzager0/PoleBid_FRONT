@@ -4,15 +4,15 @@ import React, { useState } from 'react';
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import CardDetailsModal, { CardData } from '@/components/CardDetailsModal';
-import CheckDetailsModal, { CheckData } from '@/components/CheckDetailsModal';
-import BankDetailsModal, { BankData } from '../../components/BankDetailsModal';
+import CardDetailsModal, { CardData } from '@/components/common/CardDetailsModal';
+import CheckDetailsModal, { CheckData } from '@/components/common/CheckDetailsModal';
+import BankDetailsModal, { BankData } from '../../components/common/BankDetailsModal';
 
-import BankPlaceholder from '../../components/BankPlaceholder';
-import CheckPlaceholder from '../../components/CheckPlaceholder';
-import CreditCard from '../../components/CreditCard';
-import PaymentCarousel from '../../components/PaymentCarousel';
-import RoundedButton from '../../components/RoundedButton';
+import RoundedButton from '../../components/common/RoundedButton';
+import BankPlaceholder from '../../components/settings/BankPlaceholder';
+import CheckPlaceholder from '../../components/settings/CheckPlaceholder';
+import CreditCard from '../../components/settings/CreditCard';
+import PaymentCarousel from '../../components/settings/PaymentCarousel';
 
 const CardPlaceholderData = { bankName: '---', titular: '---', cardNumber: '**** **** **** ****', expiry: '--/--' };
 const CheckPlaceholderData = { bankName: '---', titular: '---', checkNumber: '---', currency: '$', monto: '0,00', emision: '--/--/----' };

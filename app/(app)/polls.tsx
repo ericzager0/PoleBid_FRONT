@@ -1,4 +1,4 @@
-import Auction from "@/components/Auction";
+import Auction from "@/components/common/Auction";
 import FilterButton from "@/components/FilterButton";
 import SearchBar from "@/components/SearchBar";
 import { useRouter } from 'expo-router';

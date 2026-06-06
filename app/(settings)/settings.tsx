@@ -4,8 +4,8 @@ import React from 'react';
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import MethodsSettings from '../../components/MethodsSettings';
-import RoundedButton from '../../components/RoundedButton';
+import RoundedButton from '../../components/common/RoundedButton';
+import MethodsSettings from '../../components/settings/MethodsSettings';
 import UserInfoCard from '../../components/UserInfoCard';
 import UserStatusCard from '../../components/UserStatusCard';
 

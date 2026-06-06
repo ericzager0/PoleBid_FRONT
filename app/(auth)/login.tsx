@@ -1,6 +1,6 @@
 import { authService } from "@/api/services/auth";
-import { Button } from "@/components/Button";
-import { Input } from "@/components/Input";
+import { Button } from "@/components/common/Button";
+import { Input } from "@/components/common/Input";
 import { router } from "expo-router";
 import { useState } from "react";
 import { Text, View } from "react-native";

@@ -1,14 +1,14 @@
-import { Button } from "@/components/Button";
+import { Button } from "@/components/common/Button";
 import { router } from "expo-router";
 import { useRef, useState } from "react";
 import {
-  Animated,
-  FlatList,
-  Modal,
-  Pressable,
-  Text,
-  TouchableOpacity,
-  View,
+    Animated,
+    FlatList,
+    Modal,
+    Pressable,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 

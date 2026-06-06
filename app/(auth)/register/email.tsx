@@ -1,6 +1,6 @@
 import { onboardingService } from "@/api/services/onboarding";
-import { Button } from "@/components/Button";
-import { Input } from "@/components/Input";
+import { Button } from "@/components/common/Button";
+import { Input } from "@/components/common/Input";
 import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import { Text, View } from "react-native";

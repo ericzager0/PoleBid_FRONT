@@ -1,4 +1,4 @@
-import Auction from '@/components/Auction';
+import Auction from '@/components/common/Auction';
 import { useRouter } from 'expo-router';
 import React from 'react';
 import { Image, ScrollView, Text, View } from "react-native";

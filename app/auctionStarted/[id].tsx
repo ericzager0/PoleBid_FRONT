@@ -1,6 +1,6 @@
-import AuctionDetailCard from '@/components/AuctionDetailCard';
-import { Button } from '@/components/Button';
-import SimpleModal from '@/components/SimpleModal';
+import AuctionDetailCard from '@/components/common/AuctionDetailCard';
+import { Button } from '@/components/common/Button';
+import SimpleModal from '@/components/settings/SimpleModal';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useState } from 'react';

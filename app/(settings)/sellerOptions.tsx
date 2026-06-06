@@ -4,13 +4,13 @@ import React, { useState } from 'react';
 import { ScrollView, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import ActivateSellerMessage from '@/components/ActivateSellerMessege';
 import SafetyMessage from '@/components/SafetyMessege';
 import SellerToggle from '@/components/SellerToggle';
-import BankDetailsModal, { BankData } from '../../components/BankDetailsModal';
-import BankPlaceholder from '../../components/BankPlaceholder';
-import PaymentCarousel from '../../components/PaymentCarousel';
-import RoundedButton from '../../components/RoundedButton';
+import ActivateSellerMessage from '@/components/settings/ActivateSellerMessege';
+import BankDetailsModal, { BankData } from '../../components/common/BankDetailsModal';
+import RoundedButton from '../../components/common/RoundedButton';
+import BankPlaceholder from '../../components/settings/BankPlaceholder';
+import PaymentCarousel from '../../components/settings/PaymentCarousel';
 
 const BankPlaceholderData = { 
   bankName: '---', 
