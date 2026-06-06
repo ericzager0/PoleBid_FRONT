@@ -1,7 +1,9 @@
 import { authService } from "@/api/services/auth";
 import { Button } from "@/components/common/Button";
 import { Input } from "@/components/common/Input";
-import { router, useLocalSearchParams } from "expo-router";
+import { useAuth } from "@/context/AuthContext";
+import { CommonActions } from "@react-navigation/native";
+import { useLocalSearchParams, useNavigation } from "expo-router";
 import { useState } from "react";
 import { Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -12,6 +14,8 @@ export default function Name() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const navigation = useNavigation();
+  const { signIn } = useAuth();
 
   const handleSubmit = async () => {
     if (!password || !confirmPassword) {
@@ -39,14 +43,19 @@ export default function Name() {
         password,
       });
 
-      // Luego, lo logueamos automáticamente
-      await authService.login({
+      const response = await authService.login({
         email: JSON.parse(data as string).email,
         password,
       });
+      await signIn(response.token);
 
-      // Redirigimos al home
-      router.replace("/(app)/home");
+      // Reemplaza el stack para evitar que el usuario pueda volver a la pantalla de login con el botón de atrás
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{ name: "(app)" }],
+        }),
+      );
     } catch (e: any) {
       setError("Ocurrió un error al registrarse. Intentá de nuevo.");
     } finally {
