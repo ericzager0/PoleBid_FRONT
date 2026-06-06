@@ -38,8 +38,8 @@ export default function AuctionDetailScreen() {
   return (
     <SafeAreaView className="flex-1 bg-[#14191C]">
       <View className="px-4 pt-4">
-        <TouchableOpacity 
-          onPress={() => router.back()} 
+        <TouchableOpacity
+          onPress={() => router.back()}
           className="bg-[#1C1C1E] w-10 h-10 rounded-full items-center justify-center"
         >
           <Ionicons name="arrow-back" size={24} color="white" />
@@ -47,15 +47,17 @@ export default function AuctionDetailScreen() {
       </View>
 
       <View className="flex-1 items-center gap-y-4 py-5">
-        <Text className="font-bold text-[32px] text-white text-center px-4">{auction.title}</Text>
-        <AuctionDetailCard 
+        <Text className="font-bold text-[32px] text-white text-center px-4">
+          {auction.title}
+        </Text>
+        <AuctionDetailCard
           fecha={auction.fecha}
           estado={auction.state}
           descripcion={auction.description}
           images={auction.images}
         />
 
-        <View className='flex-row gap-x-4 w-full justify-center px-4'>
+        <View className="flex-row gap-x-4 w-full justify-center px-4">
           <Button
             label="Ingresar a la subasta"
             onPress={() => {
@@ -81,7 +83,6 @@ export default function AuctionDetailScreen() {
         texto="Su categoria no corresponde a esta subasta. Aun asi puede verla"
         onClose={() => setModalVisible(false)}
       />
-
     </SafeAreaView>
   );
 }

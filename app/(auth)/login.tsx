@@ -1,7 +1,9 @@
 import { authService } from "@/api/services/auth";
 import { Button } from "@/components/common/Button";
 import { Input } from "@/components/common/Input";
-import { router } from "expo-router";
+import { useAuth } from "@/context/AuthContext";
+import { CommonActions } from "@react-navigation/native";
+import { useNavigation } from "expo-router";
 import { useState } from "react";
 import { Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -11,6 +13,8 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { signIn } = useAuth();
+  const navigation = useNavigation();
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -21,8 +25,16 @@ export default function Login() {
     try {
       setLoading(true);
       setError(null);
-      await authService.login({ email, password });
-      router.replace("/home");
+      const response = await authService.login({ email, password });
+      await signIn(response.token);
+
+      // Reemplaza el stack para evitar que el usuario pueda volver a la pantalla de login con el botón de atrás
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{ name: "(app)" }],
+        }),
+      );
     } catch (e: any) {
       setError("Email o contraseña incorrectos.");
     } finally {

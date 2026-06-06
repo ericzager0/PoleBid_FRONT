@@ -24,7 +24,7 @@ export default function VerifyEmailOk() {
         variant="secondary"
         onPress={() =>
           router.push({
-            pathname: "/(auth)/register/address",
+            pathname: "/(auth)/register/verifying-documents",
             params: { data },
           })
         }

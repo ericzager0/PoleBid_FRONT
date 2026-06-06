@@ -13,12 +13,10 @@ export default function AuctionDetailCard({
   fecha,
   estado,
   descripcion,
-  images
+  images,
 }: AuctionDetailCardProps) {
-  
   return (
     <View className="bg-[#36393F] rounded-[8px] p-4 w-[90%] gap-y-4">
-      
       <View>
         <Text className="text-white text-base">
           <Text className="font-bold">Fecha: </Text>
@@ -35,7 +33,6 @@ export default function AuctionDetailCard({
       </View>
 
       <ImageCarousel images={images} />
-
     </View>
   );
 }

@@ -25,8 +25,12 @@ export default function DocumentationBack() {
       documentBack: capturedPhoto,
     };
 
+    // router.push({
+    //   pathname: "/(auth)/register/verifying-documents",
+    //   params: { data: JSON.stringify(data) },
+    // });
     router.push({
-      pathname: "/(auth)/register/verifying-documents",
+      pathname: "/(auth)/register/verify-email",
       params: { data: JSON.stringify(data) },
     });
   };

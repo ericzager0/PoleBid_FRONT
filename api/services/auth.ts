@@ -1,4 +1,3 @@
-import { authStorage } from "../auth";
 import client from "../client";
 
 export const authService = {
@@ -7,7 +6,6 @@ export const authService = {
 
   login: async (body: { email: string; password: string }) => {
     const response = await client.post("/auth/login", body);
-    await authStorage.setToken(response.token);
     return response;
   },
 };
