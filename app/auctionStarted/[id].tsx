@@ -1,11 +1,11 @@
-import AuctionDetailCard from '@/components/common/AuctionDetailCard';
-import { Button } from '@/components/common/Button';
-import SimpleModal from '@/components/settings/SimpleModal';
-import { Ionicons } from '@expo/vector-icons';
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import React, { useState } from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import AuctionDetailCard from "@/components/auctions/AuctionDetailCard";
+import { Button } from "@/components/common/Button";
+import SimpleModal from "@/components/settings/SimpleModal";
+import { Ionicons } from "@expo/vector-icons";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import React, { useState } from "react";
+import { Text, TouchableOpacity, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { f1AuctionsData } from "../data/auctions";
 
 const categoryIdUser = 1;
@@ -16,7 +16,7 @@ export default function AuctionDetailScreen() {
   const [modalVisible, setModalVisible] = useState(false);
 
   const auction = f1AuctionsData.find((item) => item.id === id);
-  
+
   if (!auction) {
     return (
       <SafeAreaView className="flex-1 bg-[#14191C] items-center justify-center">
@@ -28,8 +28,8 @@ export default function AuctionDetailScreen() {
   return (
     <SafeAreaView className="flex-1 bg-[#14191C]">
       <View className="px-4 pt-4">
-        <TouchableOpacity 
-          onPress={() => router.back()} 
+        <TouchableOpacity
+          onPress={() => router.back()}
           className="bg-[#1C1C1E] w-10 h-10 rounded-full items-center justify-center"
         >
           <Ionicons name="arrow-back" size={24} color="white" />
@@ -37,15 +37,17 @@ export default function AuctionDetailScreen() {
       </View>
 
       <View className="flex-1 items-center gap-y-4 py-5">
-        <Text className="font-bold text-[32px] text-white text-center px-4">{auction.title}</Text>
-        <AuctionDetailCard 
+        <Text className="font-bold text-[32px] text-white text-center px-4">
+          {auction.title}
+        </Text>
+        <AuctionDetailCard
           fecha={auction.fecha}
           estado={auction.state}
           descripcion={auction.description}
           images={auction.images}
         />
 
-        <View className='flex-row gap-x-4 w-full justify-center px-4'>
+        <View className="flex-row gap-x-4 w-full justify-center px-4">
           <Button
             label="Ingresar a la subasta"
             onPress={() => {
@@ -56,7 +58,7 @@ export default function AuctionDetailScreen() {
                 router.push(`/auctionStarted/live/${auction.id}`);
               }
             }}
-            variant='primary'
+            variant="primary"
           />
           <Button
             label="Solo vengo a ver"
@@ -64,7 +66,7 @@ export default function AuctionDetailScreen() {
               // Navegamos pero enviamos readonly=true para bloquear botones
               router.push(`/auctionStarted/live/${auction.id}?readonly=true`);
             }}
-            variant='secondary'
+            variant="secondary"
           />
         </View>
       </View>
@@ -74,7 +76,6 @@ export default function AuctionDetailScreen() {
         texto="Su categoria no corresponde a esta subasta. Aun asi puede verla"
         onClose={() => setModalVisible(false)}
       />
-
     </SafeAreaView>
   );
 }
