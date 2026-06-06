@@ -5,6 +5,7 @@ import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import AuctionDisplayCard from '@/components/auctions/AuctionDisplayCard';
+import VictoryModal from '@/components/auctions/VictoryModal';
 import BidInput from '@/components/common/BidInput';
 import { Button } from '@/components/common/Button';
 import DetailsList from '@/components/common/DetailList';
@@ -19,6 +20,7 @@ export default function LiveAuctionScreen() {
   const router = useRouter();
   const { id, readonly } = useLocalSearchParams();
   const isReadOnly = readonly === 'true';
+  const [won, setWon] = useState(true); 
 
   const auction = f1AuctionsData.find((item) => item.id === id);
 
@@ -119,6 +121,20 @@ export default function LiveAuctionScreen() {
         </View>
 
       </ScrollView>
+      {/* MODAL DE VICTORIA */}
+      {won && (
+        <>
+          <VictoryModal
+            visible={won}
+            itemName={auction.title}
+            winningBid="$ 1,250,000"
+            onProceed={() => {
+              setWon(false);
+              console.log('Procediendo al pago...'); 
+            }}
+          />
+        </>
+      )}
     </SafeAreaView>
   );
 }

@@ -15,7 +15,7 @@ export default function AuctionDetailScreen() {
   const router = useRouter();
   const [modalVisible, setModalVisible] = useState(false);
 
-  const isLive = true; // Aquí podrías determinar si la subasta está en vivo o no según tus datos
+  const isLive = true; 
 
   const auction = f1AuctionsData.find((item) => item.id === id);
   if (!auction) {
@@ -28,7 +28,6 @@ export default function AuctionDetailScreen() {
 
   const handleActionButtonLogic = () => {
     if (isLive) {
-      // Navegamos pero enviamos readonly=true para bloquear botones
       router.push(`/auctionStarted/live/${auction.id}?readonly=true`);
     } else{
       router.push(`/auctionStarted/catalogue/${auction.id}`);
@@ -64,7 +63,6 @@ export default function AuctionDetailScreen() {
               if (auction.categoryId !== categoryIdUser) {
                 setModalVisible(true);
               } else {
-                // Navegamos a la ruta en vivo pasando el ID
                 router.push(`/auctionStarted/live/${auction.id}`);
               }
             }}
