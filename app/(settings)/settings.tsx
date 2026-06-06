@@ -5,9 +5,9 @@ import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import RoundedButton from '../../components/common/RoundedButton';
+import UserInfoCard from '../../components/profile/UserInfoCard';
+import UserStatusCard from '../../components/profile/UserStatusCard';
 import MethodsSettings from '../../components/settings/MethodsSettings';
-import UserInfoCard from '../../components/UserInfoCard';
-import UserStatusCard from '../../components/UserStatusCard';
 
 export default function AjustesScreen() {
   const router = useRouter();

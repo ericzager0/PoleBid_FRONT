@@ -4,12 +4,12 @@ import { Input } from "@/components/common/Input";
 import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import {
-    Image,
-    KeyboardAvoidingView,
-    Platform,
-    ScrollView,
-    Text,
-    View,
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  Text,
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import verifyEmail from "../../../assets/images/verify-email.png";

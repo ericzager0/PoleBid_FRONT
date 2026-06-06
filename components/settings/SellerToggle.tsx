@@ -41,10 +41,14 @@ export default function SellerToggle({ isSeller, onToggle }: SellerToggleProps) 
         }`}
       >
         <Animated.View
-          style={{ transform: [{ translateX }] }}
-          className={`w-6 h-6 rounded-full shadow-sm ${
-            isSeller ? 'bg-[#14191C]' : 'bg-[#9CA3AF]'
-          }`}
+          style={{ 
+            transform: [{ translateX }],
+            width: 24,          
+            height: 24,        
+            borderRadius: 12,  
+            backgroundColor: isSeller ? '#14191C' : '#9CA3AF'
+          }}
+          className="shadow-sm" 
         />
       </View>
     </Pressable>

@@ -1,8 +1,8 @@
 import BidLog from "@/components/profile/BidLog";
 import CategoryText from "@/components/profile/CategoryText";
 import CustomProgressBar from "@/components/profile/CustomProgressBar";
+import StatCard from "@/components/profile/StatCard";
 import SimpleModal from "@/components/settings/SimpleModal";
-import StatCard from "@/components/StatCard";
 import { AntDesign, Feather, FontAwesome6, Ionicons, Octicons } from "@expo/vector-icons";
 import { useRouter } from 'expo-router';
 import React, { useState } from "react";

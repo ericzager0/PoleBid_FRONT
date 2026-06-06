@@ -5,25 +5,29 @@ import { Text, View } from 'react-native';
 export type UserStatus = 'verificado' | 'en_espera' | 'denegado';
 
 interface UserStatusCardProps {
+  isUser?: boolean;
   status: UserStatus;
 }
 
-export default function UserStatusCard({ status }: UserStatusCardProps) {
+export default function UserStatusCard({ isUser, status }: UserStatusCardProps) {
   const STATUS_CONFIG = {
     verificado: {
       titleText: 'Verificado para participar en subastas premium.',
+      userText: 'Tu cuenta ha sido verificada y cumple con los requisitos para vender artículos.',
       badgeText: 'ADMITIDO',
       icon: 'check-decagram' as const, 
       color: '#FACC15',
     },
     en_espera: {
       titleText: 'Su cuenta está siendo revisada por el sistema.',
+      userText: 'Tu cuenta está en proceso de revisión. Pronto recibirás una respuesta sobre tu estado.',
       badgeText: 'EN ESPERA',
       icon: 'clock-outline' as const, 
       color: '#9CA3AF', 
     },
     denegado: {
       titleText: 'No cumple con los requisitos para operar.',
+      userText: 'Tu cuenta no cumple con los requisitos para vender artículos en nuestra aplicación.',
       badgeText: 'DENEGADO',
       icon: 'alert-circle-outline' as const,
       color: '#EF4444', 
@@ -39,10 +43,10 @@ export default function UserStatusCard({ status }: UserStatusCardProps) {
           className="text-gray-200 text-base font-bold mb-1 tracking-wide"
           style={{ fontFamily: 'SpaceMono-Bold' }} 
         >
-          Estado de usuario:
+          {isUser ? 'Estado de tu cuenta:' : 'Estado de usuario:'}
         </Text>
         <Text className="text-gray-400 text-sm leading-relaxed">
-          {currentConfig.titleText}
+          {isUser ? currentConfig.userText : currentConfig.titleText}
         </Text>
       </View>
 

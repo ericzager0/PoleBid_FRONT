@@ -1,6 +1,6 @@
 import Auction from "@/components/common/Auction";
-import FilterButton from "@/components/FilterButton";
-import SearchBar from "@/components/SearchBar";
+import FilterButton from "@/components/home/FilterButton";
+import SearchBar from "@/components/home/SearchBar";
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { FlatList, View } from "react-native";

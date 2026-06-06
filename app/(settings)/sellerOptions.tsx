@@ -4,11 +4,12 @@ import React, { useState } from 'react';
 import { ScrollView, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import SafetyMessage from '@/components/SafetyMessege';
-import SellerToggle from '@/components/SellerToggle';
 import ActivateSellerMessage from '@/components/settings/ActivateSellerMessege';
+import SafetyMessage from '@/components/settings/SafetyMessege';
+import SellerToggle from '@/components/settings/SellerToggle';
 import BankDetailsModal, { BankData } from '../../components/common/BankDetailsModal';
 import RoundedButton from '../../components/common/RoundedButton';
+import UserStatusCard, { UserStatus } from '../../components/profile/UserStatusCard';
 import BankPlaceholder from '../../components/settings/BankPlaceholder';
 import PaymentCarousel from '../../components/settings/PaymentCarousel';
 
@@ -20,8 +21,12 @@ const BankPlaceholderData = {
 };
 
 export default function SellerScreen() {
+  //! FAKE: X ahora hardcodeado
+  const aprrobedSeller = true;
+
   const router = useRouter();
   const [seller, setSeller] = useState(false);
+  const [status, setStatus] = useState<UserStatus>('en_espera');
   const [showBankModal, setShowBankModal] = useState(false);
   const [bankToEdit, setBankToEdit] = useState<BankData | null>(null);
 
@@ -33,13 +38,16 @@ export default function SellerScreen() {
   }];
   const userCobroAccounts: any[] = []; 
   
+  const isFullyApproved = seller && aprrobedSeller;
+
   const handleAddBank = () => {
-    if (!seller) return;
+    if (!isFullyApproved) return;
     setBankToEdit(null);
     setShowBankModal(true);
   };
+
   const handleEditBank = (bank: BankData) => {
-    if (!seller) return;
+    if (!isFullyApproved) return;
     setBankToEdit(bank);
     setShowBankModal(true);
   };
@@ -59,7 +67,7 @@ export default function SellerScreen() {
         <View className="gap-y-6">
           <SellerToggle 
             isSeller={seller} 
-            onToggle={(value) => setSeller(value)} 
+            onToggle={(value) => {setSeller(value); if(aprrobedSeller) setStatus('verificado'); else setStatus('denegado')}} 
           />
           
           <PaymentCarousel 
@@ -70,7 +78,7 @@ export default function SellerScreen() {
             renderItem={(item) => (
               <BankPlaceholder 
                 {...item} 
-                blocked={!seller} 
+                blocked={!isFullyApproved} 
               />
             )}
             onPressAdd={handleAddBank}
@@ -78,6 +86,9 @@ export default function SellerScreen() {
           />
           
           {seller ? <SafetyMessage /> : <ActivateSellerMessage />}
+          <View className="mt-8 mb-4">
+            <UserStatusCard isUser={true} status={status} />
+          </View>
         </View>
 
       </ScrollView>
