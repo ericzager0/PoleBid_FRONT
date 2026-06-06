@@ -1,4 +1,4 @@
-import AuctionDetailCard from '@/components/common/AuctionDetailCard';
+import AuctionDetailCard from '@/components/auctions/AuctionDetailCard';
 import { Button } from '@/components/common/Button';
 import SimpleModal from '@/components/settings/SimpleModal';
 import { Ionicons } from '@expo/vector-icons';
@@ -15,8 +15,9 @@ export default function AuctionDetailScreen() {
   const router = useRouter();
   const [modalVisible, setModalVisible] = useState(false);
 
+  const isLive = true; // Aquí podrías determinar si la subasta está en vivo o no según tus datos
+
   const auction = f1AuctionsData.find((item) => item.id === id);
-  
   if (!auction) {
     return (
       <SafeAreaView className="flex-1 bg-[#14191C] items-center justify-center">
@@ -24,6 +25,15 @@ export default function AuctionDetailScreen() {
       </SafeAreaView>
     );
   }
+
+  const handleActionButtonLogic = () => {
+    if (isLive) {
+      // Navegamos pero enviamos readonly=true para bloquear botones
+      router.push(`/auctionStarted/live/${auction.id}?readonly=true`);
+    } else{
+      router.push(`/auctionStarted/catalogue/${auction.id}`);
+    }
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-[#14191C]">
@@ -56,14 +66,11 @@ export default function AuctionDetailScreen() {
                 router.push(`/auctionStarted/live/${auction.id}`);
               }
             }}
-            variant='primary'
+            variant={isLive ? 'primary' : 'blocked'}
           />
           <Button
-            label="Solo vengo a ver"
-            onPress={() => {
-              // Navegamos pero enviamos readonly=true para bloquear botones
-              router.push(`/auctionStarted/live/${auction.id}?readonly=true`);
-            }}
+            label={isLive? "Solo vengo a ver" : "Ver catálogo"}
+            onPress={handleActionButtonLogic}
             variant='secondary'
           />
         </View>

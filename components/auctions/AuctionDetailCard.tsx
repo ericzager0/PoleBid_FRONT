@@ -1,6 +1,6 @@
 import React from 'react';
 import { Text, View } from 'react-native';
-import ImageCarousel from './ImageCarousel';
+import ImageCarousel from '../common/ImageCarousel';
 
 interface AuctionDetailCardProps {
   fecha: string;

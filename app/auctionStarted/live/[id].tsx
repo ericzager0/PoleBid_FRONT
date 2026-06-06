@@ -68,7 +68,7 @@ export default function LiveAuctionScreen() {
             <Text className="font-bold">Subasta: </Text> 
             {auction.title}
           </Text>
-          <RoundedButton variant="secondary" label="Catalogo" onPress={() => console.log('Catálogo')} />
+          <RoundedButton variant="secondary" label="Catalogo" onPress={() => router.push(`/auctionStarted/catalogue/${auction.id}`)} />
         </View>
 
         <Text className="text-white text-xl mb-4">
