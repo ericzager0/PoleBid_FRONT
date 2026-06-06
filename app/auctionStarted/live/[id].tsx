@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import AuctionDisplayCard from '@/components/common/AuctionDisplayCard';
+import AuctionDisplayCard from '@/components/auctions/AuctionDisplayCard';
 import BidInput from '@/components/common/BidInput';
 import { Button } from '@/components/common/Button';
 import DetailsList from '@/components/common/DetailList';
