@@ -21,7 +21,7 @@ export default function Email() {
       await onboardingService.email({ email });
       const data = { ...prevData, email };
       router.push({
-        pathname: "/(auth)/register/verify-email",
+        pathname: "/(auth)/register/address",
         params: { data: JSON.stringify(data) },
       });
     } catch (e: any) {
