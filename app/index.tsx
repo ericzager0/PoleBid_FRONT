@@ -11,7 +11,8 @@ export default function Index() {
       <Image
         source={logo}
         resizeMode="contain"
-        style={{ width: 256, height: 256 }}
+        style={{ width: 200, height: 200 }}
+        className="mt-12"
       />
       <View className="gap-8">
         <Message message="Descubrí oportunidades y empezá a pujar." />
