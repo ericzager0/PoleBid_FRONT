@@ -1,9 +1,18 @@
 import { authStorage } from "@/api/auth";
+import { userService } from "@/api/services/users";
 import { createContext, useContext, useEffect, useState } from "react";
+
+type User = {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+};
 
 type AuthContextType = {
   isAuthenticated: boolean;
   isLoading: boolean;
+  user: User | null;
   signIn: (token: string) => Promise<void>;
   signOut: () => Promise<void>;
 };
@@ -13,13 +22,22 @@ const AuthContext = createContext<AuthContextType | null>(null);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    // Al montar, checkea si hay token guardado
     (async () => {
       try {
         const token = await authStorage.getToken();
-        setIsAuthenticated(!!token);
+        if (token) {
+          const response = await userService.me();
+          setUser(response.data);
+          setIsAuthenticated(true);
+        }
+      } catch {
+        // Token inválido o expirado — limpiamos todo
+        await authStorage.removeToken();
+        setIsAuthenticated(false);
+        setUser(null);
       } finally {
         setIsLoading(false);
       }
@@ -28,17 +46,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signIn = async (token: string) => {
     await authStorage.setToken(token);
+    const response = await userService.me();
+    setUser(response.data);
     setIsAuthenticated(true);
   };
 
   const signOut = async () => {
     await authStorage.removeToken();
+    setUser(null);
     setIsAuthenticated(false);
   };
 
   return (
     <AuthContext.Provider
-      value={{ isAuthenticated, isLoading, signIn, signOut }}
+      value={{ isAuthenticated, isLoading, user, signIn, signOut }}
     >
       {children}
     </AuthContext.Provider>
