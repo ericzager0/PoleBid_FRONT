@@ -34,7 +34,7 @@ export default function Index() {
       <Button
         label="Continuar como invitado"
         onPress={() => {
-          router.replace("/home");
+          router.push("/home");
         }}
         variant="ghost"
       />

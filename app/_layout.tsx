@@ -1,4 +1,5 @@
 import { AuthProvider, useAuth } from "@/context/AuthContext";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Stack, router } from "expo-router";
 import { useEffect, useRef } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -14,14 +15,27 @@ function RootNavigator() {
     const wasAuthenticated = prevAuthRef.current;
     prevAuthRef.current = isAuthenticated;
 
-    if (wasAuthenticated === null && isAuthenticated) {
-      // Primera carga con token
-      router.replace("/(app)/home");
-    } else if (wasAuthenticated === true && !isAuthenticated) {
-      // Logout explícito o 401: reset completo, sin back posible
-      router.dismissAll(); // limpia todo el stack
-      router.replace("/");
-    }
+    const redirect = async () => {
+      if (wasAuthenticated === null && !isAuthenticated) {
+        //vemos si el usuario estaba esperando aprobación de documentos
+        const email = await AsyncStorage.getItem("awaiting_approval");
+
+        // si hay un email, redirigimos a la pantalla de esperando aprobación
+        if (email) {
+          router.replace({
+            pathname: "/(auth)/register/verifying-documents",
+            params: { data: JSON.stringify({ email }) },
+          });
+        }
+      } else if (wasAuthenticated === null && isAuthenticated) {
+        router.replace("/(app)/home");
+      } else if (wasAuthenticated === true && !isAuthenticated) {
+        router.dismissAll();
+        router.replace("/");
+      }
+    };
+
+    redirect();
   }, [isAuthenticated, isLoading]);
 
   if (isLoading) return null;

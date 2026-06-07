@@ -1,4 +1,5 @@
 import { onboardingService } from "@/api/services/onboarding";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { BlurView } from "expo-blur";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useRef } from "react";
@@ -16,6 +17,9 @@ export default function VerifyingDocuments() {
   const translateY = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
+    // escribimos que el usuario se encuentra en esta parte del flujo
+    AsyncStorage.setItem("awaiting_approval", prevData.email);
+
     const animation = Animated.loop(
       Animated.sequence([
         Animated.timing(translateY, {
@@ -34,26 +38,21 @@ export default function VerifyingDocuments() {
     );
     animation.start();
 
-    onboardingService
-      .documents({ ...prevData })
-      .then(() => {})
-      .catch((error) => {
-        console.error("Error documents:", error.message); // ← acá
-      });
-
     const interval = setInterval(async () => {
       try {
         const response = await onboardingService.status(prevData.email);
 
         if (response.data?.status === "documents_approved") {
+          // si los documentos fueron aprobados, limpiamos el estado de "awaiting_approval" y redirigimos al usuario a la pantalla de éxito
+          await AsyncStorage.removeItem("awaiting_approval");
+
           router.replace({
             pathname: "/(auth)/register/documents-success",
             params: { data: JSON.stringify(prevData) },
           });
         }
       } catch (error) {
-        // Seguimos polling ante un error puntual
-        console.error("Error status:", error); // ← acá
+        console.error("Error status:", error);
       }
     }, POLL_INTERVAL);
 
@@ -88,8 +87,8 @@ export default function VerifyingDocuments() {
           Estamos verificando tus documentos
         </Text>
         <Text className="text-white text-2xl">
-          Te enviaremos un correo cuando los resultados estén disponibles para
-          que finalices tu registro.
+          Listo por ahora! Te enviaremos un correo cuando los resultados estén
+          disponibles para que finalices tu registro.
         </Text>
       </View>
     </SafeAreaView>
