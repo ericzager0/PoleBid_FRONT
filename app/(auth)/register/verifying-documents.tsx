@@ -87,8 +87,9 @@ export default function VerifyingDocuments() {
           Estamos verificando tus documentos
         </Text>
         <Text className="text-white text-2xl">
-          Listo por ahora! Te enviaremos un correo cuando los resultados estén
-          disponibles para que finalices tu registro.
+          ¡Listo por ahora! Te enviaremos un correo cuando los resultados estén
+          disponibles para que finalices tu registro. Puedes cerrar la
+          aplicación mientras tanto.
         </Text>
       </View>
     </SafeAreaView>
