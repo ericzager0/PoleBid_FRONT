@@ -40,6 +40,37 @@ export default function Home() {
     console.log("Abrir selector de imágenes o cámara...");
   };
 
+  if (!user) {
+    return (
+      <SafeAreaView className="flex-1 bg-[#14191C] px-6 justify-center items-center">
+        <View className="w-full bg-[#1E1E1E] rounded-3xl p-8 items-center border border-white/10">
+          <Ionicons
+            name="person-circle-outline"
+            size={64}
+            color="#FFD874"
+            className="mb-4"
+          />
+          <Text className="text-white text-center text-lg font-medium mb-8">
+            Nada por acá. Entraste como invitado.
+          </Text>
+
+          <TouchableOpacity
+            className="bg-[#FFD874] w-full py-4 rounded-full items-center"
+            activeOpacity={0.8}
+            onPress={() => {
+              router.dismissAll();
+              router.push("/(auth)/login");
+            }}
+          >
+            <Text className="text-black font-bold text-lg uppercase tracking-wider">
+              Iniciar sesión
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
   return (
     <SafeAreaView className="flex-1 bg-[#14191C]">
       <View className="items-center pt-4 pb-4 bg-[#14191C]">
