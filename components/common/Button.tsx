@@ -8,7 +8,7 @@ interface Props {
   loading?: boolean;
 }
 
-export function Button({
+export default function Button({
   label,
   onPress,
   variant = "primary",

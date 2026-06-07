@@ -2,7 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import React, { useEffect, useState } from 'react';
 import { Modal, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 
-import { Button } from '../common/Button';
+import Button from '../common/Button';
 import { Input } from '../common/Input';
 
 export interface CheckData {

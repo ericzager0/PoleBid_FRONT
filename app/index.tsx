@@ -2,7 +2,7 @@ import { router } from "expo-router";
 import { Image, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import logo from "../assets/images/icon.png";
-import { Button } from "../components/common/Button";
+import Button from "../components/common/Button";
 import Message from "../components/home/Message";
 
 export default function Index() {

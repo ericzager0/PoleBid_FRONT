@@ -12,24 +12,14 @@ export default function AppLayout() {
       <Tabs.Screen name="polls" />
       <Tabs.Screen name="profile" />
 
-      //Settings
-      {/*
+      //Bid history log
       <Tabs.Screen 
-        name="settings"
+        name="bidHistory"
         options={{
           href: null,
           tabBarStyle: { display: 'none' },
         }}
       />
-
-      <Tabs.Screen 
-        name="payments"
-        options={{
-          href: null,
-          tabBarStyle: { display: 'none' },
-        }}
-      />
-      */}
       </Tabs>
   );
 }

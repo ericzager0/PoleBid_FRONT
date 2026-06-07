@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Dimensions, Modal, Text, View } from 'react-native';
 import ConfettiCannon from 'react-native-confetti-cannon';
 
-import { Button } from '../common/Button';
+import Button from '../common/Button';
 
 interface VictoryModalProps {
   visible: boolean;

@@ -1,5 +1,5 @@
 import AuctionDetailCard from '@/components/auctions/AuctionDetailCard';
-import { Button } from '@/components/common/Button';
+import Button from '@/components/common/Button';
 import SimpleModal from '@/components/settings/SimpleModal';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';

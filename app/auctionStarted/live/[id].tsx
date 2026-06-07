@@ -7,7 +7,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import AuctionDisplayCard from '@/components/auctions/AuctionDisplayCard';
 import VictoryModal from '@/components/auctions/VictoryModal';
 import BidInput from '@/components/common/BidInput';
-import { Button } from '@/components/common/Button';
+import Button from '@/components/common/Button';
 import DetailsList from '@/components/common/DetailList';
 import ImageCarousel from '@/components/common/ImageCarousel';
 import RoundedButton from '@/components/common/RoundedButton';
@@ -130,7 +130,7 @@ export default function LiveAuctionScreen() {
             winningBid="$ 1,250,000"
             onProceed={() => {
               setWon(false);
-              console.log('Procediendo al pago...'); 
+              router.push(`/auctionStarted/live/pay/${auction.id}`);
             }}
           />
         </>

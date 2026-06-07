@@ -150,16 +150,16 @@ export default function Home() {
             </Text>
           </View>
 
-          <BidLog date="2023-10-15" name="Alpine" won={true} />
-          <BidLog date="2023-10-15" name="Alpine" won={false} />
-          <BidLog date="2023-10-15" name="Alpine" won={true} />
-          <BidLog date="2023-10-15" name="Alpine" won={false} />
-          <BidLog date="2023-10-15" name="Alpine" won={false} />
-          <BidLog date="2023-10-15" name="Alpine" won={true} />
-          <BidLog date="2023-10-15" name="Alpine" won={false} />
-          <BidLog date="2023-10-15" name="Alpine" won={false} />
-          <BidLog date="2023-10-15" name="Alpine" won={false} />
-          <BidLog date="2023-10-15" name="Alpine" won={true} />
+          <BidLog date="2023-10-15" name="Alpine" won={true} bid="$1,200" onPress={() => {}} />
+          <BidLog date="2023-10-15" name="Alpine" won={false} bid="$1,000" onPress={() => {}} />
+          <BidLog date="2023-10-15" name="Alpine" won={true} bid="$1,500" onPress={() => {}} />
+          <BidLog date="2023-10-15" name="Alpine" won={false} bid="$1,300" onPress={() => {}} />
+          <BidLog date="2023-10-15" name="Alpine" won={false} bid="$1,100" onPress={() => {}} />
+          <BidLog date="2023-10-15" name="Alpine" won={true} bid="$1,600" onPress={() => {}} />
+          <BidLog date="2023-10-15" name="Alpine" won={false} bid="$1,400" onPress={() => {}} />
+          <BidLog date="2023-10-15" name="Alpine" won={false} bid="$1,200" onPress={() => {}} />
+          <BidLog date="2023-10-15" name="Alpine" won={false} bid="$1,000" onPress={() => {}} />
+          <BidLog date="2023-10-15" name="Alpine" won={true} bid="$1,700" onPress={() => {}} />
         </View>
 
         <SimpleModal

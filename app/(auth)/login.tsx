@@ -1,5 +1,5 @@
 import { authService } from "@/api/services/auth";
-import { Button } from "@/components/common/Button";
+import Button from "@/components/common/Button";
 import { Input } from "@/components/common/Input";
 import { useAuth } from "@/context/AuthContext";
 import { CommonActions } from "@react-navigation/native";

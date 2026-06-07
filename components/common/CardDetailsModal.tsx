@@ -2,7 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import React, { useEffect, useState } from 'react';
 import { Modal, Text, TouchableOpacity, View } from 'react-native';
 
-import { Button } from './Button';
+import Button from './Button';
 import { Input } from './Input';
 
 export interface CardData {

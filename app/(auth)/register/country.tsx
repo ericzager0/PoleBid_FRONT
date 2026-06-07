@@ -1,4 +1,4 @@
-import { Button } from "@/components/common/Button";
+import Button from "@/components/common/Button";
 import { router } from "expo-router";
 import { useRef, useState } from "react";
 import {
