@@ -33,7 +33,7 @@ export default function VerifyEmailOk() {
           Correo electrónico verificado correctamente.
         </Text>
         <Text className="text-white text-2xl">
-          ¡Gracias! Ahora podés seguir creando tu cuenta.
+          ¡Gracias! Ahora tus documentos entrarán en revisión.
         </Text>
       </View>
 
