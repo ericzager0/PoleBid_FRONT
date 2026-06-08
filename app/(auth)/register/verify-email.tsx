@@ -2,6 +2,7 @@ import { onboardingService } from "@/api/services/onboarding";
 import Button from "@/components/common/Button";
 import { Input } from "@/components/common/Input";
 import KeyboardWrapper from "@/components/common/KeyboardWrapper";
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import {
@@ -31,7 +32,12 @@ export default function VerifyEmail() {
         params: { data: JSON.stringify(data) },
       });
     } catch (e: any) {
-      setError(e.message);
+      const errorMsg = e.message?.toLowerCase() || "";
+      if (errorMsg.includes("invalid") || errorMsg.includes("code") || errorMsg.includes("400")) {
+        setError("El código ingresado es incorrecto o ha expirado. Verificá e intentá de nuevo.");
+      } else {
+        setError("No pudimos verificar el código en este momento. Intentá más tarde.");
+      }
     } finally {
       setLoading(false);
     }
@@ -65,10 +71,21 @@ export default function VerifyEmail() {
                 label="Código"
                 placeholder="Ingresá el código"
                 value={code}
-                onChangeText={setCode}
+                onChangeText={(text) => {
+                  setCode(text);
+                  setError(null); 
+                }}
                 keyboardType="number-pad"
               />
-              {error && <Text className="text-red-500 mt-1">{error}</Text>}
+              
+              {error && (
+                <View className="flex-row items-center bg-[#FF3B30]/10 border border-[#FF3B30]/30 rounded-xl p-3 mt-4">
+                  <MaterialCommunityIcons name="alert-circle-outline" size={20} color="#FF3B30" />
+                  <Text className="text-[#FF3B30] text-sm font-medium ml-2 flex-1 leading-snug">
+                    {error}
+                  </Text>
+                </View>
+              )}
             </View>
           </View>
 
