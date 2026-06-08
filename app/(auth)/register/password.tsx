@@ -1,6 +1,7 @@
 import { authService } from "@/api/services/auth";
 import Button from "@/components/common/Button";
 import { Input } from "@/components/common/Input";
+import KeyboardWrapper from "@/components/common/KeyboardWrapper";
 import { useAuth } from "@/context/AuthContext";
 import { CommonActions } from "@react-navigation/native";
 import { useLocalSearchParams, useNavigation } from "expo-router";
@@ -64,48 +65,44 @@ export default function Name() {
   };
 
   return (
-    <SafeAreaView className="bg-[#14191C] flex-1 justify-between p-8">
-      <View className="gap-8">
-        <Text className="text-white text-5xl font-bold">Clave personal</Text>
-        <Text className="text-white text-2xl">
-          Elige la clave que deberás usar para acceder a tu cuenta.
-        </Text>
-        <Input
-          variant="register"
-          label="Clave"
-          placeholder="Ingresá tu clave"
-          isPassword
-          value={password}
-          onChangeText={(text) => {
-            setPassword(text);
-            setError(null);
-          }}
-        />
-        <View>
-          <Input
-            variant="register"
-            label="Repetir clave"
-            placeholder="Ingresá tu clave nuevamente"
-            isPassword
-            value={confirmPassword}
-            onChangeText={(text) => {
-              setConfirmPassword(text);
-              setError(null);
-            }}
-          />
-          {error ? (
-            <Text className="text-red-500 text-sm mt-2">{error}</Text>
-          ) : null}
-        </View>
-      </View>
+    <SafeAreaView className="bg-[#14191C] flex-1">
+      <KeyboardWrapper>
+        <View className="flex-1 justify-between p-8">
+          <View className="gap-8">
+            <Text className="text-white text-5xl font-bold">Clave personal</Text>
+            <Text className="text-white text-2xl">
+              Elige la clave que deberás usar para acceder a tu cuenta.
+            </Text>
+            <Input
+              variant="register"
+              label="Clave"
+              placeholder="Ingresá tu clave"
+              isPassword
+              value={password}
+              onChangeText={(text) => { setPassword(text); setError(null); }}
+            />
+            <View>
+              <Input
+                variant="register"
+                label="Repetir clave"
+                placeholder="Ingresá tu clave nuevamente"
+                isPassword
+                value={confirmPassword}
+                onChangeText={(text) => { setConfirmPassword(text); setError(null); }}
+              />
+              {error ? <Text className="text-red-500 text-sm mt-2">{error}</Text> : null}
+            </View>
+          </View>
 
-      <Button
-        label="Completar registro"
-        variant="secondary"
-        disabled={!password || !confirmPassword}
-        loading={loading}
-        onPress={handleSubmit}
-      />
+          <Button
+            label="Completar registro"
+            variant="secondary"
+            disabled={!password || !confirmPassword}
+            loading={loading}
+            onPress={handleSubmit}
+          />
+        </View>
+      </KeyboardWrapper>
     </SafeAreaView>
   );
 }

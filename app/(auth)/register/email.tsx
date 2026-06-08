@@ -1,6 +1,7 @@
 import { onboardingService } from "@/api/services/onboarding";
 import Button from "@/components/common/Button";
 import { Input } from "@/components/common/Input";
+import KeyboardWrapper from "@/components/common/KeyboardWrapper";
 import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import { Text, View } from "react-native";
@@ -32,33 +33,33 @@ export default function Email() {
   };
 
   return (
-    <SafeAreaView className="bg-[#14191C] flex-1 justify-between p-8">
-      <View className="gap-12">
-        <Text className="text-white text-5xl font-bold">
-          Correo electrónico
-        </Text>
-        <Text className="text-white text-2xl">
-          ¿Cómo podemos estar en contacto?
-        </Text>
-        <Input
-          variant="register"
-          label="Correo electrónico"
-          placeholder="Ingresá tu correo electrónico"
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-          autoCapitalize="none"
-        />
-        {error && <Text className="text-red-500">{error}</Text>}
-      </View>
+    <SafeAreaView className="bg-[#14191C] flex-1">
+      <KeyboardWrapper>
+        <View className="flex-1 justify-between p-8">
+          <View className="gap-12">
+            <Text className="text-white text-5xl font-bold">Correo electrónico</Text>
+            <Text className="text-white text-2xl">¿Cómo podemos estar en contacto?</Text>
+            <Input
+              variant="register"
+              label="Correo electrónico"
+              placeholder="Ingresá tu correo electrónico"
+              value={email}
+              onChangeText={setEmail}
+              keyboardType="email-address"
+              autoCapitalize="none"
+            />
+            {error && <Text className="text-red-500">{error}</Text>}
+          </View>
 
-      <Button
-        label="Continuar"
-        variant="secondary"
-        disabled={!email || loading}
-        onPress={handleNext}
-        loading={loading}
-      />
+          <Button
+            label="Continuar"
+            variant="secondary"
+            disabled={!email || loading}
+            onPress={handleNext}
+            loading={loading}
+          />
+        </View>
+      </KeyboardWrapper>
     </SafeAreaView>
   );
 }
