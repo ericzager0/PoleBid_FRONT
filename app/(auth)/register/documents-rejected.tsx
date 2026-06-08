@@ -23,7 +23,6 @@ export default function DocumentsSuccess() {
         label="Entendido"
         variant="secondary"
         onPress={() => {
-          router.dismissAll();
           router.replace("/");
         }}
       />
