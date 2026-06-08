@@ -1,3 +1,4 @@
+import perfilFoto from "@/assets/images/perfil.png";
 import BidLog from "@/components/profile/BidLog";
 import CategoryText from "@/components/profile/CategoryText";
 import CustomProgressBar from "@/components/profile/CustomProgressBar";
@@ -33,8 +34,8 @@ export default function Home() {
   const isBanned = false;
   const adeudado = 15000;
 
-  const fotoPerfilUri =
-    "https://cdn.vectorstock.com/i/500p/46/04/simple-user-icon-generic-person-vector-60254604.jpg";
+  //const fotoPerfilUri ="https://cdn.vectorstock.com/i/500p/46/04/simple-user-icon-generic-person-vector-60254604.jpg";
+  const fotoPerfil = perfilFoto;
 
   const handleEditPhoto = () => {
     console.log("Abrir selector de imágenes o cámara...");
@@ -93,9 +94,9 @@ export default function Home() {
               isBanned ? "border-[#E83C3C]" : "border-[#FFD874]"
             }`}
           >
-            {fotoPerfilUri ? (
+            {fotoPerfil ? (
               <Image
-                source={{ uri: fotoPerfilUri }}
+                source={fotoPerfil} // <-- Se pasa directamente la variable
                 className="w-full h-full"
                 resizeMode="cover"
               />
