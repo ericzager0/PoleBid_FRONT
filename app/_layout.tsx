@@ -1,6 +1,7 @@
 import { AuthProvider, useAuth } from "@/context/AuthContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Stack, router } from "expo-router";
+import { StatusBar } from 'expo-status-bar';
 import { useEffect, useRef } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import "../global.css";
@@ -54,6 +55,7 @@ function RootNavigator() {
 export default function RootLayout() {
   return (
     <SafeAreaProvider>
+      <StatusBar style="light" /> 
       <AuthProvider>
         <RootNavigator />
       </AuthProvider>

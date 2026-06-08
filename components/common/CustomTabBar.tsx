@@ -2,16 +2,22 @@ import { Ionicons } from "@expo/vector-icons";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { Platform, Pressable, Text, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function CustomTabBar({ state, navigation }: BottomTabBarProps) {
+  const insets = useSafeAreaInsets();
+  const pb = Math.max(insets.bottom, Platform.OS === "ios" ? 24 : 12);
+  const barHeight = 60 + pb;
+  const floatingBottom = pb + 24;
+
   return (
     <View className="relative bg-[#14191C]" style={{ overflow: "visible" }}>
       <View
         className="flex-row items-center px-6 rounded-t-3xl"
         style={{
           backgroundColor: "#1E1E1E",
-          height: Platform.OS === "ios" ? 84 : 64,
-          paddingBottom: Platform.OS === "ios" ? 24 : 8,
+          height: barHeight,        
+          paddingBottom: pb,        
           paddingTop: 8,
         }}
       >
@@ -62,7 +68,7 @@ export default function CustomTabBar({ state, navigation }: BottomTabBarProps) {
           backgroundColor: state.index === 1 ? "#E8B83C" : "#5A5A5A",
           borderWidth: 4,
           borderColor: "#1E1E1E",
-          bottom: Platform.OS === "ios" ? 52 : 32,
+          bottom: floatingBottom,
           shadowColor: state.index === 1 ? "#E8B83C" : "#000",
           shadowOffset: { width: 0, height: -2 },
           shadowOpacity: state.index === 1 ? 0.5 : 0.3,

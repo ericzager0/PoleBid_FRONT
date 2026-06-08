@@ -65,12 +65,17 @@ export default function LiveAuctionScreen() {
 
       <ScrollView className="flex-1 px-4" showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 40 }}>
         
-        <View className="flex-row justify-between items-center mb-6 mt-2">
-          <Text className="text-white text-2xl">
+        <View className="flex-row justify-between items-start mb-6 mt-2">
+          <Text 
+            className="text-white text-2xl flex-1 mr-4"
+            numberOfLines={2} 
+          >
             <Text className="font-bold">Subasta: </Text> 
             {auction.title}
           </Text>
-          <RoundedButton variant="secondary" label="Catalogo" onPress={() => router.push(`/auctionStarted/catalogue/${auction.id}`)} />
+          <View className="mt-1">
+            <RoundedButton variant="secondary" label="Catalogo" onPress={() => router.push(`/auctionStarted/catalogue/${auction.id}`)} />
+          </View>
         </View>
 
         <Text className="text-white text-xl mb-4">

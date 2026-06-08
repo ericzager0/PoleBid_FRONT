@@ -46,7 +46,8 @@ export default function BankPlaceholder({
         <View className="absolute -top-32 -right-10 w-96 h-96 bg-[#FF3E78] rounded-full opacity-40" />
 
         <View className="flex-row justify-between items-start z-10">
-          <Text className="text-white/80 text-xl font-medium tracking-wide">
+          {/* SOLUCIÓN: Agregamos flex-1, mr-4 y numberOfLines */}
+          <Text className="text-white/80 text-xl font-medium tracking-wide flex-1 mr-4" numberOfLines={2}>
             {bankName}
           </Text>
 
@@ -62,20 +63,24 @@ export default function BankPlaceholder({
           <Text className="text-white/90 text-lg mr-3 tracking-widest uppercase">
             CBU:
           </Text>
+          {/* SOLUCIÓN: flex-1, numberOfLines y adjustsFontSizeToFit para CBU largos */}
           <Text 
-            className="text-white text-3xl tracking-widest shadow-sm"
+            className="text-white text-3xl tracking-widest shadow-sm flex-1"
             style={{ fontFamily: 'SpaceMono-Regular' }}
+            numberOfLines={1}
+            adjustsFontSizeToFit
           >
             {accountNumber}
           </Text>
         </View>
 
         <View className="flex-row justify-between items-end mt-6 z-10">
-          <View>
+          {/* SOLUCIÓN: flex-1 y mr-4 para el contenedor del titular */}
+          <View className="flex-1 mr-4">
             <Text className="text-white/60 text-[10px] font-bold tracking-widest uppercase mb-1">
               Titular
             </Text>
-            <Text className="text-white text-sm font-medium">
+            <Text className="text-white text-sm font-medium" numberOfLines={1}>
               {titular}
             </Text>
           </View>

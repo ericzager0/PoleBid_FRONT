@@ -5,11 +5,11 @@ import { Image, Text, View } from 'react-native';
 interface CreditCardProps {
   bankName: string;  
   titular: string;    
-  number: string;    
+  cardNumber: string;    
   expiry: string;    
 }
 
-export default function CreditCard({ bankName, titular, number, expiry }: CreditCardProps) {
+export default function CreditCard({ bankName, titular, cardNumber, expiry }: CreditCardProps) {
   const getLogo = (name: string) => {
     const normalizedName = name.toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g, "");
     return LOGOS_DICT[normalizedName] || LOGOS_DICT['mastercard'];
@@ -47,7 +47,7 @@ export default function CreditCard({ bankName, titular, number, expiry }: Credit
           className="text-white text-3xl tracking-widest shadow-sm"
           style={{ fontFamily: 'SpaceMono-Regular' }}
         >
-          {number}
+          {cardNumber}
         </Text>
       </View>
 

@@ -36,12 +36,14 @@ export default function CheckPlaceholder({
       <View className="absolute -bottom-16 -left-10 w-[120%] h-32 bg-[#223337] rounded-[100px] opacity-80" />
 
       <View className="flex-row justify-between items-center z-10">
-        <View className="flex-row items-center">
+        {/* SOLUCIÓN: Agregamos flex-1 y mr-4 acá para que no empuje el número de cheque */}
+        <View className="flex-row items-center flex-1 mr-4">
           <Image 
             source={getLogo(bankName)} 
             style={{ width: 80, height: 80, resizeMode: 'contain', marginRight: 8 }} 
           />
-          <Text className="text-white text-lg font-bold uppercase tracking-wide">
+          {/* SOLUCIÓN: flex-1 y numberOfLines para cortar con puntos suspensivos si es muy largo */}
+          <Text className="text-white text-lg font-bold uppercase tracking-wide flex-1" numberOfLines={1}>
             {bankName}
           </Text>
         </View>
@@ -60,11 +62,12 @@ export default function CheckPlaceholder({
       </View>
 
       <View className="flex-row justify-between items-end mt-4 z-10">
-        <View>
+        {/* SOLUCIÓN: flex-1 y mr-4 para el titular */}
+        <View className="flex-1 mr-4">
           <Text className="text-gray-300 text-[10px] font-bold tracking-widest uppercase mb-1">
             Titular
           </Text>
-          <Text className="text-white text-base">
+          <Text className="text-white text-base" numberOfLines={1}>
             {titular}
           </Text>
         </View>

@@ -56,7 +56,7 @@ export default function AuctionDetailScreen() {
           images={auction.images}
         />
 
-        <View className="flex-row gap-x-4 w-full justify-center px-4">
+        <View className="w-full gap-y-3 px-4 mt-2">
           <Button
             label="Ingresar a la subasta"
             onPress={() => {
@@ -69,7 +69,7 @@ export default function AuctionDetailScreen() {
             variant={isLive ? 'primary' : 'blocked'}
           />
           <Button
-            label={isLive? "Solo vengo a ver" : "Ver catálogo"}
+            label={isLive ? "Solo vengo a ver" : "Ver catálogo"}
             onPress={handleActionButtonLogic}
             variant='secondary'
           />
