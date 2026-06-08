@@ -50,6 +50,11 @@ export default function VerifyingDocuments() {
             pathname: "/(auth)/register/documents-success",
             params: { data: JSON.stringify(prevData) },
           });
+        } else if (response.data?.status === "documents_rejected") {
+          await AsyncStorage.removeItem("awaiting_approval");
+          router.replace({
+            pathname: "/(auth)/register/documents-rejected",
+          });
         }
       } catch (error) {
         console.error("Error status:", error);
