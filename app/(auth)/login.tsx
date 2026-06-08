@@ -24,6 +24,15 @@ export default function Login() {
       return;
     }
 
+    // Expresión regular para validar el formato del email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    // Validación antes de llamar al backend
+    if (!emailRegex.test(email)) {
+      setError("Por favor, ingresá un correo electrónico válido.");
+      return;
+    }
+
     try {
       setLoading(true);
       setError(null);
