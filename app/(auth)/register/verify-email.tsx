@@ -32,12 +32,7 @@ export default function VerifyEmail() {
         params: { data: JSON.stringify(data) },
       });
     } catch (e: any) {
-      const errorMsg = e.message?.toLowerCase() || "";
-      if (errorMsg.includes("invalid") || errorMsg.includes("code") || errorMsg.includes("400")) {
         setError("El código ingresado es incorrecto o ha expirado. Verificá e intentá de nuevo.");
-      } else {
-        setError("No pudimos verificar el código en este momento. Intentá más tarde.");
-      }
     } finally {
       setLoading(false);
     }
