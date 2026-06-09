@@ -1,3 +1,4 @@
+import NoAuction from '@/components/common/NoAuction';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React from 'react';
@@ -16,11 +17,10 @@ export default function CatalogueScreen() {
   if (!auction) {
      return (
      <SafeAreaView className="flex-1 bg-[#14191C] items-center justify-center">
-        <Text className="text-white text-lg">Subasta no encontrada</Text>
+        <NoAuction />
      </SafeAreaView>
     );
   }
-  
 
   const catalogueHeader = {
     title: "Exclusive Collection 2026",
@@ -107,7 +107,6 @@ export default function CatalogueScreen() {
             />
           ))}
         </View>
-
       </ScrollView>
     </SafeAreaView>
   );

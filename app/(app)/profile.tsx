@@ -30,11 +30,8 @@ export default function Home() {
   const [modalWonVisible, setWonModalVisible] = useState(false);
   const { user } = useAuth();
 
-  // VARIABLES SIMULADA
   const isBanned = false;
   const adeudado = 15000;
-
-  //const fotoPerfilUri ="https://cdn.vectorstock.com/i/500p/46/04/simple-user-icon-generic-person-vector-60254604.jpg";
   const fotoPerfil = perfilFoto;
 
   const handleEditPhoto = () => {
@@ -60,7 +57,7 @@ export default function Home() {
             activeOpacity={0.8}
             onPress={() => {
               router.dismissAll();
-              router.push("/(auth)/login");
+              router.push("/");
             }}
           >
             <Text className="text-black font-bold text-lg uppercase tracking-wider">

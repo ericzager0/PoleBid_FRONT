@@ -26,11 +26,10 @@ export default function BankPlaceholder({
 
   return (
     <View 
-      className={`relative w-full rounded-[32px] overflow-hidden shadow-lg ${
+      className={`relative w-full aspect-[1.6] rounded-[32px] overflow-hidden shadow-lg ${
         blocked ? 'bg-[#1C1C1E]' : 'bg-[#E6205A]'
       }`}
       style={{
-        minHeight: 180,
         shadowColor: blocked ? '#000000' : '#E6205A',
         shadowOffset: { width: 0, height: 8 },
         shadowOpacity: 0.4,
@@ -39,33 +38,35 @@ export default function BankPlaceholder({
       }}
     >
       <View 
-        className="flex-1 p-6 justify-between"
+        className="flex-1 p-5 justify-between"
         style={{ opacity: blocked ? 0.1 : 1 }}
       >
         <View className="absolute -bottom-24 -left-16 w-80 h-64 bg-[#C71545] rounded-full opacity-80" />
         <View className="absolute -top-32 -right-10 w-96 h-96 bg-[#FF3E78] rounded-full opacity-40" />
 
         <View className="flex-row justify-between items-start z-10">
-          {/* SOLUCIÓN: Agregamos flex-1, mr-4 y numberOfLines */}
-          <Text className="text-white/80 text-xl font-medium tracking-wide flex-1 mr-4" numberOfLines={2}>
+          <Text 
+            className="text-white/80 text-lg font-medium tracking-wide flex-1 mr-4" 
+            numberOfLines={1}
+            adjustsFontSizeToFit
+          >
             {bankName}
           </Text>
 
-          <View className="items-center justify-center h-8">
+          <View className="items-center justify-center">
             <Image 
               source={getLogo(bankName)} 
-              style={{ width: 80, height: 80, resizeMode: 'contain' }} 
+              style={{ width: 45, height: 45, resizeMode: 'contain' }} 
             />
           </View>
         </View>
 
-        <View className="flex-row items-baseline mt-4 z-10">
-          <Text className="text-white/90 text-lg mr-3 tracking-widest uppercase">
+        <View className="flex-row items-center z-10">
+          <Text className="text-white/90 text-sm mr-2 tracking-widest uppercase">
             CBU:
           </Text>
-          {/* SOLUCIÓN: flex-1, numberOfLines y adjustsFontSizeToFit para CBU largos */}
           <Text 
-            className="text-white text-3xl tracking-widest shadow-sm flex-1"
+            className="text-white text-2xl tracking-widest shadow-sm flex-1"
             style={{ fontFamily: 'SpaceMono-Regular' }}
             numberOfLines={1}
             adjustsFontSizeToFit
@@ -74,13 +75,12 @@ export default function BankPlaceholder({
           </Text>
         </View>
 
-        <View className="flex-row justify-between items-end mt-6 z-10">
-          {/* SOLUCIÓN: flex-1 y mr-4 para el contenedor del titular */}
+        <View className="flex-row justify-between items-end z-10">
           <View className="flex-1 mr-4">
             <Text className="text-white/60 text-[10px] font-bold tracking-widest uppercase mb-1">
               Titular
             </Text>
-            <Text className="text-white text-sm font-medium" numberOfLines={1}>
+            <Text className="text-white text-xs font-medium" numberOfLines={2}>
               {titular}
             </Text>
           </View>
@@ -88,7 +88,7 @@ export default function BankPlaceholder({
             <Text className="text-white/60 text-[10px] font-bold tracking-widest uppercase mb-1">
               CUIL
             </Text>
-            <Text className="text-white text-sm font-medium tracking-wider">
+            <Text className="text-white text-xs font-medium tracking-wider">
               {cuil}
             </Text>
           </View>

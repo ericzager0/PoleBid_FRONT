@@ -1,10 +1,12 @@
 import AuctionDetailCard from '@/components/auctions/AuctionDetailCard';
 import Button from '@/components/common/Button';
+import NoAuction from '@/components/common/NoAuction';
 import SimpleModal from '@/components/settings/SimpleModal';
+import { useAuth } from '@/context/AuthContext';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { f1AuctionsData } from "../data/auctions";
 
@@ -14,20 +16,21 @@ export default function AuctionDetailScreen() {
   const { id } = useLocalSearchParams();
   const router = useRouter();
   const [modalVisible, setModalVisible] = useState(false);
+  const { user } = useAuth();
 
-  const isLive = true; 
+  const [isLogged, setLogged] = useState(user ? true : false);
 
   const auction = f1AuctionsData.find((item) => item.id === id);
   if (!auction) {
     return (
       <SafeAreaView className="flex-1 bg-[#14191C] items-center justify-center">
-        <Text className="text-white text-lg">Subasta no encontrada</Text>
+        <NoAuction />
       </SafeAreaView>
     );
   }
 
   const handleActionButtonLogic = () => {
-    if (isLive) {
+    if (auction.live) {
       router.push(`/auctionStarted/live/${auction.id}?readonly=true`);
     } else{
       router.push(`/auctionStarted/catalogue/${auction.id}`);
@@ -45,11 +48,12 @@ export default function AuctionDetailScreen() {
         </TouchableOpacity>
       </View>
 
-      <View className="flex-1 items-center gap-y-4 py-5">
-        <Text className="font-bold text-[32px] text-white text-center px-4">
-          {auction.title}
-        </Text>
-        <AuctionDetailCard
+      <ScrollView>
+        <View className="flex-1 items-center gap-y-4 py-5">
+          <Text className="font-bold text-[32px] text-white text-center px-4">
+            {auction.title}
+          </Text>
+          <AuctionDetailCard
           fecha={auction.fecha}
           estado={auction.state}
           descripcion={auction.description}
@@ -57,6 +61,7 @@ export default function AuctionDetailScreen() {
         />
 
         <View className="w-full gap-y-3 px-4 mt-2">
+          {(isLogged && auction.live) && 
           <Button
             label="Ingresar a la subasta"
             onPress={() => {
@@ -66,15 +71,16 @@ export default function AuctionDetailScreen() {
                 router.push(`/auctionStarted/live/${auction.id}`);
               }
             }}
-            variant={isLive ? 'primary' : 'blocked'}
-          />
+            variant='primary'
+          />}
           <Button
-            label={isLive ? "Solo vengo a ver" : "Ver catálogo"}
+            label={(isLogged && auction.live) ? "Solo vengo a ver" : "Ver catálogo"}
             onPress={handleActionButtonLogic}
             variant='secondary'
           />
         </View>
       </View>
+      </ScrollView>
 
       <SimpleModal
         visible={modalVisible}

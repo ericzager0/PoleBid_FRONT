@@ -4,6 +4,7 @@ import { Text, View } from 'react-native';
 export interface InfoItem {
   label: string; 
   value: string | number;
+  live?: boolean;
 }
 
 interface DetailsListProps {

@@ -15,7 +15,7 @@ export default function AjustesScreen() {
   const { signOut } = useAuth();
 
   return (
-    <SafeAreaView className="bg-[#0A0A0A] flex-1">
+    <SafeAreaView className="bg-[#14191C] flex-1">
       <View className="flex-row items-center justify-between px-4 pt-4 pb-6">
         <View className="flex-row items-center">
           <TouchableOpacity onPress={() => router.back()} className="p-1">

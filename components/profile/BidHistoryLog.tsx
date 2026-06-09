@@ -35,6 +35,7 @@ export default function BidHistoryLog({ bids }: BidHistoryLogProps) {
         ref={scrollViewRef}
         onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
         showsVerticalScrollIndicator={true}
+        nestedScrollEnabled={true} 
       >
         {bids.map((bid) => {
           const cat = getCategoryData(bid.idCategory);

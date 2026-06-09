@@ -27,7 +27,7 @@ export default function CatalogueProductCard({
       activeOpacity={0.8}
       className="flex-row w-full bg-[#1C1C1E] rounded-2xl overflow-hidden mb-4 border border-[#2A2B30] shadow-sm"
     >
-      <View className="flex-1 p-4 justify-between">
+      <View className="flex-1 p-4 justify-between z-10">
         <View className="mb-4">
           <Text 
             className="text-white text-xl font-bold leading-tight mb-1.5"
@@ -67,10 +67,10 @@ export default function CatalogueProductCard({
         </View>
       </View>
 
-      <View className="w-[140px] h-full bg-[#0A0A0A]">
+      <View className="w-[140px] bg-[#0A0A0A] relative">
         <Image 
           source={{ uri: imageUrl }} 
-          className="w-full h-full"
+          className="absolute w-full h-full"
           resizeMode="cover"
         />
       </View>

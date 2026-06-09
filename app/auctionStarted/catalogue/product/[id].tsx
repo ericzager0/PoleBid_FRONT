@@ -7,8 +7,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { f1AuctionsData } from '@/app/data/auctions';
 import CommissionRow from '@/components/auctions/CommissionRow';
 import ProductDetailCard from '@/components/auctions/ProductDetailCard';
-import { Button } from '@/components/common/Button';
+import Button from '@/components/common/Button';
 import ImageCarousel from '@/components/common/ImageCarousel';
+import NoAuction from '@/components/common/NoAuction';
 
 export default function AuctionItemScreen() {
   const { id } = useLocalSearchParams();
@@ -16,11 +17,11 @@ export default function AuctionItemScreen() {
 
 		const auction = f1AuctionsData.find((item) => item.id === id);
 		if (!auction) {
-						return (
-						<SafeAreaView className="flex-1 bg-[#14191C] items-center justify-center">
-										<Text className="text-white text-lg">Subasta no encontrada</Text>
-						</SafeAreaView>
-						);
+      return (
+      <SafeAreaView className="flex-1 bg-[#14191C] items-center justify-center">
+        <NoAuction />
+      </SafeAreaView>
+      );
 		}
 
   const mockImages = [

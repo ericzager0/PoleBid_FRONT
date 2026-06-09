@@ -6,6 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import DetailsList from '@/components/common/DetailList';
 import ImageCarousel from '@/components/common/ImageCarousel';
+import NoAuction from '@/components/common/NoAuction';
 import RoundedButton from '@/components/common/RoundedButton';
 import LiveButton from '@/components/home/LiveButton';
 import BidHistoryLog, { BidEvent } from '@/components/profile/BidHistoryLog';
@@ -34,7 +35,7 @@ export default function AuctionHistoryScreen() {
   if (!auction) {
     return (
       <SafeAreaView className="flex-1 bg-[#14191C] items-center justify-center">
-        <Text className="text-white text-lg">Subasta no encontrada</Text>
+        <NoAuction />
       </SafeAreaView>
     );
   }

@@ -9,6 +9,7 @@ export interface AuctionItem {
   state: 'Iniciada' | 'En espera' | 'Terminada';
   description: string;
   images: string[];
+  live?: boolean;
 }
 
 export const f1AuctionsData: AuctionItem[] = [
@@ -27,7 +28,8 @@ export const f1AuctionsData: AuctionItem[] = [
       'https://picsum.photos/seed/senna_1/400/200',
       'https://picsum.photos/seed/senna_2/400/200',
       'https://picsum.photos/seed/senna_3/400/200'
-    ]
+    ],
+    live: true
   },
   { 
     id: '2', 
@@ -43,7 +45,8 @@ export const f1AuctionsData: AuctionItem[] = [
       'https://picsum.photos/seed/f1_2/400/200',
       'https://picsum.photos/seed/ham_1/400/200',
       'https://picsum.photos/seed/ham_2/400/200'
-    ]
+    ],
+    live: true
   },
   { 
     id: '3', 
@@ -61,7 +64,8 @@ export const f1AuctionsData: AuctionItem[] = [
       'https://picsum.photos/seed/tire_2/400/200',
       'https://picsum.photos/seed/tire_3/400/200',
       'https://picsum.photos/seed/tire_4/400/200'
-    ]
+    ],
+    live: false
   },
   { 
     id: '4', 
@@ -77,7 +81,8 @@ export const f1AuctionsData: AuctionItem[] = [
       'https://picsum.photos/seed/f1_4/400/200',
       'https://picsum.photos/seed/schu_1/400/200',
       'https://picsum.photos/seed/schu_2/400/200'
-    ]
+    ],
+    live: true
   },
   { 
     id: '5', 
@@ -92,7 +97,8 @@ export const f1AuctionsData: AuctionItem[] = [
     images: [
       'https://picsum.photos/seed/f1_5/400/200',
       'https://picsum.photos/seed/lec_1/400/200'
-    ]
+    ],
+    live: false
   },
   { 
     id: '6', 
@@ -109,7 +115,8 @@ export const f1AuctionsData: AuctionItem[] = [
       'https://picsum.photos/seed/cola_1/400/200',
       'https://picsum.photos/seed/cola_2/400/200',
       'https://picsum.photos/seed/cola_3/400/200'
-    ]
+    ],
+    live: false
   },
   { 
     id: '7', 
@@ -127,7 +134,8 @@ export const f1AuctionsData: AuctionItem[] = [
       'https://picsum.photos/seed/rb_2/400/200',
       'https://picsum.photos/seed/rb_3/400/200',
       'https://picsum.photos/seed/rb_4/400/200'
-    ]
+    ],
+    live: false
   },
   { 
     id: '8', 
@@ -142,7 +150,8 @@ export const f1AuctionsData: AuctionItem[] = [
     images: [
       'https://picsum.photos/seed/f1_8/400/200',
       'https://picsum.photos/seed/monaco_1/400/200'
-    ]
+    ],
+    live: false
   },
   { 
     id: '9', 
@@ -158,7 +167,8 @@ export const f1AuctionsData: AuctionItem[] = [
       'https://picsum.photos/seed/f1_9/400/200',
       'https://picsum.photos/seed/mclaren_1/400/200',
       'https://picsum.photos/seed/mclaren_2/400/200'
-    ]
+    ],
+    live: false
   },
   { 
     id: '10', 
@@ -177,7 +187,8 @@ export const f1AuctionsData: AuctionItem[] = [
       'https://picsum.photos/seed/v10_3/400/200',
       'https://picsum.photos/seed/v10_4/400/200',
       'https://picsum.photos/seed/v10_5/400/200'
-    ]
+    ],
+    live: false
   },
   { 
     id: '11', 
@@ -192,7 +203,8 @@ export const f1AuctionsData: AuctionItem[] = [
     images: [
       'https://picsum.photos/seed/f1_11/400/200',
       'https://picsum.photos/seed/botas_1/400/200'
-    ]
+    ],
+    live: false
   },
   { 
     id: '12', 
@@ -208,7 +220,8 @@ export const f1AuctionsData: AuctionItem[] = [
       'https://picsum.photos/seed/f1_12/400/200',
       'https://picsum.photos/seed/kimi_1/400/200',
       'https://picsum.photos/seed/kimi_2/400/200'
-    ]
+    ],
+    live: false
   },
   { 
     id: '13', 
@@ -225,7 +238,8 @@ export const f1AuctionsData: AuctionItem[] = [
       'https://picsum.photos/seed/fw_1/400/200',
       'https://picsum.photos/seed/fw_2/400/200',
       'https://picsum.photos/seed/fw_3/400/200'
-    ]
+    ],
+    live: true
   },
   { 
     id: '14', 
@@ -240,7 +254,8 @@ export const f1AuctionsData: AuctionItem[] = [
     images: [
       'https://picsum.photos/seed/f1_14/400/200',
       'https://picsum.photos/seed/vip_1/400/200'
-    ]
+    ],
+    live: true
   },
   { 
     id: '15', 
@@ -256,6 +271,7 @@ export const f1AuctionsData: AuctionItem[] = [
       'https://picsum.photos/seed/f1_15/400/200',
       'https://picsum.photos/seed/toto_1/400/200',
       'https://picsum.photos/seed/toto_2/400/200'
-    ]
+    ],
+    live: true
   }
 ];

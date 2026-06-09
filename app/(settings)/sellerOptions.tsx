@@ -53,7 +53,7 @@ export default function SellerScreen() {
   };
 
   return (
-    <SafeAreaView className="bg-[#121212] flex-1">
+    <SafeAreaView className="bg-[#14191C] flex-1">
       <View className="flex-row items-center justify-between px-4 pt-4 pb-2">
         <TouchableOpacity onPress={() => router.back()} className="p-2 -ml-2">
           <MaterialCommunityIcons name="arrow-left" size={28} color="white" />
