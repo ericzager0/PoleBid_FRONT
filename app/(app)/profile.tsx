@@ -36,14 +36,8 @@ export default function Home() {
   const adeudado = 15000;
   const fotoPerfil = perfilFoto;
 
-  if (!f1AuctionsData || f1AuctionsData.length === 0) {
-    return (
-      <SafeAreaView className="flex-1 bg-[#14191C] items-center justify-center">
-        <NoAuction isProfile={true} />
-      </SafeAreaView>
-    );
-  }
-
+  const noAuction = f1AuctionsData.length === 0 || !f1AuctionsData;
+  
   const handleEditPhoto = () => {
     console.log("Abrir selector de imágenes o cámara...");
   };
@@ -103,7 +97,7 @@ export default function Home() {
           >
             {fotoPerfil ? (
               <Image
-                source={fotoPerfil} // <-- Se pasa directamente la variable
+                source={fotoPerfil}
                 className="w-full h-full"
                 resizeMode="cover"
               />
@@ -235,80 +229,32 @@ export default function Home() {
                 Historial
               </Text>
             </View>
+          
+          {!noAuction ? (
+            f1AuctionsData.map((auction, index) => {
+              const isWinner = index % 2 === 0; 
+              const myLastBid = "$ 1,250,000"; 
 
-            <BidLog
-              date="2023-10-15"
-              name="Alpine"
-              won={true}
-              bid="$1,200"
-              onPress={() => router.push({
-                pathname: '/bidHistory',
-                params: { id: 1, won: 'true' }
-              })}
-            />
-            <BidLog
-              date="2023-10-15"
-              name="Alpine"
-              won={false}
-              bid="$1,000"
-              onPress={() => {}}
-            />
-            <BidLog
-              date="2023-10-15"
-              name="Alpine"
-              won={true}
-              bid="$1,500"
-              onPress={() => {}}
-            />
-            <BidLog
-              date="2023-10-15"
-              name="Alpine"
-              won={false}
-              bid="$1,300"
-              onPress={() => {}}
-            />
-            <BidLog
-              date="2023-10-15"
-              name="Alpine"
-              won={false}
-              bid="$1,100"
-              onPress={() => {}}
-            />
-            <BidLog
-              date="2023-10-15"
-              name="Alpine"
-              won={true}
-              bid="$1,600"
-              onPress={() => {}}
-            />
-            <BidLog
-              date="2023-10-15"
-              name="Alpine"
-              won={false}
-              bid="$1,400"
-              onPress={() => {}}
-            />
-            <BidLog
-              date="2023-10-15"
-              name="Alpine"
-              won={false}
-              bid="$1,200"
-              onPress={() => {}}
-            />
-            <BidLog
-              date="2023-10-15"
-              name="Alpine"
-              won={false}
-              bid="$1,000"
-              onPress={() => {}}
-            />
-            <BidLog
-              date="2023-10-15"
-              name="Alpine"
-              won={true}
-              bid="$1,700"
-              onPress={() => {}}
-            />
+              return (
+                <BidLog
+                  key={auction.id} 
+                  date={auction.fecha} 
+                  name={auction.title} 
+                  won={isWinner}
+                  bid={myLastBid}
+                  onPress={() => router.push({
+                    pathname: '/bidHistory',
+                    params: { 
+                      id: auction.id, 
+                      won: isWinner ? 'true' : 'false' 
+                    }
+                  })}
+                />
+              );
+            })
+          ) : (
+            <NoAuction isProfile={true} />
+          )}
           </View>
 
           <SimpleModal

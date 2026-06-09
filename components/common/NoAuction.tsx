@@ -26,17 +26,17 @@ export default function NoAuctions({isProfile = false}: {isProfile?: boolean}) {
   }, [floatAnim]);
 
   return (
-    <SafeAreaView className="flex-1 bg-[#14191C]">
-      <View className="px-4 pt-4 pb-2">
-        <TouchableOpacity 
-          onPress={() => router.back()} 
-          className="bg-[#1C1C1E] w-10 h-10 rounded-full items-center justify-center"
-        >
-          <Ionicons name="arrow-back" size={24} color="white" />
+    <SafeAreaView className={isProfile ? "flex-1 bg-[#1C1C1E]" : "flex-1 bg-[#14191C]"}>
+      {!isProfile && (
+        <View className="px-4 pt-4 pb-2">
+          <TouchableOpacity 
+            onPress={() => router.back()} 
+            className="bg-[#1C1C1E] w-10 h-10 rounded-full items-center justify-center"
+          >
+            <Ionicons name="arrow-back" size={24} color="white" />
         </TouchableOpacity>
-      </View>
+      </View>)}
       <View className="flex-1 justify-center items-center p-6 pb-12">
-        
         <Animated.View
           className="w-full aspect-square max-h-[380px] bg-[#1A1E21] rounded-3xl border border-[#E8B83C]/30 justify-center items-center p-6"
           style={{ 
