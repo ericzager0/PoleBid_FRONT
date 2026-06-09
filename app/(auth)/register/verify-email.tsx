@@ -1,8 +1,8 @@
 import { onboardingService } from "@/api/services/onboarding";
 import Button from "@/components/common/Button";
+import ErrorMessege from "@/components/common/ErrorMessege";
 import { Input } from "@/components/common/Input";
 import KeyboardWrapper from "@/components/common/KeyboardWrapper";
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import {
@@ -73,14 +73,7 @@ export default function VerifyEmail() {
                 keyboardType="number-pad"
               />
               
-              {error && (
-                <View className="flex-row items-center bg-[#FF3B30]/10 border border-[#FF3B30]/30 rounded-xl p-3 mt-4">
-                  <MaterialCommunityIcons name="alert-circle-outline" size={20} color="#FF3B30" />
-                  <Text className="text-[#FF3B30] text-sm font-medium ml-2 flex-1 leading-snug">
-                    {error}
-                  </Text>
-                </View>
-              )}
+              {error && <ErrorMessege error={error} />}
             </View>
           </View>
 

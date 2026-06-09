@@ -11,9 +11,10 @@ export interface BidEvent {
 
 interface BidHistoryLogProps {
   bids: BidEvent[];
+  fullHeight?: boolean;
 }
 
-export default function BidHistoryLog({ bids }: BidHistoryLogProps) {
+export default function BidHistoryLog({ bids, fullHeight = false }: BidHistoryLogProps) {
   const scrollViewRef = useRef<ScrollView>(null);
 
   const getCategoryData = (idCategory: number) => {
@@ -30,12 +31,17 @@ export default function BidHistoryLog({ bids }: BidHistoryLogProps) {
   };
 
   return (
-    <View className="bg-[#1C1D21] rounded-xl p-4 h-48 w-full border border-[#2A2B30]">
+    <View 
+      className={`bg-[#1C1D21] rounded-xl p-4 w-full border border-[#2A2B30] ${
+        fullHeight ? 'flex-1 min-h-[300px]' : 'h-48'
+      }`}
+    >
       <ScrollView
         ref={scrollViewRef}
         onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
         showsVerticalScrollIndicator={true}
-        nestedScrollEnabled={true} 
+        nestedScrollEnabled={true}
+        contentContainerStyle={{ paddingBottom: 16 }}
       >
         {bids.map((bid) => {
           const cat = getCategoryData(bid.idCategory);

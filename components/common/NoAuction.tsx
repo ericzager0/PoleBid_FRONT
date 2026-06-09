@@ -4,7 +4,7 @@ import React, { useEffect, useRef } from 'react';
 import { Animated, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-export default function NoAuctions() {
+export default function NoAuctions({isProfile = false}: {isProfile?: boolean}) {
   const floatAnim = useRef(new Animated.Value(0)).current;
   const router = useRouter();
 
@@ -70,11 +70,11 @@ export default function NoAuctions() {
               textShadowRadius: 10,
             }}
           >
-            No hay subastas actuales
+            {!isProfile ? "No hay subastas actuales" : "No has participado en ninguna subasta aún"}
           </Text>
           
           <Text className="text-[#E8B83C]/60 text-sm tracking-wide text-center px-4">
-            Vuelve pronto para ver nuevas publicaciones
+            {isProfile ? "Participa en una subasta para ver tu historial" : "Vuelve pronto para ver nuevas publicaciones"}
           </Text>
         </Animated.View>
       </View>

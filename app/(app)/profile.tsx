@@ -1,4 +1,5 @@
 import perfilFoto from "@/assets/images/perfil.png";
+import NoAuction from "@/components/common/NoAuction";
 import BidLog from "@/components/profile/BidLog";
 import CategoryText from "@/components/profile/CategoryText";
 import CustomProgressBar from "@/components/profile/CustomProgressBar";
@@ -23,6 +24,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { f1AuctionsData } from "../data/auctions";
 
 export default function Home() {
   const router = useRouter();
@@ -33,6 +35,14 @@ export default function Home() {
   const isBanned = false;
   const adeudado = 15000;
   const fotoPerfil = perfilFoto;
+
+  if (!f1AuctionsData || f1AuctionsData.length === 0) {
+    return (
+      <SafeAreaView className="flex-1 bg-[#14191C] items-center justify-center">
+        <NoAuction isProfile={true} />
+      </SafeAreaView>
+    );
+  }
 
   const handleEditPhoto = () => {
     console.log("Abrir selector de imágenes o cámara...");
@@ -231,7 +241,10 @@ export default function Home() {
               name="Alpine"
               won={true}
               bid="$1,200"
-              onPress={() => {}}
+              onPress={() => router.push({
+                pathname: '/bidHistory',
+                params: { id: 1, won: 'true' }
+              })}
             />
             <BidLog
               date="2023-10-15"

@@ -1,10 +1,10 @@
 import { authService } from "@/api/services/auth";
 import Button from "@/components/common/Button";
+import ErrorMessege from "@/components/common/ErrorMessege";
 import { Input } from "@/components/common/Input";
 import KeyboardWrapper from "@/components/common/KeyboardWrapper";
 import { useAuth } from "@/context/AuthContext";
-import { CommonActions } from "@react-navigation/native";
-import { useLocalSearchParams, useNavigation } from "expo-router";
+import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import { useState } from "react";
 import { Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -17,6 +17,7 @@ export default function Name() {
   const [error, setError] = useState<string | null>(null);
   const navigation = useNavigation();
   const { signIn } = useAuth();
+  const router = useRouter();
 
   const handleSubmit = async () => {
     if (!password || !confirmPassword) {
@@ -50,13 +51,8 @@ export default function Name() {
       });
       await signIn(response.token);
 
-      // Reemplaza el stack para evitar que el usuario pueda volver a la pantalla de login con el botón de atrás
-      navigation.dispatch(
-        CommonActions.reset({
-          index: 0,
-          routes: [{ name: "(app)" }],
-        }),
-      );
+      router.push('/register/paymentsChoice');
+      
     } catch (e: any) {
       setError("Ocurrió un error al registrarse. Intentá de nuevo.");
     } finally {
@@ -90,7 +86,7 @@ export default function Name() {
                 value={confirmPassword}
                 onChangeText={(text) => { setConfirmPassword(text); setError(null); }}
               />
-              {error ? <Text className="text-red-500 text-sm mt-2">{error}</Text> : null}
+              {error && <ErrorMessege error={error} />}
             </View>
           </View>
 

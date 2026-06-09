@@ -12,14 +12,14 @@ export default function AppLayout() {
       <Tabs.Screen name="polls" />
       <Tabs.Screen name="profile" />
 
-      //Bid history log
+      {/*//Bid history log
       <Tabs.Screen 
         name="bidHistory"
         options={{
           href: null,
           tabBarStyle: { display: 'none' },
         }}
-      />
+      />*/}
       </Tabs>
   );
 }
