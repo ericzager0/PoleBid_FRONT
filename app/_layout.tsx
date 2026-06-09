@@ -48,6 +48,7 @@ function RootNavigator() {
       <Stack.Screen name="(auth)/register" />
       <Stack.Screen name="(auth)/register/paymentsChoice" />
       <Stack.Screen name="(app)" />
+      <Stack.Screen name="(app)/articles" />
       <Stack.Screen name="(settings)" />
     </Stack>
   );

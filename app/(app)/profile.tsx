@@ -13,6 +13,7 @@ import {
   Ionicons,
   Octicons,
 } from "@expo/vector-icons";
+import * as ImagePicker from "expo-image-picker";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
@@ -30,17 +31,50 @@ export default function Home() {
   const router = useRouter();
   const [modalAssistVisible, setAssistModalVisible] = useState(false);
   const [modalWonVisible, setWonModalVisible] = useState(false);
+  const [newProfilePhoto, setNewProfilePhoto] = useState<string | null>(null);
+  
   const { user } = useAuth();
 
   const isBanned = false;
   const adeudado = 15000;
-  const fotoPerfil = perfilFoto;
 
   const noAuction = f1AuctionsData.length === 0 || !f1AuctionsData;
   
-  const handleEditPhoto = () => {
-    console.log("Abrir selector de imágenes o cámara...");
+  const handleEditPhoto = async () => {
+    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (permissionResult.granted === false) {
+      alert("Se requiere permiso para acceder a la galería.");
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1], 
+      quality: 0.8,
+    });
+
+    if (!result.canceled) {
+      const uri = result.assets[0].uri;
+      setNewProfilePhoto(uri); 
+      uploadPhotoToBackend(uri); 
+    }
   };
+
+  const uploadPhotoToBackend = async (imageUri: string) => {
+    try {
+      console.log("Subiendo foto al servidor...", imageUri);
+      // ACÁ IRÁ TU CÓDIGO DEL FETCH AL ENDPOINT
+      // const formData = new FormData();
+      // formData.append("profileImage", { uri: imageUri, name: 'profile.jpg', type: 'image/jpeg' });
+      // await api.put("/user/avatar", formData);
+    } catch (error) {
+      console.error("Error al subir la foto", error);
+      alert("Hubo un problema al subir la foto");
+    }
+  };
+
+  const displayPhoto = newProfilePhoto ? { uri: newProfilePhoto } : perfilFoto;
 
   if (!user) {
     return (
@@ -95,9 +129,9 @@ export default function Home() {
               isBanned ? "border-[#E83C3C]" : "border-[#FFD874]"
             }`}
           >
-            {fotoPerfil ? (
+            {displayPhoto ? (
               <Image
-                source={fotoPerfil}
+                source={displayPhoto}
                 className="w-full h-full"
                 resizeMode="cover"
               />
@@ -218,6 +252,7 @@ export default function Home() {
                 icono={<Feather name="box" size={24} color="#FFD874" />}
                 texto="Mis Artículos"
                 numero={0}
+                onPress={() => router.push("/articles/myArticles")}
               />
             </View>
           </View>
