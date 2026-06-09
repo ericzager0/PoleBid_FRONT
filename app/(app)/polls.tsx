@@ -15,6 +15,7 @@ interface AuctionItem {
   fecha: string;
   hora: string;
   owner: string;
+  live?: boolean;
   onPress?: () => void;
 }
 
@@ -33,6 +34,7 @@ export default function Home() {
       fecha={item.fecha}
       hora={item.hora}
       owner={item.owner}
+      isActive={item.live}
       onPress={() => router.push(`/auctionStarted/${item.id}`)}
     />
   );
