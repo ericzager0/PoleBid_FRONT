@@ -5,9 +5,9 @@ import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import ChatInput from '@/components/articles/ChatInput';
 import ViewBidButton from '@/components/articles/ViewBidButton';
 import CommissionRow from '@/components/auctions/CommissionRow';
+import ChatInput from '@/components/chat/ChatInput';
 import ImageCarousel from '@/components/common/ImageCarousel';
 import KeyboardWrapper from '@/components/common/KeyboardWrapper';
 import NoAuction from '@/components/common/NoAuction';
@@ -118,7 +118,10 @@ export default function ScheduledBid() {
               Comunicate con la empresa de seguro:
             </Text>
             
-            <ChatInput onSend={(message) => console.log(message)} />
+            <ChatInput onSend={(message) => router.push({
+                  pathname: '/articles/chat',
+                  params: { text: message, id: auction.id }
+                })} />
           </View>
         </ScrollView>
       </KeyboardWrapper>

@@ -36,7 +36,7 @@ export default function AuctionItemScreen() {
     <SafeAreaView className="flex-1 bg-[#121212]">
       <View className="flex-row items-center justify-between px-4 py-4 border-b border-[#1C1C1E]">
         <TouchableOpacity 
-          onPress={isFromArticles ? () => router.push('/articles/myArticles') : () => router.back()} 
+          onPress={isFromArticles ? () => router.push('/articles/myArticles') : () => router.back() } 
           className="p-1 -ml-1"
         >
           <Ionicons name="arrow-back" size={24} color="white" />
@@ -79,7 +79,7 @@ export default function AuctionItemScreen() {
         </View>
 
         <Button 
-          label={!isFromArticles ? "Volver al catálogo" : "Volver a mis artículos"}
+          label={!isFromArticles ? "Volver" : "Volver a mis artículos"}
           variant="primary" 
           onPress={isFromArticles ? () => router.push('/articles/myArticles') : () => router.back()} 
         />

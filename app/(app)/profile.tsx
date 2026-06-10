@@ -39,7 +39,12 @@ export default function Home() {
   const adeudado = 15000;
   
   const noAuction = f1AuctionsData.length === 0 || !f1AuctionsData;
-  
+
+  //MOCK 
+  const getPaidActivated = true;
+  let countArticles = 11;
+  if ( !getPaidActivated) { countArticles = 0 } 
+
   const handleEditPhoto = async () => {
     const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (permissionResult.granted === false) {
@@ -251,7 +256,8 @@ export default function Home() {
               <StatCard
                 icono={<Feather name="box" size={24} color="#FFD874" />}
                 texto="Mis Artículos"
-                numero={0}
+                numero={countArticles}
+                blocked={!getPaidActivated}
                 onPress={() => router.push("/articles/myArticles")}
               />
             </View>
