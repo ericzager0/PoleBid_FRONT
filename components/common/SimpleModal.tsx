@@ -17,7 +17,6 @@ export default function SimpleModal({ visible, onClose, texto }: SimpleModalProp
       onRequestClose={onClose} 
     >
       <View className="flex-1 justify-center items-center">
-
         <Pressable 
           className="absolute top-0 bottom-0 left-0 right-0 bg-black/60" 
           onPress={onClose} 
@@ -39,7 +38,6 @@ export default function SimpleModal({ visible, onClose, texto }: SimpleModalProp
           </Text>
 
         </View>
-
       </View>
     </Modal>
   );

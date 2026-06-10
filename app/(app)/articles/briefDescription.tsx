@@ -1,4 +1,5 @@
 import Button from "@/components/common/Button";
+import ConfirmModal from "@/components/common/ConfirmModal";
 import ErrorMessege from "@/components/common/ErrorMessege";
 import { Input } from "@/components/common/Input";
 import KeyboardWrapper from "@/components/common/KeyboardWrapper";
@@ -12,6 +13,7 @@ export default function BriefDescriptionArticle() {
   const [briefDescription, setBriefDescription] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [modal, setModal] = useState(false);
 
   const handleNext = async () => {
     if (!briefDescription.trim()) {
@@ -37,7 +39,7 @@ export default function BriefDescriptionArticle() {
     <SafeAreaView className="bg-[#14191C] flex-1">
        <View className="px-4 pt-4 pb-2">
         <TouchableOpacity
-          onPress={() => router.back()}
+          onPress={() => setModal(true)}
           className="bg-[#1C1C1E] w-10 h-10 rounded-full items-center justify-center"
         >
           <Ionicons name="arrow-back" size={24} color="white" />
@@ -79,6 +81,21 @@ export default function BriefDescriptionArticle() {
 
         </View>
       </KeyboardWrapper>
+
+      {/* Modal */}
+      <ConfirmModal
+        visible={modal}
+        onClose={() => setModal(false)}
+        title="Salir sin guardar"
+        description="Si sale se perderán los datos ingresados. Seguro que quiere salir?"
+        confirmText="Salir"
+        cancelText="Cancelar"
+        onConfirm={() => {
+          setModal(false);
+          router.push("/(app)/articles/myArticles");
+        }}
+        onCancel={() => setModal(false)}
+      />
     </SafeAreaView>
   );
 }

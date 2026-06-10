@@ -1,10 +1,10 @@
 import perfilFoto from "@/assets/images/perfil.png";
 import NoAuction from "@/components/common/NoAuction";
+import SimpleModal from "@/components/common/SimpleModal";
 import BidLog from "@/components/profile/BidLog";
 import CategoryText from "@/components/profile/CategoryText";
 import CustomProgressBar from "@/components/profile/CustomProgressBar";
 import StatCard from "@/components/profile/StatCard";
-import SimpleModal from "@/components/settings/SimpleModal";
 import { useAuth } from "@/context/AuthContext";
 import {
   AntDesign,
@@ -37,7 +37,7 @@ export default function Home() {
 
   const isBanned = false;
   const adeudado = 15000;
-
+  
   const noAuction = f1AuctionsData.length === 0 || !f1AuctionsData;
   
   const handleEditPhoto = async () => {

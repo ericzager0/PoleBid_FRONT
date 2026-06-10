@@ -52,9 +52,23 @@ export default function MyArticles() {
         </View>
 
         <View className="items-center justify-center pt-1 pb-10">
-            <ItemMenuCard title="Esperando Aprobación" iconName="clock" articles={[{ id: "1", name: "Artículo 1", date: "2023-01-01" }]} onPressItem={() => {}} offeringArticle={true} onPressOffer={() => router.push('/articles/briefDescription')}/>
+            <ItemMenuCard 
+              title="Esperando Aprobación" 
+              iconName="clock" articles={[{ id: "1", name: "Artículo 1", date: "2023-01-01" }]} 
+              onPressItem={() => router.push(`/auctionStarted/catalogue/product/${1}?isArticles=true`)} 
+              offeringArticle={true} 
+              onPressOffer={() => router.push('/articles/briefDescription')}
+            />
             
-            <ItemMenuCard title="Interes en subastar" iconName="sticker-check-outline" articles={[{ id: "1", name: "Artículo 2", date: "2023-01-01" }]} onPressItem={() => {}} />
+            <ItemMenuCard 
+                title="Interes en subastar" 
+                iconName="sticker-check-outline" 
+                articles={[{ id: "1", name: "Artículo 2", date: "2023-01-01" }]} 
+                onPressItem={(item) => router.push({
+                  pathname: '/articles/interestBid',
+                  params: { id: item.id }
+                })} 
+            />
 
             <ItemMenuCard 
                 title="En inspección" 
@@ -67,8 +81,25 @@ export default function MyArticles() {
                     coordinates: { latitude: -34.6169, longitude: -58.3813 } })} 
             />
             
-            <ItemMenuCard title="Listo para subastar" iconName="calendar-clock" articles={[{ id: "1", name: "Artículo 4", date: "2023-01-01" }]} onPressItem={() => {}} />
-            <ItemMenuCard title="Subasta Programada" iconName="calendar-blank" articles={[{ id: "1", name: "Artículo 5", date: "2023-01-01" }]} onPressItem={() => {}} />
+            <ItemMenuCard 
+              title="Listo para subastar" 
+              iconName="calendar-clock" 
+              articles={[{ id: "1", name: "Artículo 4", date: "2023-01-01" }]} 
+              onPressItem={(item) => router.push({
+                  pathname: '/articles/readyBid',
+                  params: { id: item.id }
+                })}  
+            />
+
+            <ItemMenuCard 
+              title="Subasta Programada" 
+              iconName="calendar-blank" 
+              articles={[{ id: "1", name: "Artículo 5", date: "2023-01-01" }]} 
+              onPressItem={(item) => router.push({
+                  pathname: '/articles/scheduledBid',
+                  params: { id: item.id }
+                })} 
+            />
 
             <ItemMenuCard title="Subasta Finalizada" iconName="calendar-check-outline" articles={[{ id: "1", name: "Artículo 5", date: "2023-01-01" }]} 
                 onPressItem={(item) => router.push({
@@ -94,13 +125,19 @@ export default function MyArticles() {
                 articles={[{ id: "1", name: "Artículo 7", date: "2023-01-01" }]} 
                  onPressItem={() => handleOpenModal({ 
                     title: "Motivos de rechazo de producto:", 
-                    rejectReason: "El El articulo muestra muchos signos de desgaste claro.",
+                    rejectReason: "El articulo muestra muchos signos de desgaste claro.",
                     description: "Lima 757/775, Monserrat, Ciudad Autónoma de Buenos Aires", 
                     extraInfo: `Enviaremos el articulo a tu direccion de residencia luego de que se acredite el pago del mismo. El costo del envio de devolucion tiene un valor de ${constoEnvio} ARS.`, 
                     coordinates: { latitude: -34.6169, longitude: -58.3813 } })} 
             />
             
-            <ItemMenuCard title="No hay interés en subastar" iconName="close-circle-outline" articles={[{ id: "1", name: "Artículo 8", date: "2023-01-01" }]} onPressItem={() => {}} />
+            <ItemMenuCard 
+                title="No hay interés en subastar" 
+                iconName="close-circle-outline" 
+                articles={[{ id: "1", name: "Artículo 8", date: "2023-01-01" }]} 
+                onPressItem={() => router.push(`/auctionStarted/catalogue/product/${1}?isArticles=true`)} 
+            />
+
         </View>
       </ScrollView>
 
@@ -109,6 +146,7 @@ export default function MyArticles() {
         visible={mapModalVisible}
         onClose={() => setMapModalVisible(false)}
         title={modalData?.title || ""}
+        rejectReason={modalData?.rejectReason || ""}
         description={modalData?.description || ""}
         coordinates={modalData?.coordinates || { latitude: 0, longitude: 0 }}
         extraInfo={modalData?.extraInfo || ""}

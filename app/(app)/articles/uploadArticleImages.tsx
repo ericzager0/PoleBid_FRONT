@@ -38,7 +38,7 @@ export default function UploadArticleImages() {
     <SafeAreaView className="bg-[#14191C] flex-1">
        <View className="px-4 pt-4 pb-2">
         <TouchableOpacity
-          onPress={() => router.back()}
+          onPress={() => router.push("/(app)/articles/description")}
           className="bg-[#1C1C1E] w-10 h-10 rounded-full items-center justify-center"
         >
           <Ionicons name="arrow-back" size={24} color="white" />

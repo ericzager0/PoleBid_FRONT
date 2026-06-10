@@ -1,7 +1,7 @@
 import AuctionDetailCard from '@/components/auctions/AuctionDetailCard';
 import Button from '@/components/common/Button';
 import NoAuction from '@/components/common/NoAuction';
-import SimpleModal from '@/components/settings/SimpleModal';
+import SimpleModal from '@/components/common/SimpleModal';
 import { useAuth } from '@/context/AuthContext';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';

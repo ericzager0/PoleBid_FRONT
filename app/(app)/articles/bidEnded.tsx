@@ -12,7 +12,7 @@ import ImageCarousel from '@/components/common/ImageCarousel';
 import NoAuction from '@/components/common/NoAuction';
 import { f1AuctionsData } from "../../data/auctions";
 
-export default function bidEnded() {
+export default function BidEnded() {
   const router = useRouter();
   const { id } = useLocalSearchParams();
 
@@ -29,7 +29,7 @@ export default function bidEnded() {
     <SafeAreaView className="flex-1 bg-[#14191C]">
       <View className="px-4 pt-4 pb-2">
         <TouchableOpacity
-          onPress={() => router.back()}
+          onPress={() => router.push('/(app)/articles/myArticles')}
           className="bg-[#1C1C1E] w-10 h-10 rounded-full items-center justify-center"
         >
           <Ionicons name="arrow-back" size={24} color="white" />
@@ -81,7 +81,7 @@ export default function bidEnded() {
 
             <View className="flex-row items-center bg-[#1C1C1E] border border-[#E8B83C]/60 rounded-2xl p-5 w-full">
                 <MaterialCommunityIcons 
-                    name="check-decagram-outline" 
+                    name="credit-card-check-outline" 
                     size={32} 
                     color="#E8B83C" 
                 />
@@ -90,7 +90,6 @@ export default function bidEnded() {
                 </Text>
             </View>
         </View>
-
       </ScrollView>
     </SafeAreaView>
   );
