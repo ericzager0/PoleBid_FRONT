@@ -1,12 +1,11 @@
+import BankDetailsModal from "@/components/common/BankDetailsModal";
+import CardDetailsModal from "@/components/common/CardDetailsModal";
+import CheckDetailsModal from "@/components/common/CheckDetailsModal";
 import { CommonActions } from "@react-navigation/native";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import React from "react";
 import { View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-
-import BankDetailsModal from "@/components/common/BankDetailsModal";
-import CardDetailsModal from "@/components/common/CardDetailsModal";
-import CheckDetailsModal from "@/components/common/CheckDetailsModal";
 
 export default function PaymentDetailsScreen() {
   const { method } = useLocalSearchParams();

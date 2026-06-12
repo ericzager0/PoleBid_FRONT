@@ -5,6 +5,7 @@ export const paymentMethodService = {
     number: string;
     expMonth: string;
     expYear: string;
+    owner: string;
   }) => {
     return await client.post("/payment-methods/cards", body);
   },

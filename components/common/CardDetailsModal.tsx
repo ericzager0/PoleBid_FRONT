@@ -75,6 +75,7 @@ export default function CardDetailsModal({
         number: cardNumber.replace(/\s/g, ""),
         expMonth: expiry.split("/")[0],
         expYear: `20${expiry.split("/")[1]}`,
+        owner: titular,
       });
     } catch (e: any) {
       setError(
