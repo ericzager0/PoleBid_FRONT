@@ -51,7 +51,7 @@ export default function CreditCard({
 
         <View className="items-center justify-center">
           <Image
-            source={getLogo(brand)}
+            source={brand ? getLogo(brand) : LOGOS_DICT["mastercard"]}
             style={{ width: 45, height: 45, resizeMode: "contain" }}
           />
         </View>
