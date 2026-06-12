@@ -8,11 +8,12 @@ import { Input } from "./Input";
 import KeyboardWrapper from "./KeyboardWrapper";
 
 export interface CardData {
-  bankName: string;
-  cardNumber: string;
-  titular: string;
-  expiry: string;
-  cvv: string;
+  brand: string;
+  lastFour: string;
+  owner: string;
+  expMonth: string;
+  expYear: string;
+  cvv?: string;
 }
 
 interface CardDetailsModalProps {
@@ -42,11 +43,11 @@ export default function CardDetailsModal({
 
   useEffect(() => {
     if (initialData) {
-      setBankName(initialData.bankName);
-      setCardNumber(initialData.cardNumber);
-      setTitular(initialData.titular);
-      setExpiry(initialData.expiry);
-      setCvv(initialData.cvv);
+      setBankName(initialData.brand);
+      setCardNumber(initialData.lastFour);
+      setTitular(initialData.owner);
+      setExpiry(`${initialData.expMonth}/${initialData.expYear}`);
+      setCvv(initialData.cvv || "");
     } else {
       setBankName("");
       setCardNumber("");
@@ -85,7 +86,14 @@ export default function CardDetailsModal({
       // setLoading(false);
     }
 
-    onConfirm({ bankName, cardNumber, titular, expiry, cvv });
+    onConfirm({
+      brand: bankName,
+      lastFour: cardNumber,
+      owner: titular,
+      expMonth: expiry.split("/")[0],
+      expYear: `20${expiry.split("/")[1]}`,
+      cvv,
+    });
     onClose?.();
   };
 

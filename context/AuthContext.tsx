@@ -8,6 +8,16 @@ type User = {
   firstName: string;
   lastName: string;
   categoria: string;
+  paymentMethods: {
+    cards: [
+      id: string,
+      lastFour: string,
+      expMonth: string,
+      expYear: string,
+      brand: string,
+      owner: string,
+    ];
+  };
 };
 
 type AuthContextType = {
