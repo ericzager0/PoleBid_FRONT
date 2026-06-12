@@ -1,6 +1,7 @@
 import BankDetailsModal from "@/components/common/BankDetailsModal";
 import CardDetailsModal from "@/components/common/CardDetailsModal";
 import CheckDetailsModal from "@/components/common/CheckDetailsModal";
+import { useAuth } from "@/context/AuthContext";
 import { CommonActions } from "@react-navigation/native";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import React from "react";
@@ -10,8 +11,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 export default function PaymentDetailsScreen() {
   const { method } = useLocalSearchParams();
   const navigation = useNavigation();
+  const { getMe } = useAuth();
 
-  const handleConfirm = (data: any) => {
+  const handleConfirm = async (data: any) => {
     console.log("Datos ingresados:", data);
 
     navigation.dispatch(
@@ -20,6 +22,8 @@ export default function PaymentDetailsScreen() {
         routes: [{ name: "(app)" }],
       }),
     );
+
+    await getMe(); // Refresca los datos del usuario para incluir el nuevo método de pago
   };
 
   const renderPaymentInput = () => {
