@@ -1,4 +1,5 @@
 import Auction from "@/components/auctions/Auction";
+import Button from "@/components/common/Button";
 import { useRouter } from "expo-router";
 import React from "react";
 import { Image, ScrollView, Text, View } from "react-native";
@@ -40,6 +41,8 @@ export default function Home() {
             ¿Tenés lo que hay que tener{"\n"}
             <Text className="text-[#E8B83C] text-sm">para quedar primero?</Text>
           </Text>
+
+          <Button label="Test" onPress={() => router.push("/(auth)/register/check-photo")} />
           
         </View>
 
