@@ -22,10 +22,11 @@ import CreditCard from "../../components/settings/CreditCard";
 import PaymentCarousel from "../../components/settings/PaymentCarousel";
 
 const CardPlaceholderData = {
-  bankName: "---",
-  titular: "---",
-  cardNumber: "**** **** **** ****",
-  expiry: "--/--",
+  brand: "---",
+  owner: "---",
+  lastFour: "****",
+  expMonth: "--",
+  expYear: "----",
 };
 const CheckPlaceholderData = {
   bankName: "---",
