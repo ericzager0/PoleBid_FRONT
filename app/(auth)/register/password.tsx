@@ -49,10 +49,10 @@ export default function Name() {
         email: JSON.parse(data as string).email,
         password,
       });
+
       await signIn(response.token);
 
-      router.push('/register/paymentsChoice');
-      
+      router.push("/register/paymentsChoice");
     } catch (e: any) {
       setError("Ocurrió un error al registrarse. Intentá de nuevo.");
     } finally {
@@ -65,7 +65,9 @@ export default function Name() {
       <KeyboardWrapper>
         <View className="flex-1 justify-between p-8">
           <View className="gap-8">
-            <Text className="text-white text-5xl font-bold">Clave personal</Text>
+            <Text className="text-white text-5xl font-bold">
+              Clave personal
+            </Text>
             <Text className="text-white text-2xl">
               Elige la clave que deberás usar para acceder a tu cuenta.
             </Text>
@@ -75,7 +77,10 @@ export default function Name() {
               placeholder="Ingresá tu clave"
               isPassword
               value={password}
-              onChangeText={(text) => { setPassword(text); setError(null); }}
+              onChangeText={(text) => {
+                setPassword(text);
+                setError(null);
+              }}
             />
             <View>
               <Input
@@ -84,7 +89,10 @@ export default function Name() {
                 placeholder="Ingresá tu clave nuevamente"
                 isPassword
                 value={confirmPassword}
-                onChangeText={(text) => { setConfirmPassword(text); setError(null); }}
+                onChangeText={(text) => {
+                  setConfirmPassword(text);
+                  setError(null);
+                }}
               />
               {error && <ErrorMessege error={error} />}
             </View>
