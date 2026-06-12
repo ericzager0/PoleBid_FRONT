@@ -23,18 +23,14 @@ export default function StatCard({
       onPress={onPress} 
       disabled={blocked} 
       className="w-full"
-      // Aplicamos opacidad general al componente si está bloqueado
       style={{ opacity: blocked ? 0.4 : 1 }}
     >
       <View className="w-full bg-[#1C1C1E] rounded-2xl flex-row items-center p-3">
-        
-        {/* Cambiamos el color de fondo del ícono a un gris neutro si está bloqueado */}
         <View 
           className={`w-14 h-14 rounded-xl justify-center items-center ${
             blocked ? 'bg-[#2A2B30]' : 'bg-[#4A3B22]'
           }`}
         >
-          {/* Clonamos el ícono para forzarlo a ser gris si el componente está bloqueado */}
           {blocked && React.isValidElement(icono)
             ? React.cloneElement(icono as React.ReactElement<any>, { color: '#636366' })
             : icono}
