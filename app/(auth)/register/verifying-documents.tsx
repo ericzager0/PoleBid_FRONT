@@ -46,9 +46,14 @@ export default function VerifyingDocuments() {
           // si los documentos fueron aprobados, limpiamos el estado de "awaiting_approval" y redirigimos al usuario a la pantalla de éxito
           await AsyncStorage.removeItem("awaiting_approval");
 
+          const updatedData = {
+            ...prevData,
+            categoria: response.data.categoria,
+          };
+
           router.replace({
             pathname: "/(auth)/register/documents-success",
-            params: { data: JSON.stringify(prevData) },
+            params: { data: JSON.stringify(updatedData) },
           });
         } else if (response.data?.status === "documents_rejected") {
           await AsyncStorage.removeItem("awaiting_approval");
