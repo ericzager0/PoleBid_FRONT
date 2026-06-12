@@ -15,6 +15,7 @@ export default function VerifyingDocuments() {
   const { data: rawData } = useLocalSearchParams();
   const prevData = JSON.parse(rawData as string);
   const translateY = useRef(new Animated.Value(0)).current;
+  const hasNavigated = useRef(false);
 
   useEffect(() => {
     // escribimos que el usuario se encuentra en esta parte del flujo
@@ -43,22 +44,20 @@ export default function VerifyingDocuments() {
         const response = await onboardingService.status(prevData.email);
 
         if (response.data?.status === "documents_approved") {
-          // si los documentos fueron aprobados, limpiamos el estado de "awaiting_approval" y redirigimos al usuario a la pantalla de éxito
-          await AsyncStorage.removeItem("awaiting_approval");
+          if (hasNavigated.current) return;
+          hasNavigated.current = true;
+          clearInterval(interval);
 
-          const updatedData = {
-            ...prevData,
-            categoria: response.data.categoria,
-          };
+          await AsyncStorage.removeItem("awaiting_approval");
 
           router.replace({
             pathname: "/(auth)/register/documents-success",
-            params: { data: JSON.stringify(updatedData) },
-          });
-        } else if (response.data?.status === "documents_rejected") {
-          await AsyncStorage.removeItem("awaiting_approval");
-          router.replace({
-            pathname: "/(auth)/register/documents-rejected",
+            params: {
+              data: JSON.stringify({
+                ...prevData,
+                categoria: response.data.categoria,
+              }),
+            },
           });
         }
       } catch (error) {
