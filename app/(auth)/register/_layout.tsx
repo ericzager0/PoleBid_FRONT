@@ -11,6 +11,8 @@ export default function RegisterLayout() {
       <Stack.Screen name="identification" />
       <Stack.Screen name="documentation" />
       <Stack.Screen name="documentation-front" />
+      <Stack.Screen name="payment-details" />
+      <Stack.Screen name="paymentsChoice" />
     </Stack>
   );
 }
