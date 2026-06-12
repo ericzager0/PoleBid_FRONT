@@ -26,6 +26,7 @@ type AuthContextType = {
   user: User | null;
   signIn: (token: string) => Promise<void>;
   signOut: () => Promise<void>;
+  getMe: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -68,9 +69,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsAuthenticated(false);
   };
 
+  const getMe = async () => {
+    try {
+      const response = await userService.me();
+      setUser(response.data);
+    } catch {
+      // Si falla, probablemente el token es inválido o expirado
+      await authStorage.removeToken();
+      setIsAuthenticated(false);
+      setUser(null);
+    }
+  };
+
   return (
     <AuthContext.Provider
-      value={{ isAuthenticated, isLoading, user, signIn, signOut }}
+      value={{ isAuthenticated, isLoading, user, signIn, signOut, getMe }}
     >
       {children}
     </AuthContext.Provider>
