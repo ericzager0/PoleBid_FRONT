@@ -13,6 +13,7 @@ import MethodsSettings from "../../components/settings/MethodsSettings";
 export default function AjustesScreen() {
   const router = useRouter();
   const { signOut } = useAuth();
+  const {user} = useAuth();
 
   return (
     <SafeAreaView className="bg-[#14191C] flex-1">
@@ -64,16 +65,16 @@ export default function AjustesScreen() {
           </Text>
         </View>
 
-        <UserInfoCard title="D.N.I." value="89752147" />
+        <UserInfoCard title="D.N.I." value="{user?.dni}" />
 
         <UserInfoCard
           title="Nombre completo"
-          value="Alejandro Martínez Silva"
+          value={`${user?.firstName} ${user?.lastName}`}
         />
 
-        <UserInfoCard title="Dirección" value="Calle Ejemplo 123, 4B" />
+        <UserInfoCard title="Dirección" value="{user?.address}" />
 
-        <UserInfoCard title="Pais" value="España" />
+        <UserInfoCard title="Pais" value="{user?.country}" />
 
         <View className="mt-8 mb-4">
           <UserStatusCard status="verificado" />

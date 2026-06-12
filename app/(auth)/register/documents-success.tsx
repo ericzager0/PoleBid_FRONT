@@ -1,4 +1,5 @@
 import Button from "@/components/common/Button";
+import CategoryText from "@/components/profile/CategoryText";
 import { router, useLocalSearchParams } from "expo-router";
 import { Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -25,9 +26,7 @@ export default function DocumentsSuccess() {
         <View className="flex-row self-center items-center gap-2">
           <Text className="text-gray-500 text-base">Categoría asignada</Text>
           <View className="bg-slate-500/30 border border-slate-400/40 rounded-full px-3 py-1">
-            <Text className="text-slate-300 text-sm font-semibold tracking-widest">
-              {prevData.categoria}
-            </Text>
+            <CategoryText categoryId={prevData.categoria} />
           </View>
         </View>
       </View>

@@ -2,13 +2,14 @@ import BankDetailsModal from "@/components/common/BankDetailsModal";
 import CardDetailsModal from "@/components/common/CardDetailsModal";
 import CheckDetailsModal from "@/components/common/CheckDetailsModal";
 import { CommonActions } from "@react-navigation/native";
-import { useLocalSearchParams, useNavigation } from "expo-router";
+import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import React from "react";
 import { View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function PaymentDetailsScreen() {
   const { method } = useLocalSearchParams();
+  const router = useRouter();
   const navigation = useNavigation();
 
   const handleConfirm = (data: any) => {
@@ -46,7 +47,7 @@ export default function PaymentDetailsScreen() {
         return (
           <CheckDetailsModal
             isRegister={true}
-            onConfirm={handleConfirm}
+            onConfirm={() => router.push("/(auth)/register/check-photo")}
             visible={true}
             label="Finalizar registro"
           />

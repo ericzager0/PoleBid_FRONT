@@ -1,16 +1,21 @@
 import Button from "@/components/common/Button";
+import ConfirmModal from "@/components/common/ConfirmModal";
+import { CommonActions } from "@react-navigation/native";
 import { CameraView, useCameraPermissions } from "expo-camera";
-import { useRouter } from "expo-router";
+import { useNavigation } from "expo-router";
 import React, { useRef, useState } from "react";
 import { Image, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function CheckPhoto() {
+  const navigation = useNavigation();
+  const cameraRef = useRef<any>(null);
+
   const [permission, requestPermission] = useCameraPermissions();
   const [photo, setPhoto] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const cameraRef = useRef<any>(null);
-  const router = useRouter();
+  const [modalVisible, setModalVisible] = useState(false);
+
 
   const takePicture = async () => {
     if (cameraRef.current) {
@@ -34,6 +39,17 @@ export default function CheckPhoto() {
 
   const handleSave = () => {
     console.log("Guardando foto:", photo);
+    //LOGICA BACK
+    setModalVisible(true);
+  };
+
+  const handleContinue = () => {
+    navigation.dispatch(
+        CommonActions.reset({
+        index: 0,
+        routes: [{ name: "(app)" }],
+        }),
+    );
   };
 
   if (!permission) {
@@ -59,10 +75,10 @@ export default function CheckPhoto() {
       <View className="flex-1 justify-between p-8">
         <View className="gap-6">
           <Text className="text-white text-5xl font-bold tracking-tight leading-[55px]">
-            Foto de cheque
+            Validación de método de pago
           </Text>
           <Text className="text-[#9CA3AF] text-xl leading-7">
-            Ahora vamos a pedirte una foto del cheque para comprobar si es real y validar los datos.
+            Capturá una foto clara de tu cheque. Este paso es fundamental para proteger tu transacción y comprobar la autenticidad del documento.
           </Text>
         </View>
 
@@ -102,6 +118,18 @@ export default function CheckPhoto() {
         </View>
         
       </View>
+
+      {/* MODAL */}
+      <ConfirmModal
+            visible={modalVisible}
+            title="¿La foto es clara y legible?"
+            description="Ahora podrás usar la App pero el cheque estará inbhabilitado hasta que un administrador valide la foto."
+            confirmText="Continuar a la app"
+            cancelText="No, volver a sacar"
+            onConfirm={handleContinue}
+            onCancel={() => setModalVisible(false)}
+            onClose={() => setModalVisible(false)}
+      />
     </SafeAreaView>
   );
 }
