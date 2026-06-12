@@ -32,21 +32,24 @@ export default function Home() {
   const [modalAssistVisible, setAssistModalVisible] = useState(false);
   const [modalWonVisible, setWonModalVisible] = useState(false);
   const [newProfilePhoto, setNewProfilePhoto] = useState<string | null>(null);
-  
+
   const { user } = useAuth();
 
   const isBanned = false;
   const adeudado = 15000;
-  
+
   const noAuction = f1AuctionsData.length === 0 || !f1AuctionsData;
 
-  //MOCK 
+  //MOCK
   const getPaidActivated = true;
   let countArticles = 11;
-  if ( !getPaidActivated) { countArticles = 0 } 
+  if (!getPaidActivated) {
+    countArticles = 0;
+  }
 
   const handleEditPhoto = async () => {
-    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    const permissionResult =
+      await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (permissionResult.granted === false) {
       alert("Se requiere permiso para acceder a la galería.");
       return;
@@ -55,14 +58,14 @@ export default function Home() {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
-      aspect: [1, 1], 
+      aspect: [1, 1],
       quality: 0.8,
     });
 
     if (!result.canceled) {
       const uri = result.assets[0].uri;
-      setNewProfilePhoto(uri); 
-      uploadPhotoToBackend(uri); 
+      setNewProfilePhoto(uri);
+      uploadPhotoToBackend(uri);
     }
   };
 
@@ -171,7 +174,7 @@ export default function Home() {
 
         {!isBanned && (
           <View className="flex">
-            <CategoryText categoryId={1} />
+            <CategoryText categoryId={user.categoria} />
           </View>
         )}
       </View>
@@ -270,32 +273,34 @@ export default function Home() {
                 Historial
               </Text>
             </View>
-          
-          {!noAuction ? (
-            f1AuctionsData.map((auction, index) => {
-              const isWinner = index % 2 === 0; 
-              const myLastBid = "$ 1,250,000"; 
 
-              return (
-                <BidLog
-                  key={auction.id} 
-                  date={auction.fecha} 
-                  name={auction.title} 
-                  won={isWinner}
-                  bid={myLastBid}
-                  onPress={() => router.push({
-                    pathname: '/bidHistory',
-                    params: { 
-                      id: auction.id, 
-                      won: isWinner ? 'true' : 'false' 
+            {!noAuction ? (
+              f1AuctionsData.map((auction, index) => {
+                const isWinner = index % 2 === 0;
+                const myLastBid = "$ 1,250,000";
+
+                return (
+                  <BidLog
+                    key={auction.id}
+                    date={auction.fecha}
+                    name={auction.title}
+                    won={isWinner}
+                    bid={myLastBid}
+                    onPress={() =>
+                      router.push({
+                        pathname: "/bidHistory",
+                        params: {
+                          id: auction.id,
+                          won: isWinner ? "true" : "false",
+                        },
+                      })
                     }
-                  })}
-                />
-              );
-            })
-          ) : (
-            <NoAuction isProfile={true} />
-          )}
+                  />
+                );
+              })
+            ) : (
+              <NoAuction isProfile={true} />
+            )}
           </View>
 
           <SimpleModal
