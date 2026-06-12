@@ -3,13 +3,40 @@ import React from "react";
 import { Text, View } from "react-native";
 
 const categories = [
-  { id: 1, name: "Silver", colorClass: "text-[#B6BABD]", hex: "#B6BABD" },
-  { id: 2, name: "Gold", colorClass: "text-[#E8B83C]", hex: "#E8B83C" },
-  { id: 3, name: "Platinum", colorClass: "text-[#B8C1E8]", hex: "#B8C1E8" },
+  {
+    id: "comun",
+    name: "Common",
+    colorClass: "text-[#B6BABD]",
+    hex: "#B6BABD",
+  },
+  {
+    id: "especial",
+    name: "Special",
+    colorClass: "text-[#E8B83C]",
+    hex: "#E8B83C",
+  },
+  {
+    id: "plata",
+    name: "Silver",
+    colorClass: "text-[#C0C0C0]",
+    hex: "#C0C0C0",
+  },
+  {
+    id: "oro",
+    name: "Gold",
+    colorClass: "text-[#FFD700]",
+    hex: "#FFD700",
+  },
+  {
+    id: "platino",
+    name: "Platinum",
+    colorClass: "text-[#B8C1E8]",
+    hex: "#B8C1E8",
+  },
 ];
 
 interface CategoryTextProps {
-  categoryId: number;
+  categoryId: string;
 }
 
 export default function CategoryText({ categoryId }: CategoryTextProps) {
