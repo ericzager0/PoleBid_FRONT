@@ -1,21 +1,25 @@
 import Button from "@/components/common/Button";
 import ConfirmModal from "@/components/common/ConfirmModal";
+import { Ionicons } from '@expo/vector-icons';
 import { CommonActions } from "@react-navigation/native";
 import { CameraView, useCameraPermissions } from "expo-camera";
-import { useNavigation } from "expo-router";
+import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import React, { useRef, useState } from "react";
-import { Image, Text, View } from "react-native";
+import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function CheckPhoto() {
   const navigation = useNavigation();
+  const router = useRouter();
+  const { isProfile } = useLocalSearchParams();
   const cameraRef = useRef<any>(null);
+  
+  const isProfileBool = isProfile === 'true';
 
   const [permission, requestPermission] = useCameraPermissions();
   const [photo, setPhoto] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
-
 
   const takePicture = async () => {
     if (cameraRef.current) {
@@ -39,17 +43,20 @@ export default function CheckPhoto() {
 
   const handleSave = () => {
     console.log("Guardando foto:", photo);
-    //LOGICA BACK
     setModalVisible(true);
   };
 
   const handleContinue = () => {
-    navigation.dispatch(
-        CommonActions.reset({
-        index: 0,
-        routes: [{ name: "(app)" }],
-        }),
-    );
+    if (isProfileBool) {
+      router.push("/(settings)/payments");
+    } else {
+      navigation.dispatch(
+          CommonActions.reset({
+          index: 0,
+          routes: [{ name: "(app)" }],
+          }),
+      );
+    }
   };
 
   if (!permission) {
@@ -70,9 +77,39 @@ export default function CheckPhoto() {
     );
   }
 
+  // MAGIA ACÁ: Decidimos qué contenedor usar dependiendo de isProfileBool
+  const ScrollOrView = isProfileBool ? ScrollView : View;
+
   return (
     <SafeAreaView className="bg-[#14191C] flex-1">
-      <View className="flex-1 justify-between p-8">
+      
+      {/* FLECHA ARREGLADA: Queda por fuera del p-8 para que respete su margen izquierdo natural */}
+      {isProfileBool && (
+        <View className="px-6 pt-4 pb-2">
+          <TouchableOpacity
+            onPress={() => router.push('/(settings)/payments')}
+            className="bg-[#1C1C1E] w-10 h-10 rounded-full items-center justify-center border border-[#2A2B30]"
+          >
+            <Ionicons name="arrow-back" size={24} color="white" />
+          </TouchableOpacity>
+        </View>
+      )}
+
+      {/* CONTENEDOR DINÁMICO */}
+      <ScrollOrView 
+        className="flex-1"
+        {...(isProfileBool 
+          ? { 
+              // Propiedades si es ScrollView
+              contentContainerStyle: { flexGrow: 1, padding: 32, justifyContent: 'space-between' },
+              showsVerticalScrollIndicator: false
+            } 
+          : { 
+              // Propiedades si es un View normal
+              style: { padding: 32, justifyContent: 'space-between' } 
+            }
+        )}
+      >
         <View className="gap-6">
           <Text className="text-white text-5xl font-bold tracking-tight leading-[55px]">
             Validación de método de pago
@@ -116,19 +153,18 @@ export default function CheckPhoto() {
             />
           )}
         </View>
-        
-      </View>
+      </ScrollOrView>
 
       {/* MODAL */}
       <ConfirmModal
-            visible={modalVisible}
-            title="¿La foto es clara y legible?"
-            description="Ahora podrás usar la App pero el cheque estará inbhabilitado hasta que un administrador valide la foto."
-            confirmText="Continuar a la app"
-            cancelText="No, volver a sacar"
-            onConfirm={handleContinue}
-            onCancel={() => setModalVisible(false)}
-            onClose={() => setModalVisible(false)}
+          visible={modalVisible}
+          title="¿La foto es clara y legible?"
+          description="Ahora podrás usar la App pero el cheque estará inhabilitado hasta que un administrador valide la foto."
+          confirmText="Continuar a la app"
+          cancelText="No, volver a sacar"
+          onConfirm={handleContinue}
+          onCancel={() => setModalVisible(false)}
+          onClose={() => setModalVisible(false)}
       />
     </SafeAreaView>
   );

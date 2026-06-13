@@ -46,6 +46,7 @@ const BankPlaceholderData = {
 export default function PaymentsScreen() {
   const { user } = useAuth();
   const router = useRouter();
+
   const [showCardModal, setShowCardModal] = useState(false);
   const [showCheckModal, setShowCheckModal] = useState(false);
   const [showBankModal, setShowBankModal] = useState(false);
@@ -61,9 +62,19 @@ export default function PaymentsScreen() {
       currency: "$",
       monto: "125000",
       emision: "16/04/2026",
+      isRevision: true,
+    },
+    {
+      bankName: "amex",
+      titular: "Chiqui Tapia",
+      checkNumber: "00482931",
+      currency: "$",
+      monto: "500000",
+      emision: "16/04/2026",
+      isRevision: false,
     },
   ];
-  const userBankAccounts = [
+  const userBankAccounts = [ 
     {
       bankName: "Banco Santander",
       titular: "Alejandro Martínez Silva",
@@ -125,7 +136,7 @@ export default function PaymentsScreen() {
           placeholderData={CardPlaceholderData}
           renderItem={(item) => <CreditCard {...item} />}
           onPressAdd={handleAddCard}
-          // onPressEdit={() => handleEditCard(user?.paymentMethods.cards[0])}
+          onPressEdit={(item) => handleEditCard(item)} 
         />
 
         <PaymentCarousel
@@ -134,7 +145,7 @@ export default function PaymentsScreen() {
           placeholderData={CheckPlaceholderData}
           renderItem={(item) => <CheckPlaceholder {...item} />}
           onPressAdd={handleAddCheck}
-          onPressEdit={() => handleEditCheck(userChecks[0])}
+          onPressEdit={(item) => handleEditCheck(item)} 
         />
 
         <PaymentCarousel
@@ -143,7 +154,7 @@ export default function PaymentsScreen() {
           placeholderData={BankPlaceholderData}
           renderItem={(item) => <BankPlaceholder {...item} />}
           onPressAdd={handleAddBank}
-          onPressEdit={() => handleEditBank(userBankAccounts[0])}
+          onPressEdit={(item) => handleEditBank(item)} 
         />
       </ScrollView>
 
@@ -160,16 +171,24 @@ export default function PaymentsScreen() {
       <CheckDetailsModal
         visible={showCheckModal}
         initialData={checkToEdit}
-        onClose={() => setShowCheckModal(false)}
-        onConfirm={(data) => console.log("Cheque confirmado:", data)}
+        onClose={() => {
+          setShowCheckModal(false);
+        }}
+        onConfirm={(data) => {
+          console.log("Cheque confirmado:", data);
+          router.push({ pathname: "/register/check-photo", params: { isProfile: "true" } });
+        }}
       />
 
       <BankDetailsModal
         visible={showBankModal}
         initialData={bankToEdit}
         onClose={() => setShowBankModal(false)}
-        onConfirm={(data) => console.log("Banco confirmado:", data)}
+        onConfirm={(data) => {
+          console.log("Banco confirmado:", data)
+        }}
       />
+
     </SafeAreaView>
   );
 }

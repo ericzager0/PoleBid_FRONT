@@ -1,6 +1,8 @@
 import { LOGOS_DICT } from '@/api/utils/bank_logos';
-import React from 'react';
-import { Image, Text, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import React, { useState } from 'react';
+import { Image, Text, TouchableOpacity, View } from 'react-native';
+import SimpleModal from '../common/SimpleModal';
 
 interface CheckPlaceholderProps {
   bankName: string;
@@ -9,6 +11,7 @@ interface CheckPlaceholderProps {
   currency: string;
   monto: string;
   emision: string;
+  isRevision?: boolean; 
 }
 
 export default function CheckPlaceholder({
@@ -18,7 +21,9 @@ export default function CheckPlaceholder({
   currency,
   monto,
   emision,
+  isRevision = false,
 }: CheckPlaceholderProps) {
+  const [infoModal, setInfoModal] = useState(false);
 
   const getLogo = (name: string) => {
     const normalizedName = name.toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g, "");
@@ -83,7 +88,23 @@ export default function CheckPlaceholder({
           </Text>
         </View>
       </View>
-      
+
+      {/* CAPA DE REVISIÓN */}
+      {isRevision && (
+        <TouchableOpacity className="absolute top-0 bottom-0 left-0 right-0 bg-black/70 z-20 justify-center items-center" onPress={() => setInfoModal(true)}>
+          <Ionicons name="time-outline" size={48} color="#E8B83C" />
+          <Text className="text-[#E8B83C] text-sm font-bold tracking-widest uppercase mt-3">
+            En revisión
+          </Text>
+        </TouchableOpacity>
+      )}
+
+      {/* MODAL */}
+      <SimpleModal
+        visible={infoModal}
+        onClose={() => setInfoModal(false)}
+        texto="Tu cheque está siendo revisado por nuestro equipo. Te notificaremos una vez que la revisión esté completa. ¡Gracias por tu paciencia!"
+      />
     </View>
   );
 }
