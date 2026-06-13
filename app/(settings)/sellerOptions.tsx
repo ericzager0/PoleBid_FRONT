@@ -1,6 +1,7 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ScrollView, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -22,13 +23,12 @@ const BankPlaceholderData = {
 };
 
 export default function SellerScreen() {
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
   const aprrobedSeller = user?.isSeller || false;
   
-
   const router = useRouter();
   const [seller, setSeller] = useState(false);
-  const [status, setStatus] = useState<UserStatus>('en_espera');
+  const [status, setStatus] = useState<UserStatus>('inactivo');
   const [showBankModal, setShowBankModal] = useState(false);
   const [bankToEdit, setBankToEdit] = useState<BankData | null>(null);
 
@@ -41,6 +41,37 @@ export default function SellerScreen() {
   const userCobroAccounts: any[] = []; 
   
   const isFullyApproved = seller && aprrobedSeller;
+
+  useEffect(() => {
+    const loadToggleState = async () => {
+      try {
+        const savedState = await AsyncStorage.getItem('@seller_toggle');
+        if (savedState !== null) {
+          setSeller(JSON.parse(savedState));
+        }
+      } catch (error) {
+        console.error("Error al cargar el estado del toggle:", error);
+      }
+    };
+    loadToggleState();
+  }, []);
+
+  useEffect(() => {
+    if (seller) {
+      setStatus(aprrobedSeller ? 'verificado' : 'en_espera');
+    } else {
+      setStatus('inactivo');
+    }
+  }, [seller, aprrobedSeller]);
+
+  const handleToggleChange = async (value: boolean) => {
+    setSeller(value); 
+    try {
+      await AsyncStorage.setItem('@seller_toggle', JSON.stringify(value)); 
+    } catch (error) {
+      console.error("Error al guardar el estado del toggle:", error);
+    }
+  };
 
   const handleAddBank = () => {
     if (!isFullyApproved) return;
@@ -60,7 +91,7 @@ export default function SellerScreen() {
         <TouchableOpacity onPress={() => router.back()} className="p-2 -ml-2">
           <MaterialCommunityIcons name="arrow-left" size={28} color="white" />
         </TouchableOpacity>
-        <RoundedButton onPress={() => console.log('Cerrando sesión...')} />
+        <RoundedButton onPress={signOut} />
       </View>
 
       <ScrollView 
@@ -69,7 +100,7 @@ export default function SellerScreen() {
         <View className="gap-y-6">
           <SellerToggle 
             isSeller={seller} 
-            onToggle={(value) => {setSeller(value); if(aprrobedSeller) setStatus('verificado'); else setStatus('denegado')}} 
+            onToggle={handleToggleChange} 
           />
           
           <PaymentCarousel 

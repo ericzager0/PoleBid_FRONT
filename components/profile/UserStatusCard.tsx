@@ -2,7 +2,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import React from 'react';
 import { Text, View } from 'react-native';
 
-export type UserStatus = 'verificado' | 'en_espera' | 'denegado';
+export type UserStatus = 'verificado' | 'en_espera' | 'denegado' | 'inactivo';
 
 interface UserStatusCardProps {
   isUser?: boolean;
@@ -20,17 +20,24 @@ export default function UserStatusCard({ isUser, status }: UserStatusCardProps) 
     },
     en_espera: {
       titleText: 'Su cuenta está siendo revisada por el sistema.',
-      userText: 'Tu cuenta está en proceso de revisión. Pronto recibirás una respuesta sobre tu estado.',
+      userText: 'Tu solicitud de vendedor está en proceso de revisión. Pronto recibirás una respuesta.',
       badgeText: 'EN ESPERA',
       icon: 'clock-outline' as const, 
-      color: '#9CA3AF', 
+      color: '#F97316', 
     },
     denegado: {
       titleText: 'No cumple con los requisitos para operar.',
-      userText: 'Tu cuenta no cumple con los requisitos para vender artículos en nuestra aplicación.',
+      userText: 'Tu solicitud de vendedor fue denegada o no cumple con los requisitos.',
       badgeText: 'DENEGADO',
       icon: 'alert-circle-outline' as const,
       color: '#EF4444', 
+    },
+    inactivo: {
+      titleText: 'No ha solicitado ser vendedor.',
+      userText: 'Aún no has solicitado permisos para vender. Activá la opción arriba para comenzar.',
+      badgeText: 'INACTIVO',
+      icon: 'minus-circle-outline' as const,
+      color: '#9CA3AF', 
     }
   };
 
@@ -75,7 +82,6 @@ export default function UserStatusCard({ isUser, status }: UserStatusCardProps) 
           {currentConfig.badgeText}
         </Text>
       </View>
-
     </View>
   );
 }
