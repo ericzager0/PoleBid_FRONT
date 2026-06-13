@@ -7,6 +7,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import ActivateSellerMessage from '@/components/settings/ActivateSellerMessege';
 import SafetyMessage from '@/components/settings/SafetyMessege';
 import SellerToggle from '@/components/settings/SellerToggle';
+import { useAuth } from '@/context/AuthContext';
 import BankDetailsModal, { BankData } from '../../components/common/BankDetailsModal';
 import RoundedButton from '../../components/common/RoundedButton';
 import UserStatusCard, { UserStatus } from '../../components/profile/UserStatusCard';
@@ -21,8 +22,9 @@ const BankPlaceholderData = {
 };
 
 export default function SellerScreen() {
-  //! FAKE: X ahora hardcodeado
-  const aprrobedSeller = true;
+  const { user } = useAuth();
+  const aprrobedSeller = user?.isSeller || false;
+  
 
   const router = useRouter();
   const [seller, setSeller] = useState(false);

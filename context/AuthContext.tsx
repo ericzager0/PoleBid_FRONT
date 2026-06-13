@@ -11,6 +11,7 @@ type User = {
   numeropais: number;
   documento: string;
   direccion: string;
+  isSeller: boolean;
   paymentMethods: {
     cards: [
       id: string,
