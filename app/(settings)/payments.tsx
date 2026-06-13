@@ -65,7 +65,7 @@ export default function PaymentsScreen() {
       isRevision: true,
     },
     {
-      bankName: "amex",
+      bankName: "visa",
       titular: "Chiqui Tapia",
       checkNumber: "00482931",
       currency: "$",
