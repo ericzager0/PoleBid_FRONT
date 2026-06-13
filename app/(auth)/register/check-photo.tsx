@@ -77,13 +77,10 @@ export default function CheckPhoto() {
     );
   }
 
-  // MAGIA ACÁ: Decidimos qué contenedor usar dependiendo de isProfileBool
   const ScrollOrView = isProfileBool ? ScrollView : View;
 
   return (
     <SafeAreaView className="bg-[#14191C] flex-1">
-      
-      {/* FLECHA ARREGLADA: Queda por fuera del p-8 para que respete su margen izquierdo natural */}
       {isProfileBool && (
         <View className="px-6 pt-4 pb-2">
           <TouchableOpacity
@@ -100,12 +97,10 @@ export default function CheckPhoto() {
         className="flex-1"
         {...(isProfileBool 
           ? { 
-              // Propiedades si es ScrollView
               contentContainerStyle: { flexGrow: 1, padding: 32, justifyContent: 'space-between' },
               showsVerticalScrollIndicator: false
             } 
           : { 
-              // Propiedades si es un View normal
               style: { padding: 32, justifyContent: 'space-between' } 
             }
         )}

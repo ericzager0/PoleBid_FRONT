@@ -11,7 +11,7 @@ interface PaymentCarouselProps {
   showEditIcon?: boolean;
   showArrows?: boolean; 
   onPressAdd?: () => void;
-  onPressEdit?: (item: any) => void; // <-- Ahora devuelve el ítem a editar
+  onPressEdit?: (item: any) => void;
 }
 
 export default function PaymentCarousel({ 
@@ -31,7 +31,6 @@ export default function PaymentCarousel({
   const disableArrows = isEmpty || data.length === 1;
   const currentItem = isEmpty ? placeholderData : data[currentIndex];
 
-  // MAGIA ACÁ: Verificamos si el ítem actual está en revisión (o si está vacío)
   const isEditDisabled = isEmpty || currentItem?.isRevision === true;
 
   const handleNext = () => {
@@ -59,7 +58,6 @@ export default function PaymentCarousel({
             </TouchableOpacity>
           )}
           {showEditIcon && (
-            // Bloqueamos el botón y le cambiamos el color dinámicamente
             <TouchableOpacity 
               onPress={() => onPressEdit?.(currentItem)} 
               disabled={isEditDisabled}
