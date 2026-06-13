@@ -4,6 +4,7 @@ import React from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { COUNTRYS_DICT } from "@/api/utils/counrty_dic";
 import { useAuth } from "@/context/AuthContext";
 import RoundedButton from "../../components/common/RoundedButton";
 import UserInfoCard from "../../components/profile/UserInfoCard";
@@ -65,16 +66,16 @@ export default function AjustesScreen() {
           </Text>
         </View>
 
-        <UserInfoCard title="D.N.I." value="{user?.dni}" />
+        <UserInfoCard title="D.N.I." value={user?.documento || "No disponible"} />
 
         <UserInfoCard
           title="Nombre completo"
-          value={`${user?.firstName} ${user?.lastName}`}
+          value={`${user?.firstName} ${user?.lastName}` || "No disponible"}
         />
 
-        <UserInfoCard title="Dirección" value="{user?.address}" />
+        <UserInfoCard title="Dirección" value={user?.direccion || "No disponible"} />
 
-        <UserInfoCard title="Pais" value="{user?.country}" />
+        <UserInfoCard title="Pais" value={COUNTRYS_DICT[user?.numeropais || 1] || "No disponible"} />
 
         <View className="mt-8 mb-4">
           <UserStatusCard status="verificado" />

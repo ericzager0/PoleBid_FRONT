@@ -8,6 +8,9 @@ type User = {
   firstName: string;
   lastName: string;
   categoria: string;
+  numeropais: number;
+  documento: string;
+  direccion: string;
   paymentMethods: {
     cards: [
       id: string,
