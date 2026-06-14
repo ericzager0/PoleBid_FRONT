@@ -1,17 +1,18 @@
 import Button from "@/components/common/Button";
 import ErrorMessege from "@/components/common/ErrorMessege";
-import { Input } from "@/components/common/Input";
 import KeyboardWrapper from "@/components/common/KeyboardWrapper";
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { router } from "expo-router";
 import { useState } from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import { Text, TextInput, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function DescriptionArticle() {
   const [description, setDescription] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  
+  const [isFocused, setIsFocused] = useState(false);
 
   const handleNext = async () => {
     if (!description.trim()) {
@@ -47,22 +48,35 @@ export default function DescriptionArticle() {
       <KeyboardWrapper>
         <View className="flex-1 px-7 pt-7 pb-10">
           <View className="flex-1 gap-10">
-            <Text className="text-white text-5xl font-bold">Descripción</Text>
-            <Text className="text-white text-2xl">¿Qué te gustaría subastar?</Text>
+            <View>
+                <Text className="text-white text-5xl font-bold">Descripción</Text>
+                <Text className="text-white text-xl mt-2">¿Qué te gustaría subastar?</Text>
+            </View>
             
             <View className="gap-2">
-              <Input
-                variant="register"
-                label="Descripción"
-                placeholder="Describe tu artículo"
+              <Text className="text-white text-sm font-bold tracking-wide ml-1">
+                Descripción detallada
+              </Text>
+              
+              <TextInput
+                className={`w-full bg-[#1C1C1E] text-white rounded-2xl p-4 text-base border-2 ${
+                  isFocused ? 'border-[#E8B83C]' : 'border-[#2A2B30]'
+                }`}
+                style={{ height: 160, textAlignVertical: 'top' }}
+                placeholder="Ej: Reloj vintage en perfecto estado con correa de cuero original..."
+                placeholderTextColor="#9CA3AF"
                 value={description}
                 onChangeText={(text) => {
                   setDescription(text);
                   if (error) setError(null);
                 }}
+                onFocus={() => setIsFocused(true)}
+                onBlur={() => setIsFocused(false)}
+                multiline={true} 
                 keyboardType="default"
-                autoCapitalize="none"
+                autoCapitalize="sentences"
               />
+              
               {error && <ErrorMessege error={error} />}
             </View>
           </View>
@@ -76,7 +90,6 @@ export default function DescriptionArticle() {
               loading={loading}
             />
           </View>
-
         </View>
       </KeyboardWrapper>
     </SafeAreaView>
