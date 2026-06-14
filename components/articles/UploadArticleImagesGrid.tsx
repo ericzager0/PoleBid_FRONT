@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import React, { useState } from 'react';
-import { Image, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, Image, Linking, Text, TouchableOpacity, View } from 'react-native';
 
 interface UploadArticleImagesProps {
   onImagesChange?: (images: (string | null)[]) => void; 
@@ -11,9 +11,24 @@ export default function UploadArticleImages({ onImagesChange }: UploadArticleIma
   const [images, setImages] = useState<(string | null)[]>([null, null, null, null, null]);
 
   const pickImage = async (index: number) => {
-    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (permissionResult.granted === false) {
-      alert("Se requiere permiso para acceder a la galería.");
+    let permissionResult = await ImagePicker.getMediaLibraryPermissionsAsync();
+
+    if (!permissionResult.granted) {
+      permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    }
+
+    if (!permissionResult.granted) {
+      Alert.alert(
+        "Acceso a la galería",
+        "Necesitamos acceso a tus fotos para que puedas subir las imágenes del artículo. Por favor, habilítalo en los ajustes de tu dispositivo.",
+        [
+          { text: "Cancelar", style: "cancel" },
+          { 
+            text: "Ir a Ajustes", 
+            onPress: () => Linking.openSettings() 
+          }
+        ]
+      );
       return;
     }
 
@@ -89,7 +104,6 @@ export default function UploadArticleImages({ onImagesChange }: UploadArticleIma
           <Ionicons name="add" size={36} color="#4B4E54" />
         </TouchableOpacity>
       )}
-
     </View>
   );
 }
