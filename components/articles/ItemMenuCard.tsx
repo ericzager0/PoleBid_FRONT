@@ -6,6 +6,7 @@ export interface ArticleItem {
   identificador: string | number;
   descripcioncatalogo: string;
   fecha: string;
+  motivo_rechazo?: string;
 }
 
 interface ItemMenuCardProps {

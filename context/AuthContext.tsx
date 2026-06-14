@@ -39,6 +39,7 @@ type User = {
       foto: string;
     };
     estado: string;
+    motivo_rechazo: string;
   };
 };
 

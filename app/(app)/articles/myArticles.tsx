@@ -25,7 +25,7 @@ export default function MyArticles() {
   const [mapModalVisible, setMapModalVisible] = useState(false);
 
   const constoEnvio = 7900;
-
+  
   const [modalData, setModalData] = useState<MapModalConfig | null>(null);
   
   const handleOpenModal = (data: MapModalConfig) => {
@@ -152,11 +152,10 @@ export default function MyArticles() {
             title="Rechazado tras inspección"
             iconName="magnify-close"
             articles={getArticlesByState("rejected_after_inspection", user)}
-            onPressItem={() =>
+            onPressItem={(item) =>
               handleOpenModal({
                 title: "Motivos de rechazo de producto:",
-                rejectReason:
-                  "El articulo muestra muchos signos de desgaste claro.",
+                rejectReason: item.motivo_rechazo || "No se especificó un motivo de rechazo.",
                 description:
                   "Lima 757/775, Monserrat, Ciudad Autónoma de Buenos Aires",
                 extraInfo: `Enviaremos el articulo a tu direccion de residencia luego de que se acredite el pago del mismo. El costo del envio de devolucion tiene un valor de ${constoEnvio} ARS.`,
