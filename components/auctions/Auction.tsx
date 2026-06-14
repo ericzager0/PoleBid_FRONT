@@ -2,13 +2,13 @@ import React from 'react';
 import { Image, Text, TouchableOpacity, View } from 'react-native';
 
 const categories = [
-    { id: 1, name: 'Silver', hex: '#B6BABD' },
-    { id: 2, name: 'Gold',  hex: '#E8B83C' },
-    { id: 3, name: 'Platinum', hex: '#B8C1E8' },
+    { id: "plata", name: 'Silver', hex: '#B6BABD' },
+    { id: "oro", name: 'Gold',  hex: '#E8B83C' },
+    { id: "platino", name: 'Platinum', hex: '#B8C1E8' },
 ];
 
 interface AuctionProps {
-    categoryId: number;
+    categoryId: string;
     imageSrc: string;
     title: string;
     fecha: string;

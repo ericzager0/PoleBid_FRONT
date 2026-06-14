@@ -1,7 +1,7 @@
 import AuctionDetailCard from '@/components/auctions/AuctionDetailCard';
+import AlertModal from '@/components/common/AlertModal';
 import Button from '@/components/common/Button';
 import NoAuction from '@/components/common/NoAuction';
-import SimpleModal from '@/components/common/SimpleModal';
 import { useAuth } from '@/context/AuthContext';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
@@ -10,15 +10,20 @@ import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { f1AuctionsData } from "../data/auctions";
 
-const categoryIdUser = 1;
-
 export default function AuctionDetailScreen() {
   const { id } = useLocalSearchParams();
   const router = useRouter();
-  const [modalVisible, setModalVisible] = useState(false);
   const { user } = useAuth();
 
-  const [isLogged, setLogged] = useState(user ? true : false);
+  const [alertType, setAlertType] = useState<'none' | 'category' | 'full'>('none');
+
+  const [isLogged] = useState(user ? true : false);
+
+  {/* A futuro cuando lleguen los miembros y tengasmos hecho subastas 
+  if ((user?.subastas[id]).cantidadmiembres === (user?.subastas[id]).miembros) {
+    setAlertType('full');
+  }
+  */}
 
   const auction = f1AuctionsData.find((item) => item.id === id);
   if (!auction) {
@@ -65,8 +70,8 @@ export default function AuctionDetailScreen() {
           <Button
             label="Ingresar a la subasta"
             onPress={() => {
-              if (auction.categoryId !== categoryIdUser) {
-                setModalVisible(true);
+              if (auction.categoryId !== user?.categoria) {
+                setAlertType('category');
               } else {
                 router.push(`/auctionStarted/live/${auction.id}`);
               }
@@ -82,10 +87,25 @@ export default function AuctionDetailScreen() {
       </View>
       </ScrollView>
 
-      <SimpleModal
-        visible={modalVisible}
-        texto="Su categoria no corresponde a esta subasta. Aun asi puede verla"
-        onClose={() => setModalVisible(false)}
+      {/* MODALES */}
+      <AlertModal
+        visible={alertType === 'full'}
+        title="Subasta sin cupo"
+        description="Lo sentimos, esta subasta ya ha alcanzado el límite máximo de participantes. Te invitamos a explorar otras opciones en el catálogo."
+        iconName="account-group-outline"
+        iconColor="#F97316" 
+        buttonText="Volver al catálogo"
+        onClose={() => setAlertType('none')}
+      />
+
+      <AlertModal
+        visible={alertType === 'category'}
+        title="Acceso restringido"
+        description="Tu categoría actual de usuario no cumple con los requisitos mínimos para participar en esta subasta premium. Continúa operando para subir de nivel."
+        iconName="lock-outline"
+        iconColor="#EF4444" 
+        buttonText="Entendido"
+        onClose={() => setAlertType('none')}
       />
     </SafeAreaView>
   );

@@ -61,7 +61,6 @@ export default function AuctionItemScreen() {
         <ProductDetailCard 
           price={product.precio ? `${product.precio}$` : 'A definir'}
           date={product.fecha}
-          time={product.hora ? product.hora : 'A definir'} 
         />
 
         <View className="mt-6 mb-4 px-1">
@@ -74,7 +73,7 @@ export default function AuctionItemScreen() {
         </View>
 
         <View className="mt-4 mb-8">
-          <CommissionRow percentage={product.comision ? product.comision.toString() : ' - '} /> 
+          <CommissionRow percentage={product.comision ? product.comision.toString() : 'A definir'} /> 
         </View>
 
         <Button 

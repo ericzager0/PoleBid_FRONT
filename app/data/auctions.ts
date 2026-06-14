@@ -1,6 +1,6 @@
 export interface AuctionItem {
   id: string;
-  categoryId: number;
+  categoryId: string;
   imageSrc: string;
   title: string;
   fecha: string;
@@ -15,7 +15,7 @@ export interface AuctionItem {
 export const f1AuctionsData: AuctionItem[] = [
   { 
     id: '1', 
-    categoryId: 3, 
+    categoryId: "oro", 
     imageSrc: 'https://imgs.search.brave.com/qyzM_SmMSFOiqbGUn8pnGunMSG1XFH0HHPjf0W_GGQo/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9zaWxv/ZHJvbWUuY29tL3dw/LWNvbnRlbnQvdXBs/b2Fkcy8yMDE4LzEy/L0F5cnRvbi1TZW5u/YS1NY0xhcmVuLUhl/bG1ldC1TaWRlLTIt/NzQweDU5Mi5qcGc', 
     title: 'Casco Ayrton Senna 1990', 
     fecha: 'Nov 15', 
@@ -33,7 +33,7 @@ export const f1AuctionsData: AuctionItem[] = [
   },
   { 
     id: '2', 
-    categoryId: 2, 
+    categoryId: "platino", 
     imageSrc: 'https://picsum.photos/seed/f1_2/400/200', 
     title: 'Guantes de Lewis Hamilton', 
     fecha: 'Nov 16', 
@@ -50,7 +50,7 @@ export const f1AuctionsData: AuctionItem[] = [
   },
   { 
     id: '3', 
-    categoryId: 1, 
+    categoryId: "plata", 
     imageSrc: 'https://picsum.photos/seed/f1_3/400/200', 
     title: 'Neumático Pirelli Blando Usado', 
     fecha: 'Nov 18', 
@@ -69,7 +69,7 @@ export const f1AuctionsData: AuctionItem[] = [
   },
   { 
     id: '4', 
-    categoryId: 3, 
+    categoryId: "oro", 
     imageSrc: 'https://picsum.photos/seed/f1_4/400/200', 
     title: 'Volante Ferrari F2004 (Schumacher)', 
     fecha: 'Nov 20', 
@@ -86,7 +86,7 @@ export const f1AuctionsData: AuctionItem[] = [
   },
   { 
     id: '5', 
-    categoryId: 2, 
+    categoryId: "platino", 
     imageSrc: 'https://picsum.photos/seed/f1_5/400/200', 
     title: 'Mono de Charles Leclerc 2023', 
     fecha: 'Nov 22', 
@@ -102,7 +102,7 @@ export const f1AuctionsData: AuctionItem[] = [
   },
   { 
     id: '6', 
-    categoryId: 1, 
+    categoryId: "plata", 
     imageSrc: 'https://picsum.photos/seed/f1_6/400/200', 
     title: 'Gorra firmada por Franco Colapinto', 
     fecha: 'Nov 25', 
@@ -120,7 +120,7 @@ export const f1AuctionsData: AuctionItem[] = [
   },
   { 
     id: '7', 
-    categoryId: 3, 
+    categoryId: "oro", 
     imageSrc: 'https://picsum.photos/seed/f1_7/400/200', 
     title: 'Alerón Trasero Red Bull RB19', 
     fecha: 'Dic 01', 
@@ -139,7 +139,7 @@ export const f1AuctionsData: AuctionItem[] = [
   },
   { 
     id: '8', 
-    categoryId: 2, 
+    categoryId: "comun", 
     imageSrc: 'https://picsum.photos/seed/f1_8/400/200', 
     title: 'Trofeo GP de Mónaco 2018', 
     fecha: 'Dic 05', 
@@ -155,7 +155,7 @@ export const f1AuctionsData: AuctionItem[] = [
   },
   { 
     id: '9', 
-    categoryId: 1, 
+    categoryId: "especial", 
     imageSrc: 'https://picsum.photos/seed/f1_9/400/200', 
     title: 'Buzo de Mecánico McLaren', 
     fecha: 'Dic 08', 
@@ -172,7 +172,7 @@ export const f1AuctionsData: AuctionItem[] = [
   },
   { 
     id: '10', 
-    categoryId: 3, 
+    categoryId: "oro", 
     imageSrc: 'https://picsum.photos/seed/f1_10/400/200', 
     title: 'Motor Renault V10 (2005)', 
     fecha: 'Dic 12', 
@@ -192,7 +192,7 @@ export const f1AuctionsData: AuctionItem[] = [
   },
   { 
     id: '11', 
-    categoryId: 2, 
+    categoryId: "platino", 
     imageSrc: 'https://picsum.photos/seed/f1_11/400/200', 
     title: 'Botas de Fernando Alonso', 
     fecha: 'Dic 15', 
@@ -208,7 +208,7 @@ export const f1AuctionsData: AuctionItem[] = [
   },
   { 
     id: '12', 
-    categoryId: 1, 
+    categoryId: "oro", 
     imageSrc: 'https://picsum.photos/seed/f1_12/400/200', 
     title: 'Radio de Kimi Räikkönen ("Leave me alone")', 
     fecha: 'Dic 18', 
@@ -225,7 +225,7 @@ export const f1AuctionsData: AuctionItem[] = [
   },
   { 
     id: '13', 
-    categoryId: 3, 
+    categoryId:"oro", 
     imageSrc: 'https://picsum.photos/seed/f1_13/400/200', 
     title: 'Chasis Williams FW14B', 
     fecha: 'Ene 10', 
@@ -243,7 +243,7 @@ export const f1AuctionsData: AuctionItem[] = [
   },
   { 
     id: '14', 
-    categoryId: 2, 
+    categoryId: "oro", 
     imageSrc: 'https://picsum.photos/seed/f1_14/400/200', 
     title: 'Entrada VIP Paddock Club 2026', 
     fecha: 'Ene 15', 
@@ -259,7 +259,7 @@ export const f1AuctionsData: AuctionItem[] = [
   },
   { 
     id: '15', 
-    categoryId: 1, 
+    categoryId: "oro", 
     imageSrc: 'https://picsum.photos/seed/f1_15/400/200', 
     title: 'Taza rota de Toto Wolff', 
     fecha: 'Ene 20', 

@@ -13,7 +13,7 @@ export default function CommissionRow({ percentage }: CommissionRowProps) {
       </Text>
 
       <Text className="text-white text-lg font-bold tracking-wide">
-        {percentage}%
+        {percentage} %
       </Text>
     </View>
   );

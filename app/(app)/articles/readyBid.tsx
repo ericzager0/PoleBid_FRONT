@@ -8,7 +8,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import ImageCarousel from '@/components/common/ImageCarousel';
 
 import { imageBase64Render } from '@/api/utils/imageBase64Render';
+import { f1AuctionsData } from '@/app/data/auctions';
 import ConfirmButton from '@/components/articles/ConfirmButton';
+import BriefAuctionDetails from '@/components/auctions/BriefAuctionDetails';
 import CommissionRow from '@/components/auctions/CommissionRow';
 import { useAuth } from '@/context/AuthContext';
 
@@ -38,6 +40,11 @@ export default function ReadyBid() {
     console.log("Se aceptó la acción");
   };
 
+  //MOCK auction
+  const auction = f1AuctionsData.find((item) => item.id === '6');
+  const auctionName = auction?.title ?? ' - ';
+  const auctionDate = auction?.fecha ?? ' - ';
+
   return (
     <SafeAreaView className="flex-1 bg-[#14191C]">
       <View className="px-4 pt-4 pb-2">
@@ -62,6 +69,8 @@ export default function ReadyBid() {
             Tu artículo fue aprobado tras inspección. A continuacion los detalles de su subasta sugerida:
           </Text>
         </View>
+
+        <BriefAuctionDetails auctionName={auctionName} date={auctionDate} />
 
         <View className="items-center mb-6">
           <Text className="text-[#D1D5DB] text-lg text-center">
@@ -106,7 +115,6 @@ export default function ReadyBid() {
                 </Text>
             </View>
         </View>
-
       </ScrollView>
     </SafeAreaView>
   );
