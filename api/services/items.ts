@@ -1,6 +1,9 @@
 import client from "../client";
 
 export const itemsService = {
+  updateItem: (id: number, body: { estado: string }) => {
+    return client.patch(`/me/items/${id}`, body);
+  },
   postItem: (body: {
     descripcioncatalogo: string;
     descripcioncompleta: string;
