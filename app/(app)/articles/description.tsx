@@ -1,13 +1,15 @@
 import Button from "@/components/common/Button";
 import ErrorMessege from "@/components/common/ErrorMessege";
 import KeyboardWrapper from "@/components/common/KeyboardWrapper";
-import Ionicons from '@expo/vector-icons/Ionicons';
-import { router } from "expo-router";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function DescriptionArticle() {
+  const { data: rawData } = useLocalSearchParams();
+  const prevData = JSON.parse(rawData as string);
   const [description, setDescription] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -23,9 +25,10 @@ export default function DescriptionArticle() {
     try {
       setLoading(true);
       setError(null);
-      //BACK DE ARTICULO
+      const data = { ...prevData, descripcioncompleta: description };
       router.push({
         pathname: "/articles/uploadArticleImages",
+        params: { data: JSON.stringify(data) },
       });
     } catch (e: any) {
       setError(e.message);
@@ -36,7 +39,7 @@ export default function DescriptionArticle() {
 
   return (
     <SafeAreaView className="bg-[#14191C] flex-1">
-       <View className="px-4 pt-4 pb-2">
+      <View className="px-4 pt-4 pb-2">
         <TouchableOpacity
           onPress={() => router.push("/(app)/articles/briefDescription")}
           className="bg-[#1C1C1E] w-10 h-10 rounded-full items-center justify-center"
