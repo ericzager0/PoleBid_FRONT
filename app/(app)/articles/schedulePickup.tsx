@@ -1,104 +1,131 @@
+import { useAuth } from '@/context/AuthContext';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import React, { useState } from 'react';
-import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import React, { useRef, useState } from 'react';
+import { Text, TouchableOpacity, View } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import Button from '@/components/common/Button';
 import TermsCheckbox from '@/components/common/TermsCheckbox';
-import { useAuth } from '@/context/AuthContext';
+
+const DEFAULT_COORD = {
+  latitude: -34.603722,
+  longitude: -58.381592,
+};
 
 export default function SchedulePickup() {
   const { id } = useLocalSearchParams();
   const router = useRouter();
-  const [acceptedTerms, setAcceptedTerms] = useState(false);
-
+  const mapRef = useRef<MapView>(null);
   const {user} = useAuth();
   
-  const productsList = Array.isArray(user?.products) ? user.products : (user?.products ? [user.products] : []);
-  const product = productsList.find((item) => String(item.identificador) === String(id));
+   const productsList = Array.isArray(user?.products) ? user.products : (user?.products ? [user.products] : []);
+    const product = productsList.find((item) => String(item.identificador) === String(id));
+    
+    if (!product) {
+      return (
+      <SafeAreaView className="flex-1 bg-[#14191C] items-center justify-center">
+        <Text className="text-white">Producto no encontrado</Text>
+      </SafeAreaView>
+      );
+    }
   
-  if (!product) {
-    return (
-    <SafeAreaView className="flex-1 bg-[#14191C] items-center justify-center">
-      <Text className="text-white">Producto no encontrado</Text>
-    </SafeAreaView>
-    );
-  }
 
-  //MOCK
-  const epigrafo = "Mercedes, C16 y C39 Buenos Aires, Argentina";
-  const coordinates = { latitude: -34.652901, longitude: -59.445859 };
+  const [selectedCoord, setSelectedCoord] = useState(DEFAULT_COORD);
+  const [addressDesc, setAddressDesc] = useState("Ubicación por defecto (Obelisco)");
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
 
+  const handleMapPress = (e: any) => {
+    const newCoord = e.nativeEvent.coordinate;
+    setSelectedCoord(newCoord);
+    setAddressDesc("Ubicación marcada en el mapa");
+    
+    mapRef.current?.animateToRegion({
+      ...newCoord,
+      latitudeDelta: 0.02,
+      longitudeDelta: 0.02,
+    }, 500);
+  };
+
+  const handleMarkerDragEnd = (e: any) => {
+    const newCoord = e.nativeEvent.coordinate;
+    setSelectedCoord(newCoord);
+    setAddressDesc("Ubicación ajustada manualmente");
+  };
+
+  const handleConfirm = () => {
+    console.log("Coordenadas hardcodeadas listas para el contexto:", selectedCoord);
+    router.push('/articles/myArticles'); 
+  };
 
   return (
-    <SafeAreaView className="flex-1 bg-[#14191C]">
-      <View className="px-4 pt-4 pb-2">
-        <TouchableOpacity
+    <SafeAreaView className="bg-[#14191C] flex-1">
+      <View className="px-4 pt-4 pb-4 flex-row items-center">
+        <TouchableOpacity 
           onPress={() => router.push({
                   pathname: '/articles/interestBid',
                   params: { id: product.identificador }
                 })}
-          className="bg-[#1C1C1E] w-10 h-10 rounded-full items-center justify-center"
+          className="bg-[#1C1C1E] w-10 h-10 rounded-full items-center justify-center mr-4 border border-[#2A2B30]"
         >
           <Ionicons name="arrow-back" size={24} color="white" />
         </TouchableOpacity>
+        <View>
+          <Text className="text-white text-xl font-bold tracking-wide">Punto de retiro</Text>
+          <Text className="text-[#9CA3AF] text-xs mt-1">Toca el mapa o arrastra el marcador</Text>
+        </View>
       </View>
 
-      <ScrollView
-        className="flex-1 px-4"
-        contentContainerStyle={{ paddingBottom: 40 }}
-        showsVerticalScrollIndicator={false}
-      >
-        <View className="mt-2 mb-8">
-          <Text className="text-white text-5xl font-bold mb-4 tracking-tight leading-[55px]">
-            Dirección
-          </Text>
-          <Text className="text-[#9CA3AF] text-lg leading-6 pr-4">
-            Deberás enviar el artículo a la siguiente dirección:
-          </Text>
+      {/* MAPA INTERACTIVO */}
+      <View className="flex-1 overflow-hidden border-t border-[#2A2B30]">
+        <MapView
+          ref={mapRef}
+          style={{ flex: 1 }}
+          initialRegion={{
+            ...DEFAULT_COORD,
+            latitudeDelta: 0.05,
+            longitudeDelta: 0.05,
+          }}
+          onPress={handleMapPress}
+          userInterfaceStyle="dark"
+        >
+          <Marker
+            coordinate={selectedCoord}
+            title="Punto de Retiro"
+            description="Mantén presionado para arrastrar"
+            draggable 
+            onDragEnd={handleMarkerDragEnd}
+          />
+        </MapView>
+      </View>
 
-          <View className="w-full h-64 rounded-2xl overflow-hidden mb-3 border border-[#2A2B30] mt-4">
-              <MapView
-                style={{ flex: 1 }}
-                initialRegion={{
-                  latitude: coordinates.latitude,
-                  longitude: coordinates.longitude,
-                  latitudeDelta: 0.005,
-                  longitudeDelta: 0.005,
-                }}
-              >
-                <Marker
-                  coordinate={{
-                    latitude: coordinates.latitude,
-                    longitude: coordinates.longitude,
-                  }}
-                  title="Ubicación"
-                  description={epigrafo}
-                />
-              </MapView>
-            </View>
-
-            <Text className="w-full text-left text-[#9CA3AF] text-sm leading-5 mb-6">
-              {epigrafo}
-            </Text>
+      <View className="bg-[#14191C] px-6 pt-6 pb-8 border-t border-[#2A2B30]">
+        
+        <View className="mb-5">
+          <Text className="text-[#E8B83C] text-xs font-bold uppercase tracking-[0.15em] mb-1">
+            Lugar seleccionado
+          </Text>
+          <Text className="text-white text-base font-medium leading-relaxed" numberOfLines={2}>
+            {addressDesc}
+          </Text>
         </View>
 
-        <View className="items-center justify-center gap-4 mb-10">
+        <View className="mb-6">
           <TermsCheckbox
             checked={acceptedTerms}
             onChange={setAcceptedTerms}
             text="Estoy de acuerdo que en caso de no aceptar el bien enviado la empresa lo devolverá con cargo al usuario."
           />
-          <Button
-            label="Hecho"
-            disabled={!acceptedTerms}
-            variant={acceptedTerms ? "primary" : "blocked"}
-            onPress={() => router.push('/articles/myArticles')}
-          />
         </View>
-      </ScrollView>
+        
+        <Button 
+          label="Confirmar Ubicación" 
+          disabled={!acceptedTerms}
+          variant={acceptedTerms ? "primary" : "blocked"}
+          onPress={handleConfirm} 
+        />
+      </View>
     </SafeAreaView>
   );
 }
