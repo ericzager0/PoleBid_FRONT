@@ -40,10 +40,9 @@ export default function Home() {
 
   const noAuction = f1AuctionsData.length === 0 || !f1AuctionsData;
 
-  //MOCK
-  const getPaidActivated = true;
-  let countArticles = 11;
-  if (!getPaidActivated) {
+  const activatedIsSeller = user?.isSeller;
+  let countArticles = Array.isArray(user?.products) ? user!.products.length : 0;
+  if (!activatedIsSeller) {
     countArticles = 0;
   }
 
@@ -260,7 +259,7 @@ export default function Home() {
                 icono={<Feather name="box" size={24} color="#FFD874" />}
                 texto="Mis Artículos"
                 numero={countArticles}
-                blocked={!getPaidActivated}
+                blocked={!activatedIsSeller}
                 onPress={() => router.push("/articles/myArticles")}
               />
             </View>

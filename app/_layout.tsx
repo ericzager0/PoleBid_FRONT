@@ -1,7 +1,9 @@
 import { AuthProvider, useAuth } from "@/context/AuthContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { DarkTheme, ThemeProvider } from '@react-navigation/native';
 import { Stack, router } from "expo-router";
 import { StatusBar } from 'expo-status-bar';
+import * as SystemUI from 'expo-system-ui';
 import { useEffect, useRef } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import "../global.css";
@@ -9,6 +11,10 @@ import "../global.css";
 function RootNavigator() {
   const { isAuthenticated, isLoading } = useAuth();
   const prevAuthRef = useRef<boolean | null>(null);
+
+  useEffect(() => {
+    SystemUI.setBackgroundColorAsync('#14191C');
+  }, []);
 
   useEffect(() => {
     if (isLoading) return;
@@ -42,7 +48,8 @@ function RootNavigator() {
   if (isLoading) return null;
 
   return (
-    <Stack screenOptions={{ headerShown: false }}>
+    <ThemeProvider value={DarkTheme}>
+    <Stack screenOptions={{ contentStyle: { backgroundColor: '#14191C' }, headerShown: false }}>
       <Stack.Screen name="index" />
       <Stack.Screen name="(auth)/login" />
       <Stack.Screen name="(auth)/register" />
@@ -51,6 +58,7 @@ function RootNavigator() {
       <Stack.Screen name="(app)/articles" />
       <Stack.Screen name="(settings)" />
     </Stack>
+    </ThemeProvider>
   );
 }
 

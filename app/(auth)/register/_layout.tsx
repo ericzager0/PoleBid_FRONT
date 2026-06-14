@@ -1,8 +1,15 @@
+import { DarkTheme, ThemeProvider } from '@react-navigation/native';
 import { Stack } from "expo-router";
 
 export default function RegisterLayout() {
   return (
-    <Stack screenOptions={{ headerShown: false }}>
+    <ThemeProvider value={DarkTheme}>
+    <Stack 
+      screenOptions={{
+        contentStyle: { backgroundColor: '#14191C' },
+        headerShown: false,
+      }}
+    >
       <Stack.Screen name="country" />
       <Stack.Screen name="name" />
       <Stack.Screen name="email" />
@@ -14,5 +21,6 @@ export default function RegisterLayout() {
       <Stack.Screen name="payment-details" />
       <Stack.Screen name="paymentsChoice" />
     </Stack>
+    </ThemeProvider>
   );
 }
