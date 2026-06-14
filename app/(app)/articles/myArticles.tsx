@@ -1,5 +1,7 @@
+import { getArticlesByState } from "@/api/utils/articleshelper";
 import ArticleMapModal from "@/components/articles/ArticleMapModal";
 import ItemMenuCard from "@/components/articles/ItemMenuCard";
+import { useAuth } from "@/context/AuthContext";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
@@ -19,11 +21,13 @@ interface MapModalConfig {
 
 export default function MyArticles() {
   const router = useRouter();
+  const { user } = useAuth();
   const [mapModalVisible, setMapModalVisible] = useState(false);
 
   const constoEnvio = 7900;
 
   const [modalData, setModalData] = useState<MapModalConfig | null>(null);
+  
   const handleOpenModal = (data: MapModalConfig) => {
     setModalData(data);
     setMapModalVisible(true);
@@ -55,10 +59,10 @@ export default function MyArticles() {
           <ItemMenuCard
             title="Esperando Aprobación"
             iconName="clock"
-            articles={[{ id: "1", name: "Artículo 1", date: "2023-01-01" }]}
-            onPressItem={() =>
+            articles={getArticlesByState("pending_approval", user)}
+            onPressItem={(item) =>
               router.push(
-                `/auctionStarted/catalogue/product/${1}?isArticles=true`,
+                `/auctionStarted/catalogue/product/${item.identificador}?isArticles=true`,
               )
             }
             offeringArticle={true}
@@ -68,11 +72,11 @@ export default function MyArticles() {
           <ItemMenuCard
             title="Interes en subastar"
             iconName="sticker-check-outline"
-            articles={[{ id: "1", name: "Artículo 2", date: "2023-01-01" }]}
+            articles={getArticlesByState("interested", user)}
             onPressItem={(item) =>
               router.push({
                 pathname: "/articles/interestBid",
-                params: { id: item.id },
+                params: { id: item.identificador },
               })
             }
           />
@@ -80,7 +84,7 @@ export default function MyArticles() {
           <ItemMenuCard
             title="En inspección"
             iconName="eye-outline"
-            articles={[{ id: "1", name: "Artículo 3", date: "2023-01-01" }]}
+            articles={getArticlesByState("in_inspection", user)}
             onPressItem={() =>
               handleOpenModal({
                 title: "El artículo está siendo inspeccionado",
@@ -96,11 +100,11 @@ export default function MyArticles() {
           <ItemMenuCard
             title="Listo para subastar"
             iconName="calendar-clock"
-            articles={[{ id: "1", name: "Artículo 4", date: "2023-01-01" }]}
+            articles={getArticlesByState("ready_auction", user)}
             onPressItem={(item) =>
               router.push({
                 pathname: "/articles/readyBid",
-                params: { id: item.id },
+                params: { id: item.identificador },
               })
             }
           />
@@ -108,11 +112,11 @@ export default function MyArticles() {
           <ItemMenuCard
             title="Subasta Programada"
             iconName="calendar-blank"
-            articles={[{ id: "1", name: "Artículo 5", date: "2023-01-01" }]}
+            articles={getArticlesByState("scheduled_auction", user)}
             onPressItem={(item) =>
               router.push({
                 pathname: "/articles/scheduledBid",
-                params: { id: item.id },
+                params: { id: item.identificador },
               })
             }
           />
@@ -120,11 +124,11 @@ export default function MyArticles() {
           <ItemMenuCard
             title="Subasta Finalizada"
             iconName="calendar-check-outline"
-            articles={[{ id: "1", name: "Artículo 5", date: "2023-01-01" }]}
+            articles={getArticlesByState("bid_ended", user)}
             onPressItem={(item) =>
               router.push({
                 pathname: "/articles/bidEnded",
-                params: { id: item.id },
+                params: { id: item.identificador },
               })
             }
           />
@@ -132,7 +136,7 @@ export default function MyArticles() {
           <ItemMenuCard
             title="Subasta no aceptada"
             iconName="calendar-remove"
-            articles={[{ id: "1", name: "Artículo 6", date: "2023-01-01" }]}
+            articles={getArticlesByState("rejected_auction", user)}
             onPressItem={() =>
               handleOpenModal({
                 title: "Usted rechazo subastar su artículo",
@@ -147,7 +151,7 @@ export default function MyArticles() {
           <ItemMenuCard
             title="Rechazado tras inspección"
             iconName="magnify-close"
-            articles={[{ id: "1", name: "Artículo 7", date: "2023-01-01" }]}
+            articles={getArticlesByState("rejected_after_inspection", user)}
             onPressItem={() =>
               handleOpenModal({
                 title: "Motivos de rechazo de producto:",
@@ -164,10 +168,10 @@ export default function MyArticles() {
           <ItemMenuCard
             title="No hay interés en subastar"
             iconName="close-circle-outline"
-            articles={[{ id: "1", name: "Artículo 8", date: "2023-01-01" }]}
-            onPressItem={() =>
+            articles={getArticlesByState("no_interest", user)}
+            onPressItem={(item) =>
               router.push(
-                `/auctionStarted/catalogue/product/${1}?isArticles=true`,
+                `/auctionStarted/catalogue/product/${item.identificador}?isArticles=true`,
               )
             }
           />

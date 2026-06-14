@@ -8,10 +8,12 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { f1AuctionsData } from '@/app/data/auctions';
 import CatalogueProductCard from '@/components/auctions/CatalogueProductCard';
 import CatalogueTitle from '@/components/auctions/CatalogueTitle';
+import { useAuth } from '@/context/AuthContext';
 
 export default function CatalogueScreen() {
   const router = useRouter();
   const { id } = useLocalSearchParams();
+  const {user} = useAuth();
 
   const auction = f1AuctionsData.find((item) => item.id === id);
   if (!auction) {

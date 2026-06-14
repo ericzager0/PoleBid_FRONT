@@ -3,9 +3,9 @@ import React from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 
 export interface ArticleItem {
-  id: string | number;
-  name: string;
-  date: string;
+  identificador: string | number;
+  descripcioncatalogo: string;
+  fecha: string;
 }
 
 interface ItemMenuCardProps {
@@ -59,16 +59,16 @@ export default function ItemMenuCard({
         {articles.length > 0 ? (
           articles.map((article) => (
             <TouchableOpacity
-              key={article.id}
+              key={article.identificador}
               activeOpacity={0.8}
               onPress={() => onPressItem && onPressItem(article)}
               className="w-full bg-[#B6BABD] rounded-2xl py-4 px-5" 
             >
               <Text className="text-[#1A1A1A] text-lg font-bold mb-1 tracking-tight">
-                {article.name}
+                {article.descripcioncatalogo}
               </Text>
               <Text className="text-[#4B4E54] text-sm font-medium">
-                {article.date}
+                {article.fecha}
               </Text>
             </TouchableOpacity>
           ))

@@ -1,6 +1,7 @@
+import { imageBase64Render } from '@/api/utils/imageBase64Render';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import React from 'react';
+import React, { useState } from 'react';
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -8,18 +9,26 @@ import Button from '@/components/common/Button';
 import ImageCarousel from '@/components/common/ImageCarousel';
 
 import ConfirmModal from '@/components/common/ConfirmModal';
-import NoAuction from '@/components/common/NoAuction';
-import { f1AuctionsData } from "../../data/auctions";
+import { useAuth } from '@/context/AuthContext';
 
 export default function InterestBid() {
   const { id } = useLocalSearchParams();
   const router = useRouter();
-  const [modal, setModal] = React.useState(false);
+  const [modal, setModal] = useState(false);
+  const {user} = useAuth();
 
-  const auction = f1AuctionsData.find((item) => item.id === id);
-  if(!auction) {
-    return <NoAuction />;
+ const productsList = Array.isArray(user?.products) ? user.products : (user?.products ? [user.products] : []);
+  const product = productsList.find((item) => String(item.identificador) === String(id));
+  
+  if (!product) {
+    return (
+    <SafeAreaView className="flex-1 bg-[#14191C] items-center justify-center">
+      <Text className="text-white">Producto no encontrado</Text>
+    </SafeAreaView>
+    );
   }
+
+  const imagesToDisplay = imageBase64Render(product);
 
   return (
     <SafeAreaView className="flex-1 bg-[#14191C]">
@@ -39,12 +48,12 @@ export default function InterestBid() {
       >
         <View className="items-center mb-6">
           <Text className="text-[#D1D5DB] text-lg text-center">
-            {auction.title}
+            {product.descripcioncatalogo}
           </Text>
         </View>
 
         <View className="mb-6 h-64 w-full rounded-2xl overflow-hidden">
-          <ImageCarousel images={auction.images || []} />
+          <ImageCarousel images={imagesToDisplay} />
         </View>
 
         <View className="mt-2 mb-8">
@@ -61,7 +70,7 @@ export default function InterestBid() {
             label="Programar envío" 
             onPress={() => router.push({
               pathname: '/articles/schedulePickup',
-              params: { id: auction.id }
+              params: { id: product.identificador }
             })} 
           />
         </View>

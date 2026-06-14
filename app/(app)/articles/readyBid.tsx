@@ -7,19 +7,28 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import ImageCarousel from '@/components/common/ImageCarousel';
 
+import { imageBase64Render } from '@/api/utils/imageBase64Render';
 import ConfirmButton from '@/components/articles/ConfirmButton';
 import CommissionRow from '@/components/auctions/CommissionRow';
-import NoAuction from '@/components/common/NoAuction';
-import { f1AuctionsData } from "../../data/auctions";
+import { useAuth } from '@/context/AuthContext';
 
 export default function ReadyBid() {
   const router = useRouter();
   const { id } = useLocalSearchParams();
 
-  const auction = f1AuctionsData.find((item) => item.id === id);
-  if(!auction) {
-    return <NoAuction />;
+  const {user} = useAuth();
+  const productsList = Array.isArray(user?.products) ? user.products : (user?.products ? [user.products] : []);
+  const product = productsList.find((item) => String(item.identificador) === String(id));
+  
+  if (!product) {
+    return (
+    <SafeAreaView className="flex-1 bg-[#14191C] items-center justify-center">
+      <Text className="text-white">Producto no encontrado</Text>
+    </SafeAreaView>
+    );
   }
+
+  const imagesToDisplay = imageBase64Render(product);
 
   const handleReject = () => {
     console.log("Se rechazó la acción");
@@ -28,9 +37,6 @@ export default function ReadyBid() {
   const handleAccept = () => {
     console.log("Se aceptó la acción");
   };
-
-  //Precio Mock
-  const precioBase = 1200000;
 
   return (
     <SafeAreaView className="flex-1 bg-[#14191C]">
@@ -59,17 +65,17 @@ export default function ReadyBid() {
 
         <View className="items-center mb-6">
           <Text className="text-[#D1D5DB] text-lg text-center">
-            {auction.title}
+            {product.descripcioncatalogo}
           </Text>
         </View>
 
         <View className="mb-6 h-64 w-full rounded-2xl overflow-hidden">
-          <ImageCarousel images={auction.images || []} />
+          <ImageCarousel images={imagesToDisplay} />
         </View>
 
         <View className="items-center justify-center gap-4 mb-10">
             <Text className="text-white text-4xl font-extrabold tracking-tight">
-                ARS ${precioBase}
+                ARS ${product.precioBase || ' - '}
             </Text>
 
             <View className="w-full mt-4 mb-8">

@@ -7,11 +7,25 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import Button from '@/components/common/Button';
 import TermsCheckbox from '@/components/common/TermsCheckbox';
+import { useAuth } from '@/context/AuthContext';
 
 export default function SchedulePickup() {
   const { id } = useLocalSearchParams();
   const router = useRouter();
   const [acceptedTerms, setAcceptedTerms] = useState(false);
+
+  const {user} = useAuth();
+  
+  const productsList = Array.isArray(user?.products) ? user.products : (user?.products ? [user.products] : []);
+  const product = productsList.find((item) => String(item.identificador) === String(id));
+  
+  if (!product) {
+    return (
+    <SafeAreaView className="flex-1 bg-[#14191C] items-center justify-center">
+      <Text className="text-white">Producto no encontrado</Text>
+    </SafeAreaView>
+    );
+  }
 
   //MOCK
   const epigrafo = "Mercedes, C16 y C39 Buenos Aires, Argentina";
@@ -24,7 +38,7 @@ export default function SchedulePickup() {
         <TouchableOpacity
           onPress={() => router.push({
                   pathname: '/articles/interestBid',
-                  params: { id }
+                  params: { id: product.identificador }
                 })}
           className="bg-[#1C1C1E] w-10 h-10 rounded-full items-center justify-center"
         >

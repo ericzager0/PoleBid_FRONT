@@ -22,6 +22,24 @@ type User = {
       owner: string,
     ];
   };
+  products: {
+    identificador: number;
+    fecha: string;
+    disponible: string;
+    descripcioncatalogo: string;
+    descripcioncompleta: string;
+    revisor: number;
+    duenio: number;
+    seguro: string | null;
+    precio: number | undefined | null;
+    comision: number | undefined | null;
+    hora: string | undefined | null;
+    fotos: {
+      id: number;
+      foto: string;
+    };
+    estado: string;
+  };
 };
 
 type AuthContextType = {
