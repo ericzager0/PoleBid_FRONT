@@ -4,13 +4,42 @@ import CatalogueTitle from "@/components/auctions/CatalogueTitle";
 import NoAuction from "@/components/common/NoAuction";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { auctionService } from "../../../api/services/auction";
+
+interface Subasta {
+  descripcion: string;
+  estado: string;
+  items: [
+    {
+      idProducto: number;
+      precioBase: number;
+      descripcioncatalogo: string;
+      descripcioncompleta: string;
+      fotos: string[];
+    },
+  ];
+}
 
 export default function CatalogueScreen() {
   const router = useRouter();
   const { id } = useLocalSearchParams();
+  const [subasta, setSubasta] = useState<Subasta | null>(null);
+
+  useEffect(() => {
+    const fetchAuction = async () => {
+      try {
+        const response = await auctionService.getAuctionById(Number(id));
+        setSubasta(response.data);
+      } catch (error) {
+        console.error("Error fetching auction:", error);
+      }
+    };
+
+    fetchAuction();
+  }, [id]);
 
   const auction = f1AuctionsData.find((item) => item.id === id);
   if (!auction) {
@@ -65,6 +94,16 @@ export default function CatalogueScreen() {
     },
   ];
 
+  if (!subasta) {
+    return (
+      <SafeAreaView className="flex-1 bg-[#14191C] items-center justify-center">
+        <Text className="text-white text-lg font-medium">
+          Cargando detalles de la subasta...
+        </Text>
+      </SafeAreaView>
+    );
+  }
+
   return (
     <SafeAreaView className="flex-1 bg-[#121212]">
       <View className="px-4 pt-2 pb-4">
@@ -82,10 +121,10 @@ export default function CatalogueScreen() {
         contentContainerStyle={{ paddingBottom: 40 }}
       >
         <CatalogueTitle
-          title={auction.title}
+          title={subasta.descripcion}
           subtitle={catalogueHeader.subtitle}
           imageUrl={catalogueHeader.imageUrl}
-          isLive={catalogueHeader.isLive}
+          isLive={subasta.estado === "abierta"}
         />
 
         <View className="flex-row justify-between items-center mt-8 mb-5">
@@ -109,17 +148,21 @@ export default function CatalogueScreen() {
         </View>
 
         <View className="gap-y-1">
-          {featuredItems.map((item) => (
+          {subasta.items.map((item) => (
             <CatalogueProductCard
-              key={item.id}
-              title={item.title}
-              description={item.description}
-              price={item.price}
-              date={item.date}
-              time={item.time}
-              imageUrl={item.imageUrl}
+              key={item.idProducto}
+              title={item.descripcioncatalogo}
+              description={item.descripcioncompleta}
+              price={item.precioBase.toString()}
+              imageUrl={item.fotos[0]}
               onPress={() =>
-                router.push(`/auctionStarted/catalogue/product/${auction.id}`)
+                router.push({
+                  pathname: "/auctionStarted/catalogue/product/[id]",
+                  params: {
+                    id: item.idProducto,
+                    idSubasta: id,
+                  },
+                })
               }
             />
           ))}

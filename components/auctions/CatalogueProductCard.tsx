@@ -1,13 +1,11 @@
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import React from 'react';
-import { Image, Text, TouchableOpacity, View } from 'react-native';
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import React from "react";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 
 interface CatalogueProductCardProps {
   title: string;
   description: string;
   price: string;
-  date: string;
-  time: string;
   imageUrl: string;
   onPress?: () => void;
 }
@@ -16,10 +14,8 @@ export default function CatalogueProductCard({
   title,
   description,
   price,
-  date,
-  time,
   imageUrl,
-  onPress
+  onPress,
 }: CatalogueProductCardProps) {
   return (
     <TouchableOpacity
@@ -29,13 +25,13 @@ export default function CatalogueProductCard({
     >
       <View className="flex-1 p-4 justify-between z-10">
         <View className="mb-4">
-          <Text 
+          <Text
             className="text-white text-xl font-bold leading-tight mb-1.5"
             numberOfLines={2}
           >
             {title}
           </Text>
-          <Text 
+          <Text
             className="text-[#9CA3AF] text-sm leading-snug"
             numberOfLines={2}
           >
@@ -50,31 +46,16 @@ export default function CatalogueProductCard({
               {price}
             </Text>
           </View>
-
-          <View className="flex-row items-center gap-x-2 pr-2">
-            <MaterialCommunityIcons name="calendar-blank-outline" size={18} color="#E8B83C" />
-            <Text className="text-[#D1D5DB] text-sm font-medium flex-shrink">
-              {date}
-            </Text>
-          </View>
-
-          <View className="flex-row items-center gap-x-2">
-            <MaterialCommunityIcons name="clock-outline" size={18} color="#E8B83C" />
-            <Text className="text-[#D1D5DB] text-sm font-medium">
-              {time}
-            </Text>
-          </View>
         </View>
       </View>
 
       <View className="w-[140px] bg-[#0A0A0A] relative">
-        <Image 
-          source={{ uri: imageUrl }} 
+        <Image
+          source={{ uri: imageUrl }}
           className="absolute w-full h-full"
           resizeMode="cover"
         />
       </View>
-      
     </TouchableOpacity>
   );
 }
