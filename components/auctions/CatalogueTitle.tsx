@@ -4,21 +4,19 @@ import { ImageBackground, Text, View } from "react-native";
 
 interface CatalogueTitleProps {
   title: string;
-  subtitle: string;
   imageUrl: string;
   isLive?: boolean;
 }
 
 export default function CatalogueTitle({
   title,
-  subtitle,
   imageUrl,
   isLive = false,
 }: CatalogueTitleProps) {
   return (
     <View className="w-full h-56 rounded-[24px] overflow-hidden relative border border-[#2A2B30] shadow-lg">
       <ImageBackground
-        source={{ uri: imageUrl }}
+        source={{uri: imageUrl}}
         className="w-full h-full justify-end p-5"
         resizeMode="cover"
       >
@@ -43,12 +41,6 @@ export default function CatalogueTitle({
             numberOfLines={2}
           >
             {title}
-          </Text>
-          <Text
-            className="text-[#D1D5DB] text-base font-medium tracking-wide"
-            numberOfLines={2}
-          >
-            {subtitle}
           </Text>
         </View>
       </ImageBackground>

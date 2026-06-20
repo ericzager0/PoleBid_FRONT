@@ -14,6 +14,15 @@ export type AuctionType = {
   idCatalogo: number;
   descripcion: string;
   foto: string;
+  items: [
+    {
+      idProducto: number;
+      precioBase: number;
+      descripcioncatalogo: string;
+      descripcioncompleta: string;
+      fotos: string[];
+    },
+  ];
 };
 
 export const auctionService = {

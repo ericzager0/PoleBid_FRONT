@@ -99,8 +99,6 @@ export default function ChatScreen() {
               title={product?.descripcioncatalogo || " - "}
               description={product?.descripcioncompleta || " - "}
               price={product?.preciobase ? `$${product.preciobase}` : " - "}
-              date={product?.fecha || " - "}
-              time={product?.hora || " - "}
               imageUrl={auction.foto}
               onPress={() => router.push(`/auctionStarted/catalogue/product/${product?.identificador}?isArticles=true`)}
           />

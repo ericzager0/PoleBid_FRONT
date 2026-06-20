@@ -51,7 +51,7 @@ export default function CatalogueProductCard({
 
       <View className="w-[140px] bg-[#0A0A0A] relative">
         <Image
-          source={{ uri: imageUrl }}
+          source={{uri: imageUrl}}
           className="absolute w-full h-full"
           resizeMode="cover"
         />
