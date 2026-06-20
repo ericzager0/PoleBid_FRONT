@@ -14,11 +14,15 @@ export type AuctionType = {
   idCatalogo: number;
   descripcion: string;
   foto: string;
-}
+};
 
 export const auctionService = {
   getAuctions: async () => {
     const response = await client.get("/auctions");
+    return response;
+  },
+  getAuctionById: async (id: number) => {
+    const response = await client.get(`/auctions/${id}`);
     return response;
   },
 };

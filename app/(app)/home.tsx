@@ -48,9 +48,9 @@ export default function Home() {
           <RefreshControl
             refreshing={isRefreshing}
             onRefresh={onRefresh}
-            tintColor="#E8B83C" 
-            colors={['#E8B83C']} 
-            progressBackgroundColor="#1C1C1E" 
+            tintColor="#E8B83C"
+            colors={["#E8B83C"]}
+            progressBackgroundColor="#1C1C1E"
           />
         }
       >
@@ -93,7 +93,9 @@ export default function Home() {
                 fecha={item.fecha}
                 hora={item.hora}
                 isActive={item.estado}
-                onPress={() => router.push(`/auctionStarted/${item.identificador}`)}
+                onPress={() =>
+                  router.push(`/auctionStarted/${item.identificador}`)
+                }
               />
             ))}
           </>
@@ -114,7 +116,9 @@ export default function Home() {
                 fecha={item.fecha}
                 hora={item.hora}
                 isActive={item.estado}
-                onPress={() => router.push(`/auctionStarted/${item.identificador}`)}
+                onPress={() =>
+                  router.push(`/auctionStarted/${item.identificador}`)
+                }
               />
             ))}
           </>
