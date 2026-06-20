@@ -1,3 +1,4 @@
+import { auctionService, AuctionType } from "@/api/services/auction";
 import perfilFoto from "@/assets/images/perfil.png";
 import NoAuction from "@/components/common/NoAuction";
 import SimpleModal from "@/components/common/SimpleModal";
@@ -15,7 +16,7 @@ import {
 } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { useRouter } from "expo-router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Image,
   Pressable,
@@ -32,13 +33,29 @@ export default function Home() {
   const [modalAssistVisible, setAssistModalVisible] = useState(false);
   const [modalWonVisible, setWonModalVisible] = useState(false);
   const [newProfilePhoto, setNewProfilePhoto] = useState<string | null>(null);
-
   const { user } = useAuth();
+
+  const [auctions, setAuctions] = useState<AuctionType[]>([]);
+  
+  useEffect(() => {
+    const fetchAuctions = async () => {
+      try {
+        const response = await auctionService.getAuctions();
+        setAuctions(response.data);
+        console.log("Fetched auctions: ", response.data);
+      } catch (error) {
+        console.error("Error fetching auctions: ", error);
+      }
+    };
+
+    fetchAuctions();
+  }, []);
+
 
   const isBanned = false;
   const adeudado = 15000;
 
-  const noAuction = f1AuctionsData.length === 0 || !f1AuctionsData;
+  const noAuction = auctions.length === 0 || !auctions;
 
   const activatedIsSeller = user?.isSeller;
   let countArticles = Array.isArray(user?.products) ? user!.products.length : 0;
