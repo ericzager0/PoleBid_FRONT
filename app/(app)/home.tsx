@@ -1,36 +1,41 @@
-import { auctionService } from "@/api/services/auction";
+import { auctionService, AuctionType } from "@/api/services/auction";
+import { imageBase64Render } from "@/api/utils/imageBase64Render";
 import Auction from "@/components/auctions/Auction";
 import { useRouter } from "expo-router";
-import React, { useEffect } from "react";
-import { Image, ScrollView, Text, View } from "react-native";
+import React, { useEffect, useState } from "react";
+import { Image, RefreshControl, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { f1AuctionsData } from "../data/auctions";
 
 export default function Home() {
   const router = useRouter();
 
-  // Usar este estado para mostrar las subastas obtenidas desde la API
-  const [auctions, setAuctions] = React.useState([]);
+  const [auctions, setAuctions] = useState<AuctionType[]>([]);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const fetchAuctions = async () => {
+    try {
+      const response = await auctionService.getAuctions();
+      setAuctions(response.data);
+    } catch (error) {
+      console.error("Error fetching auctions: ", error);
+    }
+  };
 
   useEffect(() => {
-    const fetchAuctions = async () => {
-      try {
-        const response = await auctionService.getAuctions();
-        setAuctions(response.data);
-        console.log("Fetched auctions: ", response.data);
-      } catch (error) {
-        console.error("Error fetching auctions: ", error);
-      }
-    };
-
     fetchAuctions();
   }, []);
 
-  const activeAuctionsData = f1AuctionsData
-    .filter((auction) => auction.live)
+  const onRefresh = async () => {
+    setIsRefreshing(true);
+    await fetchAuctions();
+    setIsRefreshing(false);
+  };
+
+  const activeAuctionsData = auctions
+    .filter((auction) => auction.estado === "abierta")
     .slice(0, 5);
-  const upcomingAuctionsData = f1AuctionsData
-    .filter((auction) => !auction.live)
+  const upcomingAuctionsData = auctions
+    .filter((auction) => auction.estado === "cerrada")
     .slice(0, 5);
 
   return (
@@ -39,6 +44,15 @@ export default function Home() {
         className="flex-1 px-4"
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 100 }}
+        refreshControl={
+          <RefreshControl
+            refreshing={isRefreshing}
+            onRefresh={onRefresh}
+            tintColor="#E8B83C" 
+            colors={['#E8B83C']} 
+            progressBackgroundColor="#1C1C1E" 
+          />
+        }
       >
         <View className="items-center justify-center pt-8 pb-10">
           <View
@@ -72,15 +86,14 @@ export default function Home() {
 
             {activeAuctionsData.map((item) => (
               <Auction
-                key={item.id}
-                categoryId={item.categoryId}
-                imageSrc={item.imageSrc}
-                title={item.title}
+                key={item.identificador}
+                categoryId={item.categoria}
+                imageSrc={imageBase64Render(item.foto)[0]}
+                title={item.descripcion}
                 fecha={item.fecha}
                 hora={item.hora}
-                owner={item.owner}
-                isActive={item.live}
-                onPress={() => router.push(`/auctionStarted/${item.id}`)}
+                isActive={item.estado}
+                onPress={() => router.push(`/auctionStarted/${item.identificador}`)}
               />
             ))}
           </>
@@ -94,15 +107,14 @@ export default function Home() {
 
             {upcomingAuctionsData.map((item) => (
               <Auction
-                key={item.id}
-                categoryId={item.categoryId}
-                imageSrc={item.imageSrc}
-                title={item.title}
+                key={item.identificador}
+                categoryId={item.categoria}
+                imageSrc={imageBase64Render(item.foto)[0]}
+                title={item.descripcion}
                 fecha={item.fecha}
                 hora={item.hora}
-                owner={item.owner}
-                isActive={item.live}
-                onPress={() => router.push(`/auctionStarted/${item.id}`)}
+                isActive={item.estado}
+                onPress={() => router.push(`/auctionStarted/${item.identificador}`)}
               />
             ))}
           </>

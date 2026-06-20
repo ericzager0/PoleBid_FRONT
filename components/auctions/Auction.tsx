@@ -9,12 +9,11 @@ const categories = [
 
 interface AuctionProps {
     categoryId: string;
-    imageSrc: string;
+    imageSrc: string | any;
     title: string;
     fecha: string;
     hora: string;
-    owner: string;
-    isActive?: boolean; 
+    isActive?: string; 
     onPress?: () => void;
 }
 
@@ -24,8 +23,7 @@ export default function Auction({
     title, 
     fecha, 
     hora, 
-    owner,
-    isActive = false, 
+    isActive = "cerrada", 
     onPress 
 }: AuctionProps) {
     const category = categories.find((c) => c.id === categoryId) || categories[0];
@@ -35,7 +33,7 @@ export default function Auction({
             onPress={onPress}
             activeOpacity={0.8} 
             className={`w-[100%] bg-[#2C2D32] rounded-[8px] p-3 flex-row mb-4 ${
-              isActive ? 'border border-[#E8B83C]' : ''
+              isActive === "abierta" ? 'border border-[#E8B83C]' : ''
             }`}
         >
             <View className="relative w-32 h-20 rounded-[8px] overflow-hidden">
@@ -60,7 +58,7 @@ export default function Auction({
                         {title}
                     </Text>
                     
-                    {isActive ? (
+                    {isActive === "abierta" ? (
                         <View className="flex-row items-center mt-1">
                             <View className="w-2 h-2 bg-red-500 rounded-full mr-1.5" />
                             <Text className="text-red-500 text-sm font-bold tracking-widest">
@@ -73,9 +71,6 @@ export default function Auction({
                         </Text>
                     )}
                 </View>
-                <Text className="text-[#E8B83C] text-sm font-medium mt-2">
-                    {owner}
-                </Text>
             </View>
 
         </TouchableOpacity>

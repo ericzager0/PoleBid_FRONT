@@ -1,20 +1,31 @@
-
-export const imageBase64Render = (product: any) => {
+export const imageBase64Render = (productData: any) => {
   let imagesToDisplay: string[] = [];
-  if (product.fotos && Array.isArray(product.fotos) && product.fotos.length > 0) {
-    imagesToDisplay = product.fotos.map((item: any) => {
-      const base64String = item.foto || '';
-      return base64String.startsWith('data:image') 
-        ? base64String 
-        : `data:image/jpeg;base64,${base64String}`;
-    });
-  } else if (product.fotos && !Array.isArray(product.fotos) && product.fotos.foto) {
-    const base64String = product.fotos.foto;
-    imagesToDisplay = [
-      base64String.startsWith('data:image') 
-        ? base64String 
-        : `data:image/jpeg;base64,${base64String}`
-    ];
+  
+  const formatImage = (base64String: any) => {
+    if (!base64String || typeof base64String !== 'string') return null;
+    if (base64String.startsWith('XHg')) return null;
+    
+    return base64String.startsWith('data:image') 
+      ? base64String 
+      : `data:image/jpeg;base64,${base64String}`;
+  };
+
+  if (typeof productData === 'string') {
+    const formatted = formatImage(productData);
+    if (formatted) imagesToDisplay.push(formatted);
+  }
+  else if (productData?.foto && typeof productData.foto === 'string') {
+    const formatted = formatImage(productData.foto);
+    if (formatted) imagesToDisplay.push(formatted);
+  }
+  else if (productData?.fotos && Array.isArray(productData.fotos)) {
+    imagesToDisplay = productData.fotos
+      .map((item: any) => formatImage(item.foto || item))
+      .filter(Boolean) as string[];
+  }
+  else if (productData?.fotos && !Array.isArray(productData.fotos) && productData.fotos.foto) {
+    const formatted = formatImage(productData.fotos.foto);
+    if (formatted) imagesToDisplay.push(formatted);
   }
 
   if (imagesToDisplay.length === 0) {
