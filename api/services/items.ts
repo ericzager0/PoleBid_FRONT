@@ -1,6 +1,9 @@
 import client from "../client";
 
 export const itemsService = {
+  getItem: (id: number) => {
+    return client.get(`/me/items/${id}`);
+  },
   updateItem: (id: number, body: { estado: string }) => {
     return client.patch(`/me/items/${id}`, body);
   },

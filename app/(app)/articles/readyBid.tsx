@@ -1,24 +1,38 @@
-import { Ionicons } from "@expo/vector-icons";
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import { useLocalSearchParams, useRouter } from "expo-router";
-import React from "react";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-
-import ImageCarousel from "@/components/common/ImageCarousel";
-
+import { itemsService } from "@/api/services/items";
 import { imageBase64Render } from "@/api/utils/imageBase64Render";
 import { f1AuctionsData } from "@/app/data/auctions";
 import ConfirmButton from "@/components/articles/ConfirmButton";
 import BriefAuctionDetails from "@/components/auctions/BriefAuctionDetails";
 import CommissionRow from "@/components/auctions/CommissionRow";
+import ImageCarousel from "@/components/common/ImageCarousel";
 import { useAuth } from "@/context/AuthContext";
-
-import { itemsService } from "@/api/services/items";
+import { Ionicons } from "@expo/vector-icons";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import React, { useEffect } from "react";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ReadyBid() {
   const router = useRouter();
   const { id } = useLocalSearchParams();
+
+  const [item, setItem] = React.useState(null);
+
+  useEffect(() => {
+    const fetchItem = async () => {
+      if (id) {
+        try {
+          const response = await itemsService.getItem(Number(id));
+          setItem(response.data);
+        } catch (error) {
+          console.error("Error fetching item:", error);
+        }
+      }
+    };
+
+    fetchItem();
+  }, [id]);
 
   const itemId = Number(id);
 

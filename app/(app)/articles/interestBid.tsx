@@ -1,30 +1,36 @@
-import { imageBase64Render } from '@/api/utils/imageBase64Render';
-import { Ionicons } from '@expo/vector-icons';
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import React, { useState } from 'react';
-import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { imageBase64Render } from "@/api/utils/imageBase64Render";
+import { Ionicons } from "@expo/vector-icons";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import React, { useState } from "react";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-import Button from '@/components/common/Button';
-import ImageCarousel from '@/components/common/ImageCarousel';
+import Button from "@/components/common/Button";
+import ImageCarousel from "@/components/common/ImageCarousel";
 
-import ConfirmModal from '@/components/common/ConfirmModal';
-import { useAuth } from '@/context/AuthContext';
+import ConfirmModal from "@/components/common/ConfirmModal";
+import { useAuth } from "@/context/AuthContext";
 
 export default function InterestBid() {
   const { id } = useLocalSearchParams();
   const router = useRouter();
   const [modal, setModal] = useState(false);
-  const {user} = useAuth();
+  const { user } = useAuth();
 
- const productsList = Array.isArray(user?.products) ? user.products : (user?.products ? [user.products] : []);
-  const product = productsList.find((item) => String(item.identificador) === String(id));
-  
+  const productsList = Array.isArray(user?.products)
+    ? user.products
+    : user?.products
+      ? [user.products]
+      : [];
+  const product = productsList.find(
+    (item) => String(item.identificador) === String(id),
+  );
+
   if (!product) {
     return (
-    <SafeAreaView className="flex-1 bg-[#14191C] items-center justify-center">
-      <Text className="text-white">Producto no encontrado</Text>
-    </SafeAreaView>
+      <SafeAreaView className="flex-1 bg-[#14191C] items-center justify-center">
+        <Text className="text-white">Producto no encontrado</Text>
+      </SafeAreaView>
     );
   }
 
@@ -61,23 +67,26 @@ export default function InterestBid() {
             Programar envío
           </Text>
           <Text className="text-[#9CA3AF] text-lg leading-6 pr-4">
-            La empresa está interesada en subastar tu artículo. Deberás programar un envío para que podamos inspeccionarlo y tasarlo.
+            La empresa está interesada en subastar tu artículo. Deberás
+            programar un envío para que podamos inspeccionarlo y tasarlo.
           </Text>
         </View>
 
         <View className="items-center justify-center gap-4 mb-10">
-         <Button
-            label="Programar envío" 
-            onPress={() => router.push({
-              pathname: '/articles/schedulePickup',
-              params: { id: product.identificador }
-            })} 
+          <Button
+            label="Programar envío"
+            onPress={() =>
+              router.push({
+                pathname: "/articles/schedulePickup",
+                params: { id: product.identificador },
+              })
+            }
           />
         </View>
       </ScrollView>
-      
-    {/* Modal */}
-    <ConfirmModal
+
+      {/* Modal */}
+      <ConfirmModal
         visible={modal}
         onClose={() => setModal(false)}
         title="Salir sin guardar"
@@ -85,11 +94,11 @@ export default function InterestBid() {
         confirmText="Salir"
         cancelText="Cancelar"
         onConfirm={() => {
-        setModal(false);
-            router.push("/(app)/articles/myArticles");
+          setModal(false);
+          router.push("/(app)/articles/myArticles");
         }}
         onCancel={() => setModal(false)}
-    />
+      />
     </SafeAreaView>
   );
 }
