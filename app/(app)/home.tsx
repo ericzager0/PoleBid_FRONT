@@ -1,6 +1,7 @@
+import { auctionService } from "@/api/services/auction";
 import Auction from "@/components/auctions/Auction";
 import { useRouter } from "expo-router";
-import React from "react";
+import React, { useEffect } from "react";
 import { Image, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { f1AuctionsData } from "../data/auctions";
@@ -8,8 +9,29 @@ import { f1AuctionsData } from "../data/auctions";
 export default function Home() {
   const router = useRouter();
 
-  const activeAuctionsData = f1AuctionsData.filter(auction => auction.live).slice(0, 5);
-  const upcomingAuctionsData = f1AuctionsData.filter(auction => !auction.live).slice(0, 5);
+  // Usar este estado para mostrar las subastas obtenidas desde la API
+  const [auctions, setAuctions] = React.useState([]);
+
+  useEffect(() => {
+    const fetchAuctions = async () => {
+      try {
+        const response = await auctionService.getAuctions();
+        setAuctions(response.data);
+        console.log("Fetched auctions: ", response.data);
+      } catch (error) {
+        console.error("Error fetching auctions: ", error);
+      }
+    };
+
+    fetchAuctions();
+  }, []);
+
+  const activeAuctionsData = f1AuctionsData
+    .filter((auction) => auction.live)
+    .slice(0, 5);
+  const upcomingAuctionsData = f1AuctionsData
+    .filter((auction) => !auction.live)
+    .slice(0, 5);
 
   return (
     <SafeAreaView className="flex-1 bg-[#14191C]">
@@ -22,11 +44,11 @@ export default function Home() {
           <View
             className="items-center justify-center rounded-full"
             style={{
-              shadowColor: '#E8B83C', 
+              shadowColor: "#E8B83C",
               shadowOffset: { width: 0, height: 0 },
               shadowOpacity: 0.45,
               shadowRadius: 35,
-              elevation: 40, 
+              elevation: 40,
             }}
           >
             <Image
@@ -40,7 +62,6 @@ export default function Home() {
             ¿Tenés lo que hay que tener{"\n"}
             <Text className="text-[#E8B83C] text-sm">para quedar primero?</Text>
           </Text>
-          
         </View>
 
         {activeAuctionsData.length > 0 && (
@@ -86,7 +107,6 @@ export default function Home() {
             ))}
           </>
         )}
-
       </ScrollView>
     </SafeAreaView>
   );
