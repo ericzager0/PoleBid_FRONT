@@ -6,7 +6,6 @@ import SearchBar from "@/components/home/SearchBar";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
-// 1. Agregamos ActivityIndicator a los imports
 import { ActivityIndicator, FlatList, RefreshControl, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -15,7 +14,6 @@ export default function Home() {
   const [filtroActivo, setFiltroActivo] = useState("Todas");
   const [isRefreshing, setIsRefreshing] = useState(false);
   
-  // 2. NUEVO: Estado para controlar la carga inicial
   const [isLoading, setIsLoading] = useState(true); 
   
   const [auctions, setAuctions] = useState<AuctionType[]>([]);
@@ -30,7 +28,6 @@ export default function Home() {
     } catch (error) {
       console.error("Error fetching auctions: ", error);
     } finally {
-      // 3. Apagamos el loading cuando termina la petición (sea éxito o error)
       setIsLoading(false);
     }
   };
@@ -75,7 +72,6 @@ export default function Home() {
     setIsRefreshing(false);
   };
 
-  // 4. Modificamos el componente vacío para que sea inteligente
   const renderEmptyComponent = () => {
     if (isLoading) {
       return (

@@ -2,11 +2,12 @@ import React, { useRef } from 'react';
 import { ScrollView, Text, View } from 'react-native';
 
 export interface BidEvent {
-  id: string;        
-  timestamp: string;  
-  idCategory: number; 
-  name: string;      
-  amount: number;     
+  identificador: number;        
+  created_at: string;  
+  asistente: number; 
+  ganador: string;      
+  importe: number;
+  categoria: string;     
 }
 
 interface BidHistoryLogProps {
@@ -17,12 +18,12 @@ interface BidHistoryLogProps {
 export default function BidHistoryLog({ bids, fullHeight = false }: BidHistoryLogProps) {
   const scrollViewRef = useRef<ScrollView>(null);
 
-  const getCategoryData = (idCategory: number) => {
+  const getCategoryData = (idCategory: string) => {
     switch (idCategory) {
-      case 1: return { name: "Silver", color: "#B6BABD" };
-      case 2: return { name: "Gold", color: "#E8B83C" };
-      case 3: return { name: "Platinum", color: "#B8C1E8" };
-      default: return { name: "Normal", color: "#FFFFFF" };
+      case "Plata": return { name: "Silver", color: "#B6BABD" };
+      case "Oro": return { name: "Gold", color: "#E8B83C" };
+      case "Platino": return { name: "Platinum", color: "#B8C1E8" };
+      default: return { name: "Comun", color: "#FFFFFF" };
     }
   };
 
@@ -44,11 +45,11 @@ export default function BidHistoryLog({ bids, fullHeight = false }: BidHistoryLo
         contentContainerStyle={{ paddingBottom: 16 }}
       >
         {bids.map((bid) => {
-          const cat = getCategoryData(bid.idCategory);
+          const cat = getCategoryData(bid.categoria);
           
           return (
-            <Text key={bid.id} className="text-white text-base font-bold mb-3 tracking-wide">
-              {bid.timestamp} - <Text style={{ color: cat.color }}>[{cat.name}]</Text> {bid.name}: {formatMoney(bid.amount)}
+            <Text key={bid.identificador} className="text-white text-base font-bold mb-3 tracking-wide">
+              {bid.created_at} - <Text style={{ color: cat.color }}>[{cat.name}]</Text> {bid.ganador}: {formatMoney(bid.importe)}
             </Text>
           );
         })}

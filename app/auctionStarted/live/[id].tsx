@@ -13,9 +13,10 @@ import ImageCarousel from "@/components/common/ImageCarousel";
 import NoAuction from "@/components/common/NoAuction";
 import RoundedButton from "@/components/common/RoundedButton";
 import LiveButton from "@/components/home/LiveButton";
-import BidHistoryLog, { BidEvent } from "@/components/profile/BidHistoryLog";
+import BidHistoryLog from "@/components/profile/BidHistoryLog";
 
 import { auctionService } from "@/api/services/auction";
+import { ItemType } from "@/api/services/items";
 import { useAuth } from "@/context/AuthContext";
 import { f1AuctionsData } from "../../data/auctions";
 
@@ -28,7 +29,7 @@ export default function LiveAuctionScreen() {
   const [isLogged, setLogged] = useState(user ? true : false);
 
   const auction = f1AuctionsData.find((item) => item.id === id);
-  const [currentItem, setCurrentItem] = useState({});
+  const [currentItem, setCurrentItem] = useState<ItemType | null>(null);
 
   const fetchCurrentItem = async () => {
     try {
@@ -44,98 +45,12 @@ export default function LiveAuctionScreen() {
     fetchCurrentItem();
   }, [id]);
 
-  // Mocks de pujas para simular la actividad en i ? vivo
-  const [bids, setBids] = useState<BidEvent[]>([
-    {
-      id: "1",
-      timestamp: "14:30:55",
-      idCategory: 2,
-      name: "Martinqq",
-      amount: 1000000,
-    },
-    {
-      id: "2",
-      timestamp: "14:31:20",
-      idCategory: 3,
-      name: "Mateo",
-      amount: 1150000,
-    },
-    {
-      id: "3",
-      timestamp: "14:31:50",
-      idCategory: 1,
-      name: "Eric",
-      amount: 1200000,
-    },
-    {
-      id: "4",
-      timestamp: "14:32:15",
-      idCategory: 2,
-      name: "Octavio",
-      amount: 1250000,
-    },
-    {
-      id: "5",
-      timestamp: "14:34:15",
-      idCategory: 3,
-      name: "Lisandro",
-      amount: 1250000,
-    },
-    {
-      id: "6",
-      timestamp: "14:35:15",
-      idCategory: 3,
-      name: "Messi",
-      amount: 1250000,
-    },
-    {
-      id: "7",
-      timestamp: "14:38:15",
-      idCategory: 2,
-      name: "Buendía",
-      amount: 1250000,
-    },
-    {
-      id: "8",
-      timestamp: "14:42:15",
-      idCategory: 1,
-      name: "Paz",
-      amount: 1250000,
-    },
-    {
-      id: "9",
-      timestamp: "14:42:15",
-      idCategory: 1,
-      name: "Guilano",
-      amount: 1250000,
-    },
-    {
-      id: "10",
-      timestamp: "14:42:15",
-      idCategory: 1,
-      name: "Paredes",
-      amount: 1250000,
-    },
-    {
-      id: "11",
-      timestamp: "14:42:15",
-      idCategory: 2,
-      name: "De Paul",
-      amount: 1250000,
-    },
-    {
-      id: "12",
-      timestamp: "14:42:15",
-      idCategory: 3,
-      name: "Aranda",
-      amount: 1250000,
-    },
-  ]);
+  const bids = currentItem?.pujos ? [currentItem.pujos] : [];
 
   if (!auction) {
     return (
       <SafeAreaView className="flex-1 bg-[#14191C] items-center justify-center">
-        <NoAuction />
+        <NoAuction title="Subasta no encontrada" text="La subasta que buscas no existe o ya ha finalizado." />
       </SafeAreaView>
     );
   }

@@ -21,6 +21,14 @@ export type ItemType = {
   fotos: {
     foto: string;
   };
+  pujos: {
+    identificador: number;
+    created_at: string;
+    asistente: number;
+    importe: number;
+    ganador: string;
+    categoria: string;
+  }
 };
 
 export const itemsService = {
