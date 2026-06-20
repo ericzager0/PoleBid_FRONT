@@ -34,4 +34,15 @@ export const auctionService = {
     const response = await client.get(`/auctions/${id}`);
     return response;
   },
+  placeBid: async (amount: number, auctionId: number, itemId: number) => {
+    const response = await client.post(
+      `/auctions/${auctionId}/items/${itemId}/bids`,
+      { amount },
+    );
+    return response;
+  },
+  getCurrentItem: async (auctionId: number) => {
+    const response = await client.get(`/auctions/${auctionId}/current-item`);
+    return response;
+  },
 };
