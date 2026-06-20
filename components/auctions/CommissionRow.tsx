@@ -2,7 +2,7 @@ import React from 'react';
 import { Text, View } from 'react-native';
 
 interface CommissionRowProps {
-  percentage: string | number; 
+  percentage: string | number | null; 
 }
 
 export default function CommissionRow({ percentage }: CommissionRowProps) {

@@ -1,10 +1,12 @@
 import { imageBase64Render } from '@/api/utils/imageBase64Render';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { auctionService, AuctionType } from '@/api/services/auction';
+import { itemsService, ItemType } from '@/api/services/items';
 import CommissionRow from '@/components/auctions/CommissionRow';
 import ProductDetailCard from '@/components/auctions/ProductDetailCard';
 import Button from '@/components/common/Button';
@@ -19,7 +21,39 @@ export default function AuctionItemScreen() {
   const isFromArticles = isArticles === 'true';
 
   const productsList = Array.isArray(user?.products) ? user.products : (user?.products ? [user.products] : []);
-  const product = productsList.find((item) => String(item.identificador) === String(id));
+  const baseProduct = productsList.find((item) => String(item.identificador) === String(id));
+
+  const [extraProduct, setExtraProduct] = useState<ItemType | null>(null);
+  const [auctions, setAuctions] = useState<AuctionType[]>([]);
+    
+  useEffect(() => {
+    const fetchAuctions = async () => {
+      try {
+        const response = await auctionService.getAuctions();
+        setAuctions(response.data);
+      } catch (error) {
+        console.error("Error fetching auctions: ", error);
+      }
+    };
+    fetchAuctions();
+  }, []);
+
+  useEffect(() => {
+    const fetchproduct = async () => {
+      if (id) {
+        try {
+          const response = await itemsService.getItem(Number(id));
+          setExtraProduct(response.data);
+        } catch (error) {
+          console.error("Error fetching product:", error);
+        }
+      }
+    };
+
+    fetchproduct();
+  }, [id]);
+    
+  const product = (baseProduct && extraProduct) ? { ...baseProduct, ...extraProduct } : baseProduct;
   
   if (!product) {
     return (

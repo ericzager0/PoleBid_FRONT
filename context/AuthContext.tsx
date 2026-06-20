@@ -31,9 +31,6 @@ type User = {
     revisor: number;
     duenio: number;
     seguro: string | null;
-    precio: number | undefined | null;
-    comision: number | undefined | null;
-    hora: string | undefined | null;
     fotos: {
       id: number;
       foto: string;

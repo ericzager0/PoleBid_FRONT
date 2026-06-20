@@ -5,33 +5,19 @@ import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { auctionService, AuctionType } from '@/api/services/auction';
 import { itemsService, ItemType } from '@/api/services/items';
+import { imageBase64Render } from '@/api/utils/imageBase64Render';
 import ViewBidButton from '@/components/articles/ViewBidButton';
 import CommissionRow from '@/components/auctions/CommissionRow';
 import ChatInput from '@/components/chat/ChatInput';
 import ImageCarousel from '@/components/common/ImageCarousel';
 import KeyboardWrapper from '@/components/common/KeyboardWrapper';
-import NoAuction from '@/components/common/NoAuction';
 
 export default function ScheduledBid() {
   const router = useRouter();
   const { id } = useLocalSearchParams();
 
   const [product, setproduct] = useState<ItemType | null>(null);
-  const [auctions, setAuctions] = useState<AuctionType[]>([]);
-  
-  useEffect(() => {
-    const fetchAuctions = async () => {
-      try {
-        const response = await auctionService.getAuctions();
-        setAuctions(response.data);
-      } catch (error) {
-        console.error("Error fetching auctions: ", error);
-      }
-    };
-    fetchAuctions();
-  }, []);
 
   useEffect(() => {
     const fetchproduct = async () => {
@@ -47,12 +33,13 @@ export default function ScheduledBid() {
 
     fetchproduct();
   }, [id]);
-  
-  const productId = Number(id);
 
-  const auction = auctions.find((item) => Number(item.identificador) === productId);
-  if(!auction) {
-    return <NoAuction />;
+  if(!product) {
+    return (
+      <SafeAreaView className="flex-1 bg-[#14191C] items-center justify-center">
+        <Text className="text-white">Producto no encontrado</Text>
+      </SafeAreaView>
+    );
   }
 
   //Mock data
@@ -88,26 +75,26 @@ export default function ScheduledBid() {
 
           <View className="items-center mb-6">
             <Text className="text-white text-xl font-medium mb-1 text-center">
-              {auction.fecha}
+              {product?.fecha}
             </Text>
             <Text className="text-[#D1D5DB] text-lg text-center">
-              {auction.descripcion}
+              {product?.descripcion}
             </Text>
           </View>
 
           <View className="mb-6 h-64 w-full rounded-2xl overflow-hidden">
-            <ImageCarousel images={Array.isArray(auction.foto) ? auction.foto : [auction.foto]} />
+            <ImageCarousel images={imageBase64Render(product)} />
           </View>
 
           <View className="items-center justify-center gap-4 mb-10">
             <ViewBidButton
               label="Ver subasta" 
               className="self-center"
-              onPress={() => router.push(`/auctionStarted/${auction.identificador}`)}
+              onPress={() => router.push(`/auctionStarted/${product.idSubasta}`)}
             />
           
             <View className="w-full mt-4 mb-8">
-                <CommissionRow percentage={10}/>
+                <CommissionRow percentage={product?.comision ? product.comision * 100 : 4} />
             </View>
 
             <Text className="w-full text-left text-[#D1D5DB] text-base font-semibold mb-3">
@@ -153,7 +140,7 @@ export default function ScheduledBid() {
             
             <ChatInput onSend={(message) => router.push({
                   pathname: '/articles/chat',
-                  params: { text: message, id: auction.identificador }
+                  params: { text: message, id: product.identificador }
                 })} />
           </View>
         </ScrollView>

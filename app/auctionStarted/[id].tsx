@@ -1,3 +1,5 @@
+import { auctionService, AuctionType } from '@/api/services/auction';
+import { imageBase64Render } from '@/api/utils/imageBase64Render';
 import AuctionDetailCard from '@/components/auctions/AuctionDetailCard';
 import AlertModal from '@/components/common/AlertModal';
 import Button from '@/components/common/Button';
@@ -5,17 +7,30 @@ import NoAuction from '@/components/common/NoAuction';
 import { useAuth } from '@/context/AuthContext';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { f1AuctionsData } from "../data/auctions";
 
 export default function AuctionDetailScreen() {
   const { id } = useLocalSearchParams();
+  console.log(id);
   const router = useRouter();
   const { user } = useAuth();
 
   const [alertType, setAlertType] = useState<'none' | 'category' | 'full'>('none');
+  const [auctions, setAuctions] = useState<AuctionType[]>([]);
+  
+  useEffect(() => {
+    const fetchAuctions = async () => {
+      try {
+        const response = await auctionService.getAuctions();
+        setAuctions(response.data);
+      } catch (error) {
+        console.error("Error fetching auctions: ", error);
+      }
+    };
+    fetchAuctions();
+  }, []);
 
   const [isLogged] = useState(user ? true : false);
 
@@ -25,8 +40,8 @@ export default function AuctionDetailScreen() {
   }
   */}
 
-  const auction = f1AuctionsData.find((item) => item.id === id);
-  if (!auction) {
+  const auction = auctions.find((item) => item.identificador === Number(id));
+  if (!auction || auctions.length === 0) {
     return (
       <SafeAreaView className="flex-1 bg-[#14191C] items-center justify-center">
         <NoAuction />
@@ -35,10 +50,10 @@ export default function AuctionDetailScreen() {
   }
 
   const handleActionButtonLogic = () => {
-    if (auction.live) {
-      router.push(`/auctionStarted/live/${auction.id}?readonly=true`);
+    if (auction.estado == "abierta") {
+      router.push(`/auctionStarted/live/${auction.identificador}?readonly=true`);
     } else{
-      router.push(`/auctionStarted/catalogue/${auction.id}`);
+      router.push(`/auctionStarted/catalogue/${auction.identificador}`);
     }
   };
 
@@ -56,30 +71,30 @@ export default function AuctionDetailScreen() {
       <ScrollView>
         <View className="flex-1 items-center gap-y-4 py-5">
           <Text className="font-bold text-[32px] text-white text-center px-4">
-            {auction.title}
+            {auction.descripcion}
           </Text>
           <AuctionDetailCard
           fecha={auction.fecha}
-          estado={auction.state}
-          descripcion={auction.description}
-          images={auction.images}
+          estado={auction.estado}
+          descripcion={auction.descripcion}
+          images={imageBase64Render(auction)}
         />
 
         <View className="w-full gap-y-3 px-4 mt-2">
-          {(isLogged && auction.live) && 
+          {(isLogged && auction.estado === "abierta") && 
           <Button
             label="Ingresar a la subasta"
             onPress={() => {
-              if (auction.categoryId !== user?.categoria) {
+              if (auction.categoria !== user?.categoria) {
                 setAlertType('category');
               } else {
-                router.push(`/auctionStarted/live/${auction.id}`);
+                router.push(`/auctionStarted/live/${auction.identificador}`);
               }
             }}
             variant='primary'
           />}
           <Button
-            label={(isLogged && auction.live) ? "Solo vengo a ver" : "Ver catálogo"}
+            label={(isLogged && auction.estado === "abierta") ? "Solo vengo a ver" : "Ver catálogo"}
             onPress={handleActionButtonLogic}
             variant='secondary'
           />
