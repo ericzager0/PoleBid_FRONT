@@ -41,8 +41,10 @@ export const auctionService = {
     );
     return response;
   },
-  getCurrentItem: async (auctionId: number) => {
-    const response = await client.get(`/auctions/${auctionId}/current-item`);
+  getCurrentItem: async (auctionId: number, bidsOnly: boolean) => {
+    const response = await client.get(`/auctions/${auctionId}/current-item`, {
+      params: { bidsonly: bidsOnly },
+    });
     return response;
   },
 };

@@ -28,7 +28,8 @@ export type ItemType = {
     importe: number;
     ganador: string;
     categoria: string;
-  }
+  };
+  itemId: number;
 };
 
 export const itemsService = {

@@ -1,9 +1,5 @@
-import { Ionicons } from "@expo/vector-icons";
-import { useLocalSearchParams, useRouter } from "expo-router";
-import React, { useEffect, useState } from "react";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-
+import { auctionService } from "@/api/services/auction";
+import { ItemType } from "@/api/services/items";
 import AuctionDisplayCard from "@/components/auctions/AuctionDisplayCard";
 import VictoryModal from "@/components/auctions/VictoryModal";
 import BidInput from "@/components/common/BidInput";
@@ -14,10 +10,12 @@ import NoAuction from "@/components/common/NoAuction";
 import RoundedButton from "@/components/common/RoundedButton";
 import LiveButton from "@/components/home/LiveButton";
 import BidHistoryLog from "@/components/profile/BidHistoryLog";
-
-import { auctionService } from "@/api/services/auction";
-import { ItemType } from "@/api/services/items";
 import { useAuth } from "@/context/AuthContext";
+import { Ionicons } from "@expo/vector-icons";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import React, { useEffect, useState } from "react";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { f1AuctionsData } from "../../data/auctions";
 
 export default function LiveAuctionScreen() {
@@ -26,15 +24,28 @@ export default function LiveAuctionScreen() {
   const isReadOnly = readonly === "true";
   const [won, setWon] = useState(false);
   const { user } = useAuth();
-  const [isLogged, setLogged] = useState(user ? true : false);
-
+  const isLogged = !!user;
   const auction = f1AuctionsData.find((item) => item.id === id);
   const [currentItem, setCurrentItem] = useState<ItemType | null>(null);
+  const [bidValue, setBidValue] = useState<number>(0);
 
-  const fetchCurrentItem = async () => {
+  const handleBidSubmit = async () => {
+    if (!currentItem) return;
+
+    console.log("todos los valores", bidValue, id, currentItem.itemId);
+
+    await auctionService.placeBid(bidValue, Number(id), currentItem.itemId);
+
+    setBidValue(0);
+  };
+
+  const fetchCurrentItem = async (bidsOnly: boolean) => {
     try {
-      const response = await auctionService.getCurrentItem(Number(id));
-      console.log("Current item data: ", response.data);
+      const response = await auctionService.getCurrentItem(
+        Number(id),
+        bidsOnly,
+      );
+
       setCurrentItem(response.data);
     } catch (error) {
       console.error("Error fetching current item: ", error);
@@ -42,15 +53,24 @@ export default function LiveAuctionScreen() {
   };
 
   useEffect(() => {
-    fetchCurrentItem();
+    fetchCurrentItem(false);
+
+    const intervalId = setInterval(() => {
+      fetchCurrentItem(true);
+    }, 1000);
+
+    return () => clearInterval(intervalId);
   }, [id]);
 
-  const bids = currentItem?.pujos ? [currentItem.pujos] : [];
+  const bids = currentItem?.pujos ?? [];
 
   if (!auction) {
     return (
       <SafeAreaView className="flex-1 bg-[#14191C] items-center justify-center">
-        <NoAuction title="Subasta no encontrada" text="La subasta que buscas no existe o ya ha finalizado." />
+        <NoAuction
+          title="Subasta no encontrada"
+          text="La subasta que buscas no existe o ya ha finalizado."
+        />
       </SafeAreaView>
     );
   }
@@ -142,6 +162,8 @@ export default function LiveAuctionScreen() {
 
         <View className="mt-6">
           <BidInput
+            value={bidValue}
+            setValue={setBidValue}
             min={1262500}
             max={1500000}
             // Si el modo es readonly (Solo a ver), bloqueamos el input
@@ -152,7 +174,7 @@ export default function LiveAuctionScreen() {
               label="Pujar"
               // Si es readonly, usamos la variante blocked
               variant={isReadOnly ? "blocked" : "primary"}
-              onPress={() => console.log("Puja enviada")}
+              onPress={handleBidSubmit}
             />
           </View>
         </View>
