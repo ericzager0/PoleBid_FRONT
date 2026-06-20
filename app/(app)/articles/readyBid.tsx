@@ -120,7 +120,7 @@ export default function ReadyBid() {
           </Text>
 
           <View className="w-full mt-4 mb-8">
-            <CommissionRow percentage={10} />
+            <CommissionRow percentage={(product.comision) * 100} />
           </View>
 
           <View className="flex-row items-center justify-between gap-x-4 w-full">
