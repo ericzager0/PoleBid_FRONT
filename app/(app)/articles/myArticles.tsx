@@ -25,7 +25,6 @@ export default function MyArticles() {
   const [mapModalVisible, setMapModalVisible] = useState(false);
 
   const constoEnvio = 7900;
-  
   const [modalData, setModalData] = useState<MapModalConfig | null>(null);
   
   const handleOpenModal = (data: MapModalConfig) => {

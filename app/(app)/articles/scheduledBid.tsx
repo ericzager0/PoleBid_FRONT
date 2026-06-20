@@ -1,23 +1,56 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { auctionService, AuctionType } from '@/api/services/auction';
+import { itemsService, ItemType } from '@/api/services/items';
 import ViewBidButton from '@/components/articles/ViewBidButton';
 import CommissionRow from '@/components/auctions/CommissionRow';
 import ChatInput from '@/components/chat/ChatInput';
 import ImageCarousel from '@/components/common/ImageCarousel';
 import KeyboardWrapper from '@/components/common/KeyboardWrapper';
 import NoAuction from '@/components/common/NoAuction';
-import { f1AuctionsData } from "../../data/auctions";
 
 export default function ScheduledBid() {
   const router = useRouter();
   const { id } = useLocalSearchParams();
 
-  const auction = f1AuctionsData.find((item) => item.id === id);
+  const [product, setproduct] = useState<ItemType | null>(null);
+  const [auctions, setAuctions] = useState<AuctionType[]>([]);
+  
+  useEffect(() => {
+    const fetchAuctions = async () => {
+      try {
+        const response = await auctionService.getAuctions();
+        setAuctions(response.data);
+      } catch (error) {
+        console.error("Error fetching auctions: ", error);
+      }
+    };
+    fetchAuctions();
+  }, []);
+
+  useEffect(() => {
+    const fetchproduct = async () => {
+      if (id) {
+        try {
+          const response = await itemsService.getItem(Number(id));
+          setproduct(response.data);
+        } catch (error) {
+          console.error("Error fetching product:", error);
+        }
+      }
+    };
+
+    fetchproduct();
+  }, [id]);
+  
+  const productId = Number(id);
+
+  const auction = auctions.find((item) => Number(item.identificador) === productId);
   if(!auction) {
     return <NoAuction />;
   }
@@ -58,19 +91,19 @@ export default function ScheduledBid() {
               {auction.fecha}
             </Text>
             <Text className="text-[#D1D5DB] text-lg text-center">
-              {auction.title}
+              {auction.descripcion}
             </Text>
           </View>
 
           <View className="mb-6 h-64 w-full rounded-2xl overflow-hidden">
-            <ImageCarousel images={auction.images || []} />
+            <ImageCarousel images={Array.isArray(auction.foto) ? auction.foto : [auction.foto]} />
           </View>
 
           <View className="items-center justify-center gap-4 mb-10">
             <ViewBidButton
               label="Ver subasta" 
               className="self-center"
-              onPress={() => router.push(`/auctionStarted/${auction.id}`)}
+              onPress={() => router.push(`/auctionStarted/${auction.identificador}`)}
             />
           
             <View className="w-full mt-4 mb-8">
@@ -120,7 +153,7 @@ export default function ScheduledBid() {
             
             <ChatInput onSend={(message) => router.push({
                   pathname: '/articles/chat',
-                  params: { text: message, id: auction.id }
+                  params: { text: message, id: auction.identificador }
                 })} />
           </View>
         </ScrollView>

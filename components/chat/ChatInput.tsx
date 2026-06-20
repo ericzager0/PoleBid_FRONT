@@ -44,7 +44,6 @@ export default function ChatInput({ onSend }: ChatInputProps) {
           style={{ marginLeft: 3 }} 
         />
       </TouchableOpacity>
-      
     </View>
   );
 }

@@ -1,50 +1,54 @@
-import { itemsService } from "@/api/services/items";
+import { auctionService, AuctionType } from "@/api/services/auction";
+import { itemsService, ItemType } from "@/api/services/items";
 import { imageBase64Render } from "@/api/utils/imageBase64Render";
-import { f1AuctionsData } from "@/app/data/auctions";
 import ConfirmButton from "@/components/articles/ConfirmButton";
 import BriefAuctionDetails from "@/components/auctions/BriefAuctionDetails";
 import CommissionRow from "@/components/auctions/CommissionRow";
 import ImageCarousel from "@/components/common/ImageCarousel";
-import { useAuth } from "@/context/AuthContext";
 import { Ionicons } from "@expo/vector-icons";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useAuth } from "../../../context/AuthContext";
 
 export default function ReadyBid() {
   const router = useRouter();
   const { id } = useLocalSearchParams();
+  const { getMe } = useAuth();
 
-  const [item, setItem] = React.useState(null);
+  const [product, setproduct] = useState<ItemType | null>(null);
+  const [auctions, setAuctions] = useState<AuctionType[]>([]);
+  
+  useEffect(() => {
+    const fetchAuctions = async () => {
+      try {
+        const response = await auctionService.getAuctions();
+        setAuctions(response.data);
+      } catch (error) {
+        console.error("Error fetching auctions: ", error);
+      }
+    };
+    fetchAuctions();
+  }, []);
 
   useEffect(() => {
-    const fetchItem = async () => {
+    const fetchproduct = async () => {
       if (id) {
         try {
           const response = await itemsService.getItem(Number(id));
-          setItem(response.data);
+          setproduct(response.data);
         } catch (error) {
-          console.error("Error fetching item:", error);
+          console.error("Error fetching product:", error);
         }
       }
     };
 
-    fetchItem();
+    fetchproduct();
   }, [id]);
 
-  const itemId = Number(id);
-
-  const { user, getMe } = useAuth();
-  const productsList = Array.isArray(user?.products)
-    ? user.products
-    : user?.products
-      ? [user.products]
-      : [];
-  const product = productsList.find(
-    (item) => String(item.identificador) === String(id),
-  );
+  const productId = Number(id);
 
   if (!product) {
     return (
@@ -57,20 +61,19 @@ export default function ReadyBid() {
   const imagesToDisplay = imageBase64Render(product);
 
   const handleReject = async () => {
-    await itemsService.updateItem(itemId, { estado: "rejected_auction" });
+    await itemsService.updateItem(productId, { estado: "rejected_auction" });
     await getMe(); // Refrescar datos del usuario para actualizar estados
     router.push("/articles/myArticles");
   };
 
   const handleAccept = async () => {
-    await itemsService.updateItem(itemId, { estado: "scheduled_auction" });
+    await itemsService.updateItem(productId, { estado: "scheduled_auction" });
     await getMe(); // Refrescar datos del usuario para actualizar estados
     router.push("/articles/myArticles");
   };
 
-  //MOCK auction
-  const auction = f1AuctionsData.find((item) => item.id === "6");
-  const auctionName = auction?.title ?? " - ";
+  const auction = auctions.find((item) => Number(item.identificador) === product.idSubtasta);
+  const auctionName = auction?.descripcion ?? " - ";
   const auctionDate = auction?.fecha ?? " - ";
 
   return (
@@ -113,7 +116,7 @@ export default function ReadyBid() {
 
         <View className="items-center justify-center gap-4 mb-10">
           <Text className="text-white text-4xl font-extrabold tracking-tight">
-            ARS ${product.precioBase || " - "}
+            ARS ${product.preciobase || " - "}
           </Text>
 
           <View className="w-full mt-4 mb-8">

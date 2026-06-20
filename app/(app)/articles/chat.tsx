@@ -9,32 +9,56 @@ import ChatInput from "@/components/chat/ChatInput";
 import SalesmanDetails from "@/components/chat/SalesmanDetails";
 import TypingAnimation from "@/components/chat/TypingAnimation";
 
-import { f1AuctionsData } from "@/app/data/auctions";
+import { auctionService, AuctionType } from "@/api/services/auction";
+import { itemsService, ItemType } from "@/api/services/items";
 import CatalogueProductCard from "@/components/auctions/CatalogueProductCard";
 import NoAuction from "@/components/common/NoAuction";
+import { useEffect, useState } from "react";
 import fotoPerfil from "../../../assets/images/la_nueva_seguros.png";
 
 export default function ChatScreen() {
   const { text, id } = useLocalSearchParams();
   const router = useRouter();
   const insets = useSafeAreaInsets(); 
+
+  const [product, setproduct] = useState<ItemType | null>(null);
+  const [auctions, setAuctions] = useState<AuctionType[]>([]);
   
+  useEffect(() => {
+    const fetchAuctions = async () => {
+      try {
+        const response = await auctionService.getAuctions();
+        setAuctions(response.data);
+      } catch (error) {
+        console.error("Error fetching auctions: ", error);
+      }
+    };
+    fetchAuctions();
+  }, []);
+
+  useEffect(() => {
+    const fetchproduct = async () => {
+      if (id) {
+        try {
+          const response = await itemsService.getItem(Number(id));
+          setproduct(response.data);
+        } catch (error) {
+          console.error("Error fetching product:", error);
+        }
+      }
+    };
+
+    fetchproduct();
+  }, [id]);
+    
+  const productId = Number(id);
+
   const messageText = Array.isArray(text) ? text[0] : text;
 
-  const auction = f1AuctionsData.find((item) => item.id === id);
+  const auction = auctions.find((item) => Number(item.identificador) === productId);
     if(!auction) {
       return <NoAuction />;
     }
-
-  const item = {
-    id: '1',
-    title: "Vintage Chronograph 1958",
-    description: "Breve descripción: Edición limitada restaurada con componentes originales.",
-    price: "15,450$",
-    date: "Martes 5 de abril de 2026",
-    time: "14:15 Hs",
-    imageUrl: "https://images.unsplash.com/photo-1523170335258-f5ed11844a49?q=80&w=1000&auto=format&fit=crop" 
-  };
   
   return (
     <View style={{ flex: 1, backgroundColor: '#14191C' }}>
@@ -71,14 +95,14 @@ export default function ChatScreen() {
           keyboardShouldPersistTaps="handled"
         >
           <CatalogueProductCard
-              key={item.id}
-              title={item.title}
-              description={item.description}
-              price={item.price}
-              date={item.date}
-              time={item.time}
-              imageUrl={item.imageUrl}
-              onPress={() => router.push(`/auctionStarted/catalogue/product/${item.id}?isArticles=true`)}
+              key={product?.identificador}
+              title={product?.descripcioncatalogo || " - "}
+              description={product?.descripcioncompleta || " - "}
+              price={product?.preciobase ? `$${product.preciobase}` : " - "}
+              date={product?.fecha || " - "}
+              time={product?.hora || " - "}
+              imageUrl={auction.foto}
+              onPress={() => router.push(`/auctionStarted/catalogue/product/${product?.identificador}?isArticles=true`)}
           />
 
           <ChatDate date={new Date()} />

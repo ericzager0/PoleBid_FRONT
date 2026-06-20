@@ -1,5 +1,24 @@
 import client from "../client";
 
+export type ItemType = {
+  identificador: number;
+  fecha: string;
+  disponible: string;
+  descripcioncatalogo: string;
+  descripcioncompleta: string;
+  revisor: number;
+  duenio: number;
+  seguro: string;
+  idSubtasta: number;
+  estado: string;
+  motivo_rechazo: string;
+  preciobase: number;
+  comision: number;
+  hora: string;
+  estadoSubasta: string;
+  categoria: string;
+};
+
 export const itemsService = {
   getItem: (id: number) => {
     return client.get(`/me/items/${id}`);

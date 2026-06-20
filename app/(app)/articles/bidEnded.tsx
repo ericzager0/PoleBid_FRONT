@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -9,21 +9,56 @@ import ReceiptCard from '@/components/articles/ReciptCard';
 import ViewBidButton from '@/components/articles/ViewBidButton';
 import ImageCarousel from '@/components/common/ImageCarousel';
 
+import { auctionService, AuctionType } from '@/api/services/auction';
+import { itemsService, ItemType } from '@/api/services/items';
 import NoAuction from '@/components/common/NoAuction';
-import { f1AuctionsData } from "../../data/auctions";
 
 export default function BidEnded() {
   const router = useRouter();
   const { id } = useLocalSearchParams();
+  
+  const [product, setproduct] = useState<ItemType | null>(null);
+  const [auctions, setAuctions] = useState<AuctionType[]>([]);
+  
+  useEffect(() => {
+    const fetchAuctions = async () => {
+      try {
+        const response = await auctionService.getAuctions();
+        setAuctions(response.data);
+      } catch (error) {
+        console.error("Error fetching auctions: ", error);
+      }
+    };
+    fetchAuctions();
+  }, []);
 
-  const auction = f1AuctionsData.find((item) => item.id === id);
+  useEffect(() => {
+    const fetchproduct = async () => {
+      if (id) {
+        try {
+          const response = await itemsService.getItem(Number(id));
+          setproduct(response.data);
+        } catch (error) {
+          console.error("Error fetching product:", error);
+        }
+      }
+    };
+
+    fetchproduct();
+  }, [id]);
+  
+  const productId = Number(id);
+
+  const auction = auctions.find((item) => Number(item.identificador) === productId);
   if(!auction) {
     return <NoAuction />;
   }
 
+  //MOCK
   const buyerName = "Antonio Conte";
   const totalAmount = 140000;
-  const netAmount = 135800;
+
+  const netAmount = totalAmount * (product?.comision || 0.03); //COMISIÓN BASE
 
   return (
     <SafeAreaView className="flex-1 bg-[#14191C]">
@@ -55,12 +90,12 @@ export default function BidEnded() {
             {auction.fecha}
           </Text>
           <Text className="text-[#D1D5DB] text-lg text-center">
-            {auction.title}
+            {auction.descripcion}
           </Text>
         </View>
 
         <View className="mb-6 h-64 w-full rounded-2xl overflow-hidden">
-          <ImageCarousel images={auction.images || []} />
+          <ImageCarousel images={Array.isArray(auction.foto) ? auction.foto : [auction.foto]} />
         </View>
 
         <View className="items-center justify-center gap-4 mb-10">
@@ -69,7 +104,7 @@ export default function BidEnded() {
             className="self-center"
             onPress={() => router.push({
               pathname: '/bidHistory',
-              params: { id: auction.id }
+              params: { id: auction.identificador }
             })}
           />
         
