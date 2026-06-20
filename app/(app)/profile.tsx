@@ -315,7 +315,7 @@ export default function Home() {
                 );
               })
             ) : (
-              <NoAuction isProfile={true} />
+              <NoAuction isProfile={true} title="No has participado en ninguna subasta aún" text="Participa en una subasta para ver tu historial" />
             )}
           </View>
 

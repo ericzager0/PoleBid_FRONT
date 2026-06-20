@@ -4,7 +4,13 @@ import React, { useEffect, useRef } from 'react';
 import { Animated, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-export default function NoAuctions({isProfile = false}: {isProfile?: boolean}) {
+interface NoAuctionProps {
+  isProfile?: boolean;
+  title: string;
+  text: string;
+};
+
+export default function NoAuctions({ isProfile, title, text }: NoAuctionProps) {
   const floatAnim = useRef(new Animated.Value(0)).current;
   const router = useRouter();
 
@@ -70,11 +76,11 @@ export default function NoAuctions({isProfile = false}: {isProfile?: boolean}) {
               textShadowRadius: 10,
             }}
           >
-            {!isProfile ? "No hay subastas actuales" : "No has participado en ninguna subasta aún"}
+            {title}
           </Text>
           
           <Text className="text-[#E8B83C]/60 text-sm tracking-wide text-center px-4">
-            {isProfile ? "Participa en una subasta para ver tu historial" : "Vuelve pronto para ver nuevas publicaciones"}
+            {text}
           </Text>
         </Animated.View>
       </View>

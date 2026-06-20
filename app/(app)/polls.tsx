@@ -6,13 +6,18 @@ import SearchBar from "@/components/home/SearchBar";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { FlatList, RefreshControl, ScrollView, Text, View } from "react-native";
+// 1. Agregamos ActivityIndicator a los imports
+import { ActivityIndicator, FlatList, RefreshControl, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
   const [filtroActivo, setFiltroActivo] = useState("Todas");
   const [isRefreshing, setIsRefreshing] = useState(false);
+  
+  // 2. NUEVO: Estado para controlar la carga inicial
+  const [isLoading, setIsLoading] = useState(true); 
+  
   const [auctions, setAuctions] = useState<AuctionType[]>([]);
   const router = useRouter();
   
@@ -24,6 +29,9 @@ export default function Home() {
       setAuctions(response.data);
     } catch (error) {
       console.error("Error fetching auctions: ", error);
+    } finally {
+      // 3. Apagamos el loading cuando termina la petición (sea éxito o error)
+      setIsLoading(false);
     }
   };
 
@@ -67,21 +75,38 @@ export default function Home() {
     setIsRefreshing(false);
   };
 
-  const renderEmptyComponent = () => (
-    <View className="flex-1 justify-center items-center pt-24 px-6">
-      <View className="w-20 h-20 rounded-full bg-[#1C1C1E] border border-[#2A2B30] items-center justify-center mb-6 shadow-xl">
-        <Ionicons name="search-outline" size={36} color="#E8B83C" />
+  // 4. Modificamos el componente vacío para que sea inteligente
+  const renderEmptyComponent = () => {
+    if (isLoading) {
+      return (
+        <View className="flex-1 justify-center items-center pt-24 px-6">
+          <ActivityIndicator size="large" color="#E8B83C" />
+          <Text className="text-white text-lg font-bold tracking-wide mt-5 text-center">
+            Buscando subastas...
+          </Text>
+          <Text className="text-[#9CA3AF] text-sm text-center mt-2">
+            Preparando el catálogo para vos
+          </Text>
+        </View>
+      );
+    }
+
+    return (
+      <View className="flex-1 justify-center items-center pt-24 px-6">
+        <View className="w-20 h-20 rounded-full bg-[#1C1C1E] border border-[#2A2B30] items-center justify-center mb-6 shadow-xl">
+          <Ionicons name="search-outline" size={36} color="#E8B83C" />
+        </View>
+        <Text className="text-white text-xl font-bold tracking-wide mb-3 text-center">
+          Sin resultados
+        </Text>
+        <Text className="text-[#9CA3AF] text-base text-center leading-relaxed">
+          {searchQuery.trim() !== "" 
+            ? `No encontramos subastas que coincidan con "${searchQuery}".` 
+            : "No hay subastas disponibles con este filtro por el momento."}
+        </Text>
       </View>
-      <Text className="text-white text-xl font-bold tracking-wide mb-3 text-center">
-        Sin resultados
-      </Text>
-      <Text className="text-[#9CA3AF] text-base text-center leading-relaxed">
-        {searchQuery.trim() !== "" 
-          ? `No encontramos subastas que coincidan con "${searchQuery}".` 
-          : "No hay subastas disponibles con este filtro por el momento."}
-      </Text>
-    </View>
-  );
+    );
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-[#14191C] items-center">

@@ -57,7 +57,7 @@ export default function ChatScreen() {
 
   const auction = auctions.find((item) => Number(item.identificador) === productId);
     if(!auction) {
-      return <NoAuction />;
+      return <NoAuction title="Subasta no encontrada" text="La subasta que buscas no existe o ya ha finalizado." />;
     }
   
   return (

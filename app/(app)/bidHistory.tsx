@@ -18,7 +18,7 @@ export default function BidHistoryScreen() {
   if (!auction) {
     return (
       <SafeAreaView className="flex-1 bg-[#14191C] items-center justify-center">
-        <NoAuction />
+        <NoAuction title="Subastas no encontradas" text="Todavía no has participado en ninguna subasta aún" />
       </SafeAreaView>
     );
   }

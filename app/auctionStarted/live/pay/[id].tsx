@@ -41,7 +41,7 @@ export default function LiveAuctionScreen() {
   if (!auction) {
     return (
       <SafeAreaView className="flex-1 bg-[#14191C] items-center justify-center">
-        <NoAuction />
+        <NoAuction title="Subasta no encontrada" text="La subasta que buscas no existe o ya ha finalizado." />
       </SafeAreaView>
     );
   }
