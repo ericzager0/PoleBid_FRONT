@@ -24,7 +24,7 @@ export default function AuctionDetailCard({
         </Text>
         <Text className="text-white text-base mt-1">
           <Text className="font-bold">Estado: </Text>
-          {estado}
+          {estado === "abierta" ? "En vivo" : "Agendada"}
         </Text>
         <Text className="text-white text-base mt-1 leading-relaxed">
           <Text className="font-bold">Descripción: </Text>

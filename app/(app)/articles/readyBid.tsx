@@ -1,4 +1,3 @@
-import { auctionService, AuctionType } from "@/api/services/auction";
 import { itemsService, ItemType } from "@/api/services/items";
 import { imageBase64Render } from "@/api/utils/imageBase64Render";
 import ConfirmButton from "@/components/articles/ConfirmButton";
@@ -19,19 +18,6 @@ export default function ReadyBid() {
   const { getMe } = useAuth();
 
   const [product, setproduct] = useState<ItemType | null>(null);
-  const [auctions, setAuctions] = useState<AuctionType[]>([]);
-  
-  useEffect(() => {
-    const fetchAuctions = async () => {
-      try {
-        const response = await auctionService.getAuctions();
-        setAuctions(response.data);
-      } catch (error) {
-        console.error("Error fetching auctions: ", error);
-      }
-    };
-    fetchAuctions();
-  }, []);
 
   useEffect(() => {
     const fetchproduct = async () => {
@@ -72,10 +58,6 @@ export default function ReadyBid() {
     router.push("/articles/myArticles");
   };
 
-  const auction = auctions.find((item) => Number(item.identificador) === product.idSubtasta);
-  const auctionName = auction?.descripcion ?? " - ";
-  const auctionDate = auction?.fecha ?? " - ";
-
   return (
     <SafeAreaView className="flex-1 bg-[#14191C]">
       <View className="px-4 pt-4 pb-2">
@@ -102,9 +84,9 @@ export default function ReadyBid() {
           </Text>
         </View>
 
-        <BriefAuctionDetails auctionName={auctionName} date={auctionDate} />
+        <BriefAuctionDetails auctionName={product.descripcion} date={product.fecha} />
 
-        <View className="items-center mb-6">
+        <View className="items-center mt-4 mb-6">
           <Text className="text-[#D1D5DB] text-lg text-center">
             {product.descripcioncatalogo}
           </Text>

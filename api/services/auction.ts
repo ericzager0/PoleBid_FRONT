@@ -1,7 +1,7 @@
 import client from "../client";
 
 export type AuctionType = {
-  identificador: string;
+  identificador: number;
   fecha: string;
   hora: string;
   estado: string;

@@ -4,12 +4,13 @@ export type ItemType = {
   identificador: number;
   fecha: string;
   disponible: string;
+  descripcion: string;
   descripcioncatalogo: string;
   descripcioncompleta: string;
   revisor: number;
   duenio: number;
   seguro: string;
-  idSubtasta: number;
+  idSubasta: number;
   estado: string;
   motivo_rechazo: string;
   preciobase: number;
@@ -17,6 +18,9 @@ export type ItemType = {
   hora: string;
   estadoSubasta: string;
   categoria: string;
+  fotos: {
+    foto: string;
+  };
 };
 
 export const itemsService = {
