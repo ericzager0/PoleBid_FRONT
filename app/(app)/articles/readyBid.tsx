@@ -1,55 +1,69 @@
-import { Ionicons } from '@expo/vector-icons';
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import React from 'react';
-import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from "@expo/vector-icons";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import React from "react";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-import ImageCarousel from '@/components/common/ImageCarousel';
+import ImageCarousel from "@/components/common/ImageCarousel";
 
-import { imageBase64Render } from '@/api/utils/imageBase64Render';
-import { f1AuctionsData } from '@/app/data/auctions';
-import ConfirmButton from '@/components/articles/ConfirmButton';
-import BriefAuctionDetails from '@/components/auctions/BriefAuctionDetails';
-import CommissionRow from '@/components/auctions/CommissionRow';
-import { useAuth } from '@/context/AuthContext';
+import { imageBase64Render } from "@/api/utils/imageBase64Render";
+import { f1AuctionsData } from "@/app/data/auctions";
+import ConfirmButton from "@/components/articles/ConfirmButton";
+import BriefAuctionDetails from "@/components/auctions/BriefAuctionDetails";
+import CommissionRow from "@/components/auctions/CommissionRow";
+import { useAuth } from "@/context/AuthContext";
+
+import { itemsService } from "@/api/services/items";
 
 export default function ReadyBid() {
   const router = useRouter();
   const { id } = useLocalSearchParams();
 
-  const {user} = useAuth();
-  const productsList = Array.isArray(user?.products) ? user.products : (user?.products ? [user.products] : []);
-  const product = productsList.find((item) => String(item.identificador) === String(id));
-  
+  const itemId = Number(id);
+
+  const { user, getMe } = useAuth();
+  const productsList = Array.isArray(user?.products)
+    ? user.products
+    : user?.products
+      ? [user.products]
+      : [];
+  const product = productsList.find(
+    (item) => String(item.identificador) === String(id),
+  );
+
   if (!product) {
     return (
-    <SafeAreaView className="flex-1 bg-[#14191C] items-center justify-center">
-      <Text className="text-white">Producto no encontrado</Text>
-    </SafeAreaView>
+      <SafeAreaView className="flex-1 bg-[#14191C] items-center justify-center">
+        <Text className="text-white">Producto no encontrado</Text>
+      </SafeAreaView>
     );
   }
 
   const imagesToDisplay = imageBase64Render(product);
 
-  const handleReject = () => {
-    console.log("Se rechazó la acción");
+  const handleReject = async () => {
+    await itemsService.updateItem(itemId, { estado: "rejected_auction" });
+    await getMe(); // Refrescar datos del usuario para actualizar estados
+    router.push("/articles/myArticles");
   };
 
-  const handleAccept = () => {
-    console.log("Se aceptó la acción");
+  const handleAccept = async () => {
+    await itemsService.updateItem(itemId, { estado: "scheduled_auction" });
+    await getMe(); // Refrescar datos del usuario para actualizar estados
+    router.push("/articles/myArticles");
   };
 
   //MOCK auction
-  const auction = f1AuctionsData.find((item) => item.id === '6');
-  const auctionName = auction?.title ?? ' - ';
-  const auctionDate = auction?.fecha ?? ' - ';
+  const auction = f1AuctionsData.find((item) => item.id === "6");
+  const auctionName = auction?.title ?? " - ";
+  const auctionDate = auction?.fecha ?? " - ";
 
   return (
     <SafeAreaView className="flex-1 bg-[#14191C]">
       <View className="px-4 pt-4 pb-2">
         <TouchableOpacity
-          onPress={() => router.push('/(app)/articles/myArticles')}
+          onPress={() => router.push("/(app)/articles/myArticles")}
           className="bg-[#1C1C1E] w-10 h-10 rounded-full items-center justify-center"
         >
           <Ionicons name="arrow-back" size={24} color="white" />
@@ -63,10 +77,11 @@ export default function ReadyBid() {
       >
         <View className="mt-2 mb-8">
           <Text className="text-white text-5xl font-bold mb-4 tracking-tight leading-[55px]">
-            Subasta finalizada
+            Subasta sugerida
           </Text>
           <Text className="text-[#9CA3AF] text-lg leading-6 pr-4">
-            Tu artículo fue aprobado tras inspección. A continuacion los detalles de su subasta sugerida:
+            Tu artículo fue aprobado tras inspección. A continuacion los
+            detalles de su subasta sugerida:
           </Text>
         </View>
 
@@ -83,37 +98,32 @@ export default function ReadyBid() {
         </View>
 
         <View className="items-center justify-center gap-4 mb-10">
-            <Text className="text-white text-4xl font-extrabold tracking-tight">
-                ARS ${product.precioBase || ' - '}
+          <Text className="text-white text-4xl font-extrabold tracking-tight">
+            ARS ${product.precioBase || " - "}
+          </Text>
+
+          <View className="w-full mt-4 mb-8">
+            <CommissionRow percentage={10} />
+          </View>
+
+          <View className="flex-row items-center justify-between gap-x-4 w-full">
+            <ConfirmButton isAccepted={false} onPress={handleReject} />
+
+            <ConfirmButton isAccepted={true} onPress={handleAccept} />
+          </View>
+
+          <View className="flex-row items-center bg-[#1C1C1E] border border-[#E8B83C]/60 rounded-2xl p-5 w-full">
+            <MaterialCommunityIcons
+              name="check-decagram-outline"
+              size={32}
+              color="#E8B83C"
+            />
+            <Text className="text-[#E8B83C] text-[17px] font-medium ml-4 flex-1 tracking-wide leading-6">
+              Al aceptar, te garantizamos que recibiras el valor del precio base
+              (menos la comision) en caso que nadie subaste por tu articulo o
+              algo le ocurra a este hasta el dia de la subasta.
             </Text>
-
-            <View className="w-full mt-4 mb-8">
-                <CommissionRow percentage={10}/>
-            </View>
-
-            <View className="flex-row items-center justify-between gap-x-4 w-full"> 
-                <ConfirmButton 
-                isAccepted={false} 
-                onPress={handleReject} 
-                />
-                
-                <ConfirmButton 
-                isAccepted={true} 
-                onPress={handleAccept} 
-                />
-                
-            </View>
-
-            <View className="flex-row items-center bg-[#1C1C1E] border border-[#E8B83C]/60 rounded-2xl p-5 w-full">
-                <MaterialCommunityIcons 
-                    name="check-decagram-outline" 
-                    size={32} 
-                    color="#E8B83C" 
-                />
-                <Text className="text-[#E8B83C] text-[17px] font-medium ml-4 flex-1 tracking-wide leading-6">
-                    Al aceptar, te garantizamos que recibiras el valor del precio base (menos la comision) en caso que nadie subaste por tu articulo o algo le ocurra a este hasta el dia de la subasta.
-                </Text>
-            </View>
+          </View>
         </View>
       </ScrollView>
     </SafeAreaView>
