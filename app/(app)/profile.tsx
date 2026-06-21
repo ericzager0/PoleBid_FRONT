@@ -133,8 +133,20 @@ export default function Home() {
     );
   }
 
-  const totalActualParticipa = CATEGORIAS_USUARIO[user.categoria]?.minParticipaciones || 10;
-  const totalActualGanadas = CATEGORIAS_USUARIO[user.categoria]?.minGanadas || 30;
+
+  const siguienteCategoria = obtenerSiguienteCategoria(user?.categoria || "comun");
+
+  const participacionesMeta = siguienteCategoria ? CATEGORIAS_USUARIO[siguienteCategoria].minParticipaciones : null; 
+
+  const participacionesActuales = user?.stats.pujasRealizadas || 0;
+  const participacionesFaltantes = participacionesMeta ? participacionesMeta - participacionesActuales : 0;
+  
+  const ganadasMeta = siguienteCategoria ? CATEGORIAS_USUARIO[siguienteCategoria].minGanadas : null;
+
+  const ganadasActuales = user?.stats.subastasGanadas || 0;
+  const ganadasFaltantes = ganadasMeta 
+    ? ganadasMeta - ganadasActuales 
+    : 0;
 
   return (
     <SafeAreaView className="flex-1 bg-[#14191C]">
@@ -236,12 +248,12 @@ export default function Home() {
           <View className="w-full items-center gap-y-4 mt-2">
             <CustomProgressBar
               nombre="Subastas asistidas"
-              porcentaje={((user.stats.subastasParticipadas * 100) / totalActualParticipa) || 0}
+              porcentaje={((user.stats.subastasParticipadas * 100) / participacionesActuales) || 0}
               onPress={() => setAssistModalVisible(true)}
             />
             <CustomProgressBar
               nombre="Subastas ganadas"
-              porcentaje={((user.stats.subastasGanadas * 100) / totalActualGanadas) || 0}
+              porcentaje={((user.stats.subastasGanadas * 100) / ganadasActuales) || 0}
               onPress={() => setWonModalVisible(true)}
             />
           </View>
@@ -327,13 +339,13 @@ export default function Home() {
           <SimpleModal
             visible={modalAssistVisible}
             onClose={() => setAssistModalVisible(false)}
-            texto={`Necesitas ${CATEGORIAS_USUARIO[obtenerSiguienteCategoria(user?.categoria) as string]?.minParticipaciones || 0} subastas asistidas para alcanzar el próximo nivel y obtener beneficios exclusivos!`}
+            texto={`Necesitas ${participacionesFaltantes} subastas asistidas para alcanzar el próximo nivel y obtener beneficios exclusivos!`}
           />
 
           <SimpleModal
             visible={modalWonVisible}
             onClose={() => setWonModalVisible(false)}
-            texto={`Necesitas ${CATEGORIAS_USUARIO[obtenerSiguienteCategoria(user?.categoria) as string]?.minGanadas || 0} subastas ganadas para alcanzar el próximo nivel y obtener beneficios exclusivos!`}
+            texto={`Necesitas ${ganadasFaltantes} subastas ganadas para alcanzar el próximo nivel y obtener beneficios exclusivos!`}
           />
         </ScrollView>
       )}

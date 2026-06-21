@@ -5,27 +5,27 @@ export interface RequisitosCategoria {
 }
 
 export const CATEGORIAS_USUARIO: Record<string, RequisitosCategoria> = {
-  COMUN: {
+  comun: {
     nombre: "comun",
     minParticipaciones: 0,
     minGanadas: 0,
   },
-  PLATA: {
+  plata: {
     nombre: "plata",
     minParticipaciones: 15,
     minGanadas: 5,
   },
-  ORO: {
+  oro: {
     nombre: "oro",
     minParticipaciones: 30,
     minGanadas: 10,
   },
-  PLATINO: {
+  platino: {
     nombre: "platino",
     minParticipaciones: 50,
     minGanadas: 20,
   },
-  Especial: {
+  especial: {
     nombre: "especial",
     minParticipaciones: 100,
     minGanadas: 50,
