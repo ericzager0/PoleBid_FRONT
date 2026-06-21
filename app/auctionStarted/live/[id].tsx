@@ -152,15 +152,15 @@ export default function LiveAuctionScreen() {
 
     const fetchLoop = async () => {
       if (!isMounted) return;
-      await fetchCurrentItem(true); 
+      await fetchCurrentItem(true);
       if (isMounted) {
         timeoutId = setTimeout(fetchLoop, 3000);
       }
     };
 
     const init = async () => {
-      await fetchCurrentItem(false); 
-      fetchLoop(); 
+      await fetchCurrentItem(false);
+      fetchLoop();
     };
 
     init();
@@ -179,17 +179,18 @@ export default function LiveAuctionScreen() {
       : [];
 
   const basePrice = Number(currentItem?.precioBase || 0);
-  const maxBid = bidsBackend.length > 0
-    ? Math.max(...bidsBackend.map((bid) => bid.importe))
-    : 0;
+  const maxBid =
+    bidsBackend.length > 0
+      ? Math.max(...bidsBackend.map((bid) => bid.importe))
+      : 0;
 
-  const minAllowed = bidsBackend.length === 0 
-    ? basePrice 
-    : maxBid + (0.1 * basePrice);
+  const minAllowed =
+    bidsBackend.length === 0 ? basePrice : maxBid + 0.1 * basePrice;
 
-  const maxAllowed = bidsBackend.length === 0
-    ? basePrice + (0.2 * basePrice)
-    : maxBid + (0.2 * basePrice);
+  const maxAllowed =
+    bidsBackend.length === 0
+      ? basePrice + 0.2 * basePrice
+      : maxBid + 0.2 * basePrice;
 
   const isSold = currentItem?.subastado != null;
   const bidsBackendMarcadas = bidsBackend.map((bid) => ({
@@ -271,15 +272,16 @@ export default function LiveAuctionScreen() {
   useEffect(() => {
     if (!currentItem) return;
 
+    // Si el item ya está subastado, no corremos cuenta regresiva.
+    if (currentItem.subastado != null) {
+      setTimeLeft(0);
+      return;
+    }
+
     // "bids" se recalcula en cada render (es un array nuevo siempre),
-    // así que NO puede ir como dependencia del effect: causaría que el
-    // interval se reinicie en cada render (incluso por el propio
-    // setTimeLeft) y el countdown se quede pegado. En vez de eso,
+    // así que NO puede ir como dependencia del effect. En vez de eso,
     // dependemos de los datos "crudos" (currentItem y misPujasLocales)
     // y recalculamos bidsBackend/bids acá adentro, ya estables.
-
-    const fechaItem = (currentItem as any).updatedAt || (currentItem as any).updated_at;
-    let ultimaActividad = fechaItem ? new Date(fechaItem).getTime() : Date.now();
 
     const rawPujosLocal = currentItem?.pujos;
     const bidsBackendLocal = Array.isArray(rawPujosLocal)
@@ -290,7 +292,11 @@ export default function LiveAuctionScreen() {
 
     const todasLasPujas = [...bidsBackendLocal, ...misPujasLocales];
 
+    let inicioVentana: number;
+
     if (todasLasPujas.length > 0) {
+      // Hay pujas: la ventana de 1 minuto se cuenta SOLO desde la última
+      // puja (created_at), sin mezclar con updatedAt del item.
       const tiemposPujas = todasLasPujas
         .map((bid: any) => {
           const fechaPuja = bid.createdAt || bid.created_at;
@@ -300,16 +306,17 @@ export default function LiveAuctionScreen() {
         })
         .filter((t): t is number => t !== null);
 
-      if (tiemposPujas.length > 0) {
-        const tiempoUltimoPujo = Math.max(...tiemposPujas);
-        // El timer SIEMPRE arranca/resetea desde la puja más reciente
-        // (created_at), ya que el fetch no es real-time y updatedAt del
-        // item puede llegar "viejo" frente a una puja recién hecha.
-        ultimaActividad = Math.max(ultimaActividad, tiempoUltimoPujo);
-      }
+      inicioVentana =
+        tiemposPujas.length > 0 ? Math.max(...tiemposPujas) : Date.now();
+    } else {
+      // No hay pujas todavía: la ventana de 1 minuto se cuenta desde la
+      // apertura del item (updatedAt).
+      const fechaItem =
+        (currentItem as any).updatedAt || (currentItem as any).updated_at;
+      inicioVentana = fechaItem ? new Date(fechaItem).getTime() : Date.now();
     }
 
-    const endTime = ultimaActividad + 60000;
+    const endTime = inicioVentana + 60000;
 
     const actualizarTimeLeft = () => {
       const ahora = Date.now();
@@ -445,7 +452,15 @@ export default function LiveAuctionScreen() {
 
           <View className="h-[1px] bg-[#333333] w-full mb-6" />
 
-          <AuctionDisplayCard money={false} initialTime={timeLeft} />
+          {isSold ? (
+            <View className="bg-[#1C1C1E] p-4 rounded-2xl items-center border border-[#333333] mb-2">
+              <Text className="text-[#E8B83C] font-bold text-lg tracking-widest">
+                SUBASTADO
+              </Text>
+            </View>
+          ) : (
+            <AuctionDisplayCard money={false} initialTime={timeLeft} />
+          )}
           <AuctionDisplayCard money={true} amount={maxBid} />
 
           <View className="mt-4">
