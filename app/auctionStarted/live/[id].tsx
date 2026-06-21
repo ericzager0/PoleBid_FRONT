@@ -265,18 +265,25 @@ export default function LiveAuctionScreen() {
 
   useEffect(() => {
     if (!currentItem) return;
-    let ultimaActividad = currentItem.updated_at
-      ? new Date(currentItem.updated_at).getTime()
-      : Date.now();
+    const fechaItem = currentItem.updatedAt || currentItem.updatedAt;
+    let ultimaActividad = fechaItem ? new Date(fechaItem).getTime() : Date.now();
 
-    if (bidsBackend.length > 0) {
-      const tiempoUltimoPujo = Math.max(
-        ...bidsBackend.map((bid) => new Date(bid.created_at).getTime()),
-      );
+    if (bids.length > 0) {
+      const tiemposPujas = bids.map((bid) => {
+        const fechaPuja = bid.createdAt || bid.created_at;
+        
+        if (!fechaPuja) return 0; 
+        
+        const tiempo = new Date(fechaPuja).getTime();
+        return isNaN(tiempo) ? 0 : tiempo; 
+      });
+
+      const tiempoUltimoPujo = Math.max(...tiemposPujas);
       ultimaActividad = Math.max(ultimaActividad, tiempoUltimoPujo);
     }
 
-    const endTime = ultimaActividad + 60000;
+    const endTime = ultimaActividad + 60000; 
+
     const timerInterval = setInterval(() => {
       const ahora = Date.now();
       const diferenciaEnMilisegundos = endTime - ahora;
@@ -287,10 +294,10 @@ export default function LiveAuctionScreen() {
       } else {
         setTimeLeft(Math.floor(diferenciaEnMilisegundos / 1000));
       }
-    }, 1000);
+    }, 1000); 
 
     return () => clearInterval(timerInterval);
-  }, [currentItem, bidsBackend]);
+  }, [currentItem, bids]); 
 
   if (isInitialLoading) {
     return (
