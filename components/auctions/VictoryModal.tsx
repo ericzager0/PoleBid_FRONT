@@ -10,13 +10,15 @@ interface VictoryModalProps {
   itemName: string;
   winningBid: string;
   onProceed: () => void;
+  onClose: () => void;
 }
 
 export default function VictoryModal({
   visible,
   itemName,
   winningBid,
-  onProceed
+  onProceed,
+  onClose,
 }: VictoryModalProps) {
   const [showConfetti, setShowConfetti] = useState(false);
 
@@ -66,6 +68,11 @@ export default function VictoryModal({
 
           <View className="w-full gap-y-3">
             <Button label="Proceder al Pago" variant="primary" onPress={onProceed} />
+            <Button 
+              label="Seguir participando" 
+              variant="secondary" 
+              onPress={onClose} 
+            />
           </View>
 
         </View>

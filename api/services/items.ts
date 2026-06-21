@@ -27,9 +27,12 @@ export type ItemType = {
     asistente: number;
     importe: number;
     ganador: string;
+    clientId: number;
     categoria: string;
   };
   itemId: number;
+  subastado: string;
+  updated_at: string;
 };
 
 export const itemsService = {

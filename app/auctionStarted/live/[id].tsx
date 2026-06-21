@@ -2,6 +2,7 @@ import { auctionService } from "@/api/services/auction";
 import { ItemType } from "@/api/services/items";
 import { imageBase64Render } from "@/api/utils/imageBase64Render";
 import AuctionDisplayCard from "@/components/auctions/AuctionDisplayCard";
+import AuctionFinishedModal from "@/components/auctions/AuctionFinishedModal";
 import VictoryModal from "@/components/auctions/VictoryModal";
 import AlertModal from "@/components/common/AlertModal";
 import BidInput from "@/components/common/BidInput";
@@ -14,6 +15,7 @@ import LiveButton from "@/components/home/LiveButton";
 import BidHistoryLog from "@/components/profile/BidHistoryLog";
 import { useAuth } from "@/context/AuthContext";
 import { Ionicons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, Keyboard, KeyboardAvoidingView, Platform, ScrollView, Text, TouchableOpacity, View } from "react-native";
@@ -34,6 +36,8 @@ export default function LiveAuctionScreen() {
   const [alertContent, setAlertContent] = useState({ title: "", description: "" });
   const [hasBidError, setHasBidError] = useState(false);
   const [isInitialLoading, setIsInitialLoading] = useState(true);
+  const [timeLeft, setTimeLeft] = useState<number>(0);
+  const [isAuctionFinished, setIsAuctionFinished] = useState(false);
 
   const handleBidSubmit = async () => {
     if (!currentItem) return;
@@ -80,6 +84,22 @@ export default function LiveAuctionScreen() {
     setBidValue(0);
   };
 
+  const handleAuctionEnd = async () => {
+    try {
+      const guardado = await AsyncStorage.getItem('@mis_victorias');
+      const listaVictorias = guardado ? JSON.parse(guardado) : [];
+      
+      if (listaVictorias.length > 0) {
+        router.replace(`/auctionStarted/live/pay/${id}`);
+      } else {
+        setIsAuctionFinished(true);
+      }
+    } catch (error) {
+      console.error("Error chequeando el carrito final: ", error);
+      setIsAuctionFinished(true);
+    }
+  };
+
   const fetchCurrentItem = async (bidsOnly: boolean) => {
     try {
       const response = await auctionService.getCurrentItem(
@@ -99,6 +119,8 @@ export default function LiveAuctionScreen() {
 
     } catch (error) {
       console.error("Error fetching current item: ", error);
+      await handleAuctionEnd();
+      return false;
     } finally {
       setIsInitialLoading(false);
     }
@@ -133,6 +155,24 @@ export default function LiveAuctionScreen() {
   const minAllowed = maxBid + 0.1 * basePrice;
   const maxAllowed = maxBid + 0.2 * basePrice;
 
+  const isSold = currentItem?.subastado != null;
+  const bidsBackendMarcadas = bidsBackend.map(bid => ({
+    ...bid,
+    isMe: misPujasLocales.some(local => local.importe === bid.importe)
+  }));
+
+  const misPujasPendientes = misPujasLocales.filter(
+    local => !bidsBackend.some(back => back.importe === local.importe)
+  );
+  const bids = [...bidsBackendMarcadas, ...misPujasPendientes];
+
+  const boughtByCompany = isSold && bidsBackend.length === 0;
+  const myWinningBid = isSold ? bidsBackend.find(
+    (bid) => bid.ganador === "si" && bid.clientId === user?.id
+  ) : null;
+
+  const iWonThisItem = !!myWinningBid;
+
   useEffect(() => {
     const showEvent = Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow";
     const hideEvent = Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide";
@@ -150,15 +190,62 @@ export default function LiveAuctionScreen() {
     };
   }, []);
 
-  const bidsBackendMarcadas = bidsBackend.map(bid => ({
-    ...bid,
-    isMe: misPujasLocales.some(local => local.importe === bid.importe)
-  }));
+  useEffect(() => {
+    const registrarVictoria = async () => {
+      if (iWonThisItem && currentItem && myWinningBid) {
+        try {
+          const guardadoAnterior = await AsyncStorage.getItem('@mis_victorias');
+          let listaVictorias = guardadoAnterior ? JSON.parse(guardadoAnterior) : [];
+          const yaExiste = listaVictorias.some((item: any) => item.id === currentItem.itemId);
 
-  const misPujasPendientes = misPujasLocales.filter(
-    local => !bidsBackend.some(back => back.importe === local.importe)
-  );
-  const bids = [...bidsBackendMarcadas, ...misPujasPendientes];
+          if (!yaExiste) {
+            listaVictorias.push({
+              id: currentItem.itemId,
+              precio: myWinningBid.importe
+            });
+            
+            await AsyncStorage.setItem('@mis_victorias', JSON.stringify(listaVictorias));
+            console.log("¡Artículo y precio guardados en local!", listaVictorias);
+          }
+
+          setWon(true);
+        } catch (error) {
+          console.error("Error guardando la victoria localmente", error);
+        }
+      }
+    };
+
+    registrarVictoria();
+  }, [iWonThisItem, currentItem, myWinningBid]); 
+
+  useEffect(() => {
+    if (!currentItem) return;
+    let ultimaActividad = currentItem.updated_at 
+      ? new Date(currentItem.updated_at).getTime() 
+      : Date.now();
+
+    if (bidsBackend.length > 0) {
+      const tiempoUltimoPujo = Math.max(
+        ...bidsBackend.map((bid) => new Date(bid.created_at).getTime())
+      );
+      ultimaActividad = Math.max(ultimaActividad, tiempoUltimoPujo);
+    }
+
+    const endTime = ultimaActividad + 60000; 
+    const timerInterval = setInterval(() => {
+      const ahora = Date.now();
+      const diferenciaEnMilisegundos = endTime - ahora;
+
+      if (diferenciaEnMilisegundos <= 0) {
+        setTimeLeft(0);
+        clearInterval(timerInterval);
+      } else {
+        setTimeLeft(Math.floor(diferenciaEnMilisegundos / 1000));
+      }
+    }, 1000); 
+
+    return () => clearInterval(timerInterval);
+  }, [currentItem, bidsBackend]);
 
   if (isInitialLoading) {
     return (
@@ -265,7 +352,7 @@ export default function LiveAuctionScreen() {
 
           <View className="h-[1px] bg-[#333333] w-full mb-6" />
 
-          <AuctionDisplayCard money={false} initialTime={60} />
+          <AuctionDisplayCard money={false} initialTime={timeLeft} />
           <AuctionDisplayCard money={true} amount={maxBid} />
 
           <View className="mt-4">
@@ -273,21 +360,34 @@ export default function LiveAuctionScreen() {
           </View>
 
           <View className="mt-6">
-            <BidInput
-              value={bidValue}
-              setValue={setBidValue}
-              min={minAllowed}
-              max={maxAllowed}
-              enabled={!isReadOnly}
-              hasError={hasBidError} 
-            />
-            <View className="mt-4">
-              <Button
-                label="Pujar"
-                variant={isReadOnly ? "blocked" : "primary"}
-                onPress={handleBidSubmit}
-              />
-            </View>
+            {boughtByCompany ? (
+              <View className="bg-[#1C1C1E] p-5 rounded-2xl items-center border border-[#333333] mb-4">
+                <Text className="text-gray-400 font-bold text-lg uppercase tracking-widest mb-1">
+                  Lote Desierto
+                </Text>
+                <Text className="text-gray-500 text-sm text-center">
+                  El artículo no recibió ofertas y fue adquirido por la casa.
+                </Text>
+              </View>
+            ) : (
+              <>
+                <BidInput
+                  value={bidValue}
+                  setValue={setBidValue}
+                  min={minAllowed}
+                  max={maxAllowed}
+                  enabled={!isReadOnly && !isSold}
+                  hasError={hasBidError} 
+                />
+                <View className="mt-4">
+                  <Button
+                    label="Pujar"
+                    variant={isReadOnly || isSold ? "blocked" : "primary"}
+                    onPress={handleBidSubmit}
+                  />
+                </View>
+              </>
+            )}
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -309,6 +409,17 @@ export default function LiveAuctionScreen() {
           onProceed={() => {
             setWon(false);
             router.push(`/auctionStarted/live/pay/${id}`);
+          }}
+          onClose={() => setWon(false)}
+        />
+      )}
+
+      {isAuctionFinished && (
+        <AuctionFinishedModal
+          visible={isAuctionFinished}
+          onProceed={() => {
+            setIsAuctionFinished(false);
+            router.replace("/");
           }}
         />
       )}
