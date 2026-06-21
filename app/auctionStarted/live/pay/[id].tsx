@@ -192,10 +192,10 @@ export default function PayProductScreen() {
           <View className="flex-row mb-6">
             <View className="flex-1 pr-4 justify-between">
               <DetailsList data={articleDetails} />
-            </View>
-            <View className="w-full">
-              <Text className="text-gray-400 text-base mb-1.5 leading-relaxed">Precio base: </Text>
-              <Text className="text-gray-300">{isLogged ? '$' + precioBase.toLocaleString() : 'No disponible'}</Text>
+              <View className="mt-4">
+                <Text className="text-gray-400 text-base mb-1.5 leading-relaxed">Precio base: </Text>
+                <Text className="text-gray-300">{isLogged ? '$' + precioBase.toLocaleString() : 'No disponible'}</Text>
+              </View>
             </View>
             <View className="flex-1">
               <ImageCarousel images={imageBase64Render(item?.fotos)} />
