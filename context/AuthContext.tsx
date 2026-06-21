@@ -2,6 +2,14 @@ import { authStorage } from "@/api/auth";
 import { userService } from "@/api/services/users";
 import { createContext, useContext, useEffect, useState } from "react";
 
+export interface HistoryItemType {
+  identificadorItemCatalogo: number;
+  descCatalogo: string;
+  importe: number;
+  ganador: "si" | "no"; 
+  fecha: string;
+}
+
 type User = {
   id: string;
   clientId: number;
@@ -39,6 +47,13 @@ type User = {
     estado: string;
     motivo_rechazo: string;
   };
+  stats: {
+    subastasParticipadas: number;
+    pujasRealizadas: number;
+    totalInvertido: number;
+    subastasGanadas: number;
+  };
+  history: HistoryItemType[];
 };
 
 type AuthContextType = {

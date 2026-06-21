@@ -1,4 +1,6 @@
 import { auctionService, AuctionType } from "@/api/services/auction";
+import { CATEGORIAS_USUARIO, obtenerSiguienteCategoria } from "@/api/utils/categoryValues";
+import { formatearFecha } from "@/api/utils/helpersTimeDate";
 import perfilFoto from "@/assets/images/perfil.png";
 import NoAuction from "@/components/common/NoAuction";
 import SimpleModal from "@/components/common/SimpleModal";
@@ -6,7 +8,7 @@ import BidLog from "@/components/profile/BidLog";
 import CategoryText from "@/components/profile/CategoryText";
 import CustomProgressBar from "@/components/profile/CustomProgressBar";
 import StatCard from "@/components/profile/StatCard";
-import { useAuth } from "@/context/AuthContext";
+import { HistoryItemType, useAuth } from "@/context/AuthContext";
 import {
   AntDesign,
   Feather,
@@ -26,13 +28,13 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { f1AuctionsData } from "../data/auctions";
 
 export default function Home() {
   const router = useRouter();
   const [modalAssistVisible, setAssistModalVisible] = useState(false);
   const [modalWonVisible, setWonModalVisible] = useState(false);
   const [newProfilePhoto, setNewProfilePhoto] = useState<string | null>(null);
+  const [historial, setHistorial] = useState<HistoryItemType[]>([]);
   const { user } = useAuth();
 
   const [auctions, setAuctions] = useState<AuctionType[]>([]);
@@ -42,6 +44,7 @@ export default function Home() {
       try {
         const response = await auctionService.getAuctions();
         setAuctions(response.data);
+        setHistorial(user?.history || []);
         console.log("Fetched auctions: ", response.data);
       } catch (error) {
         console.error("Error fetching auctions: ", error);
@@ -130,6 +133,9 @@ export default function Home() {
       </SafeAreaView>
     );
   }
+
+  const totalActualParticipa = CATEGORIAS_USUARIO[user.categoria]?.minParticipaciones || 10;
+  const totalActualGanadas = CATEGORIAS_USUARIO[user.categoria]?.minGanadas || 30;
 
   return (
     <SafeAreaView className="flex-1 bg-[#14191C]">
@@ -231,12 +237,12 @@ export default function Home() {
           <View className="w-full items-center gap-y-4 mt-2">
             <CustomProgressBar
               nombre="Subastas asistidas"
-              porcentaje={75}
+              porcentaje={((user.stats.subastasParticipadas * 100) / totalActualParticipa) || 0}
               onPress={() => setAssistModalVisible(true)}
             />
             <CustomProgressBar
               nombre="Subastas ganadas"
-              porcentaje={30}
+              porcentaje={((user.stats.subastasGanadas * 100) / totalActualGanadas) || 0}
               onPress={() => setWonModalVisible(true)}
             />
           </View>
@@ -253,7 +259,7 @@ export default function Home() {
                     />
                   }
                   texto="Pujas Realizadas"
-                  numero={500}
+                  numero={user?.stats?.pujasRealizadas || 0}
                 />
               </View>
               <View className="flex-1">
@@ -266,7 +272,7 @@ export default function Home() {
                     />
                   }
                   texto="Total invertido"
-                  numero={500}
+                  numero={user?.stats?.totalInvertido || 0}
                   price={true}
                 />
               </View>
@@ -290,23 +296,23 @@ export default function Home() {
               </Text>
             </View>
 
-            {!noAuction ? (
-              f1AuctionsData.map((auction, index) => {
-                const isWinner = index % 2 === 0;
-                const myLastBid = "$ 1,250,000";
+            {historial.length > 0 ? (
+              historial.map((item, index) => {
+                const isWinner = item.ganador === "si";
+                const myLastBid = `$ ${item.importe.toLocaleString()}`;
 
                 return (
                   <BidLog
-                    key={auction.id}
-                    date={auction.fecha}
-                    name={auction.title}
+                    key={item.identificadorItemCatalogo}
+                    date={formatearFecha(item.fecha)}
+                    name={item.descCatalogo}
                     won={isWinner}
                     bid={myLastBid}
                     onPress={() =>
                       router.push({
                         pathname: "/bidHistory",
                         params: {
-                          id: auction.id,
+                          id: item.identificadorItemCatalogo,
                           won: isWinner ? "true" : "false",
                         },
                       })
@@ -322,13 +328,13 @@ export default function Home() {
           <SimpleModal
             visible={modalAssistVisible}
             onClose={() => setAssistModalVisible(false)}
-            texto="Te faltan 25 subastas asistidas para alcanzar el próximo nivel y obtener beneficios exclusivos!"
+            texto={`Necesitas ${CATEGORIAS_USUARIO[obtenerSiguienteCategoria(user?.categoria) as string]?.minParticipaciones || 0} subastas asistidas para alcanzar el próximo nivel y obtener beneficios exclusivos!`}
           />
 
           <SimpleModal
             visible={modalWonVisible}
             onClose={() => setWonModalVisible(false)}
-            texto="Te faltan 30 subastas ganadas para alcanzar el próximo nivel y obtener beneficios exclusivos!"
+            texto={`Necesitas ${CATEGORIAS_USUARIO[obtenerSiguienteCategoria(user?.categoria) as string]?.minGanadas || 0} subastas ganadas para alcanzar el próximo nivel y obtener beneficios exclusivos!`}
           />
         </ScrollView>
       )}

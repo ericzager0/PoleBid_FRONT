@@ -3,3 +3,4 @@ export const getArticlesByState = (statusToFilter: string, user: any) => {
     const products = Array.isArray(user.products) ? user.products : [user.products];
     return products.filter((product: any) => product.estado === statusToFilter);
   };
+

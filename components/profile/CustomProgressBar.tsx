@@ -28,7 +28,6 @@ export default function CustomProgressBar({ nombre, porcentaje, onPress }: Custo
       <Text className="text-gray-100 text-center font-bold text-sm mt-2">
         {nombre}
       </Text>
-      
     </View>
   );
 }
