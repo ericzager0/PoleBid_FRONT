@@ -94,11 +94,11 @@ export default function ReadyBid() {
 
         <View className="mb-6 h-64 w-full rounded-2xl overflow-hidden">
           <ImageCarousel images={imagesToDisplay} />
-        </View>
+        </View> 
 
         <View className="items-center justify-center gap-4 mb-10">
           <Text className="text-white text-4xl font-extrabold tracking-tight">
-            ARS ${product.preciobase || " - "}
+            ARS ${product.precioBase || " - "}
           </Text>
 
           <View className="w-full mt-4 mb-8">
