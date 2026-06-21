@@ -13,7 +13,7 @@ export type ItemType = {
   idSubasta: number;
   estado: string;
   motivo_rechazo: string;
-  preciobase: number;
+  precioBase: number;
   comision: number;
   hora: string;
   estadoSubasta: string;

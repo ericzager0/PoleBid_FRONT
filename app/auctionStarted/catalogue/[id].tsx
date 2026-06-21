@@ -1,10 +1,11 @@
 import { imageBase64Render } from "@/api/utils/imageBase64Render";
 import CatalogueProductCard from "@/components/auctions/CatalogueProductCard";
 import CatalogueTitle from "@/components/auctions/CatalogueTitle";
+import NoAuction from "@/components/common/NoAuction";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { auctionService, AuctionType } from "../../../api/services/auction";
 
@@ -12,6 +13,7 @@ export default function CatalogueScreen() {
   const router = useRouter();
   const { id } = useLocalSearchParams();
   const [subasta, setSubasta] = useState<AuctionType | null>(null);
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
 
   useEffect(() => {
     const fetchAuction = async () => {
@@ -20,18 +22,32 @@ export default function CatalogueScreen() {
         setSubasta(response.data);
       } catch (error) {
         console.error("Error fetching auction:", error);
+      } finally {
+        setIsInitialLoading(false);
       }
     };
 
     fetchAuction();
   }, [id]);
 
+  if (isInitialLoading) {
+      return (
+        <SafeAreaView className="flex-1 bg-[#14191C] items-center justify-center">
+          <ActivityIndicator size="large" color="#E8B83C" />
+          <Text className="text-white text-lg mt-4 font-bold tracking-wide">
+            Cargando el catálogo...
+          </Text>
+        </SafeAreaView>
+      );
+    }
+
   if (!subasta) {
     return (
       <SafeAreaView className="flex-1 bg-[#14191C] items-center justify-center">
-        <Text className="text-white text-lg font-medium">
-          Cargando detalles de la subasta...
-        </Text>
+        <NoAuction
+          title="Subasta no encontrada"
+          text="La subasta que buscas no existe o ya ha finalizado."
+        />
       </SafeAreaView>
     );
   }
@@ -92,7 +108,7 @@ export default function CatalogueScreen() {
                 title={item.descripcioncatalogo}
                 description={item.descripcioncompleta}
                 price={item.precioBase?.toString() || "A definir"}
-                imageUrl={itemImage} // Usamos la imagen segura del ítem
+                imageUrl={itemImage} 
                 onPress={() =>
                   router.push({
                     pathname: "/auctionStarted/catalogue/product/[id]",

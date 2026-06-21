@@ -3,7 +3,7 @@ import { imageBase64Render } from "@/api/utils/imageBase64Render";
 import Auction from "@/components/auctions/Auction";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { Image, RefreshControl, ScrollView, Text, View } from "react-native";
+import { ActivityIndicator, Image, RefreshControl, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Home() {
@@ -11,6 +11,7 @@ export default function Home() {
 
   const [auctions, setAuctions] = useState<AuctionType[]>([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const fetchAuctions = async () => {
     try {
@@ -18,6 +19,8 @@ export default function Home() {
       setAuctions(response.data);
     } catch (error) {
       console.error("Error fetching auctions: ", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -54,7 +57,7 @@ export default function Home() {
           />
         }
       >
-        <View className="items-center justify-center pt-8 pb-10">
+      <View className="items-center justify-center pt-8 pb-10">
           <View
             className="items-center justify-center rounded-full"
             style={{
@@ -78,49 +81,60 @@ export default function Home() {
           </Text>
         </View>
 
-        {activeAuctionsData.length > 0 && (
-          <>
-            <Text className="text-white text-2xl font-bold tracking-wide mb-4">
-              Subastas activas
+        {isLoading ? (
+          <View className="mt-12 items-center justify-center">
+            <ActivityIndicator size="large" color="#E8B83C" />
+            <Text className="text-[#E8B83C] text-xs font-bold tracking-[0.15em] uppercase mt-4">
+              Cargando subastas...
             </Text>
-
-            {activeAuctionsData.map((item) => (
-              <Auction
-                key={item.identificador}
-                categoryId={item.categoria}
-                imageSrc={imageBase64Render(item.foto)[0]}
-                title={item.descripcion}
-                fecha={item.fecha}
-                hora={item.hora}
-                isActive={item.estado}
-                onPress={() =>
-                  router.push(`/auctionStarted/${item.identificador}`)
-                }
-              />
-            ))}
-          </>
-        )}
-
-        {upcomingAuctionsData.length > 0 && (
+          </View>
+        ) : (
           <>
-            <Text className="text-white text-2xl font-bold tracking-wide mt-4 mb-4">
-              Próximas subastas
-            </Text>
+            {activeAuctionsData.length > 0 && (
+              <>
+                <Text className="text-white text-2xl font-bold tracking-wide mb-4">
+                  Subastas activas
+                </Text>
 
-            {upcomingAuctionsData.map((item) => (
-              <Auction
-                key={item.identificador}
-                categoryId={item.categoria}
-                imageSrc={imageBase64Render(item.foto)[0]}
-                title={item.descripcion}
-                fecha={item.fecha}
-                hora={item.hora}
-                isActive={item.estado}
-                onPress={() =>
-                  router.push(`/auctionStarted/${item.identificador}`)
-                }
-              />
-            ))}
+                {activeAuctionsData.map((item) => (
+                  <Auction
+                    key={item.identificador}
+                    categoryId={item.categoria}
+                    imageSrc={imageBase64Render(item.foto)[0]}
+                    title={item.descripcion}
+                    fecha={item.fecha}
+                    hora={item.hora}
+                    isActive={item.estado}
+                    onPress={() =>
+                      router.push(`/auctionStarted/${item.identificador}`)
+                    }
+                  />
+                ))}
+              </>
+            )}
+
+            {upcomingAuctionsData.length > 0 && (
+              <>
+                <Text className="text-white text-2xl font-bold tracking-wide mt-4 mb-4">
+                  Próximas subastas
+                </Text>
+
+                {upcomingAuctionsData.map((item) => (
+                  <Auction
+                    key={item.identificador}
+                    categoryId={item.categoria}
+                    imageSrc={imageBase64Render(item.foto)[0]}
+                    title={item.descripcion}
+                    fecha={item.fecha}
+                    hora={item.hora}
+                    isActive={item.estado}
+                    onPress={() =>
+                      router.push(`/auctionStarted/${item.identificador}`)
+                    }
+                  />
+                ))}
+              </>
+            )}
           </>
         )}
       </ScrollView>

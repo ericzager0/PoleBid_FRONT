@@ -1,33 +1,22 @@
-import { auctionService } from "@/api/services/auction";
+import { auctionService, AuctionType } from "@/api/services/auction";
+import { ItemType } from "@/api/services/items";
 import { imageBase64Render } from "@/api/utils/imageBase64Render";
 import ProductDetailCard from "@/components/auctions/ProductDetailCard";
 import ImageCarousel from "@/components/common/ImageCarousel";
-import { useLocalSearchParams } from "expo-router";
+import NoAuction from "@/components/common/NoAuction";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { ScrollView, Text, View } from "react-native";
+import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-
-interface Producto {
-  idProducto: number;
-  precioBase: number;
-  descripcioncatalogo: string;
-  descripcioncompleta: string;
-  fotos: string[];
-  precio?: number;
-  fecha?: string;
-  comision?: number;
-}
-
-interface Subasta {
-  descripcion: string;
-  estado: string;
-  items: Producto[];
-}
 
 export default function AuctionItemScreen() {
   const { id, idSubasta } = useLocalSearchParams();
-  const [subasta, setSubasta] = useState<Subasta | null>(null);
-  const [producto, setProducto] = useState<Producto | null>(null);
+  
+  const [subasta, setSubasta] = useState<AuctionType | null>(null);
+  const [producto, setProducto] = useState<ItemType | null>(null);
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchAuction = async () => {
@@ -36,26 +25,43 @@ export default function AuctionItemScreen() {
         setSubasta(response.data);
       } catch (error) {
         console.error("Error fetching auction:", error);
+      } finally {
+        setIsInitialLoading(false);
       }
     };
 
-    fetchAuction();
+    if (idSubasta) {
+      fetchAuction();
+    }
   }, [idSubasta]);
 
   useEffect(() => {
     if (!subasta) return;
-
     const found = subasta.items.find(
       (item) => String(item.idProducto) === String(id),
     );
 
-    setProducto(found ?? null);
+    setProducto((found as unknown as ItemType) || null);
   }, [subasta, id]);
+
+  if (isInitialLoading) {
+    return (
+      <SafeAreaView className="flex-1 bg-[#14191C] items-center justify-center">
+        <ActivityIndicator size="large" color="#E8B83C" />
+        <Text className="text-white text-lg mt-4 font-bold tracking-wide">
+          Cargando el producto...
+        </Text>
+      </SafeAreaView>
+    );
+  }
 
   if (!producto) {
     return (
       <SafeAreaView className="flex-1 bg-[#14191C] items-center justify-center">
-        <Text className="text-white">Cargando detalles del producto...</Text>
+        <NoAuction
+          title="Producto no encontrado"
+          text="El producto que buscas no existe o ya no está disponible."
+        />
       </SafeAreaView>
     );
   }
@@ -65,6 +71,14 @@ export default function AuctionItemScreen() {
   return (
     <SafeAreaView className="flex-1 bg-[#121212]">
       <View className="flex-row items-center justify-between px-4 py-4 border-b border-[#1C1C1E]">
+        <View className="px-4 pt-2 pb-4">
+        <TouchableOpacity
+          onPress={() => router.back()}
+          className="self-start p-1 -ml-1"
+        >
+          <MaterialCommunityIcons name="arrow-left" size={28} color="white" />
+        </TouchableOpacity>
+        </View>
         <Text className="text-white text-lg font-bold tracking-wide">
           {producto.descripcioncatalogo}
         </Text>

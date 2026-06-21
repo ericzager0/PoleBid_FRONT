@@ -8,12 +8,11 @@ import { useAuth } from "@/context/AuthContext";
 import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function AuctionDetailScreen() {
   const { id } = useLocalSearchParams();
-  console.log(id);
   const router = useRouter();
   const { user } = useAuth();
 
@@ -21,6 +20,7 @@ export default function AuctionDetailScreen() {
     "none",
   );
   const [auctions, setAuctions] = useState<AuctionType[]>([]);
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
 
   useEffect(() => {
     const fetchAuctions = async () => {
@@ -29,6 +29,8 @@ export default function AuctionDetailScreen() {
         setAuctions(response.data);
       } catch (error) {
         console.error("Error fetching auctions: ", error);
+      } finally {
+        setIsInitialLoading(false);
       }
     };
     fetchAuctions();
@@ -42,6 +44,17 @@ export default function AuctionDetailScreen() {
     setAlertType('full');
   }
   */
+  }
+
+  if (isInitialLoading) {
+    return (
+      <SafeAreaView className="flex-1 bg-[#14191C] items-center justify-center">
+        <ActivityIndicator size="large" color="#E8B83C" />
+        <Text className="text-white text-lg mt-4 font-bold tracking-wide">
+          Cargando la subasta...
+        </Text>
+      </SafeAreaView>
+    );
   }
 
   const auction = auctions.find((item) => item.identificador === Number(id));

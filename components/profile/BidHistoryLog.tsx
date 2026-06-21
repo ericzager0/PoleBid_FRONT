@@ -8,6 +8,7 @@ export interface BidEvent {
   ganador: string;
   importe: number;
   categoria: string;
+  isMe?: boolean;
 }
 
 interface BidHistoryLogProps {
@@ -23,14 +24,11 @@ export default function BidHistoryLog({
 
   const getCategoryData = (idCategory: string) => {
     switch (idCategory) {
-      case "Plata":
-        return { name: "Silver", color: "#B6BABD" };
-      case "Oro":
-        return { name: "Gold", color: "#E8B83C" };
-      case "Platino":
-        return { name: "Platinum", color: "#B8C1E8" };
-      default:
-        return { name: "Comun", color: "#FFFFFF" };
+      case "plata": return { name: "Silver", color: "#C0C0C0" };
+      case "oro": return { name: "Gold", color: "#FFD700" };
+      case "platino": return { name: "Platinum", color: "#B8C1E8" };
+      case "especial": return { name: "Special", color: "#E8B83C" };
+      default: return { name: "Comun", color: "#B6BABD" };
     }
   };
 
@@ -40,10 +38,7 @@ export default function BidHistoryLog({
 
   const formatTime = (value: string) => {
     return new Date(value).toLocaleTimeString("en-GB", {
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-      hour12: false,
+      hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false,
     });
   };
 
@@ -55,9 +50,7 @@ export default function BidHistoryLog({
     >
       <ScrollView
         ref={scrollViewRef}
-        onContentSizeChange={() =>
-          scrollViewRef.current?.scrollToEnd({ animated: true })
-        }
+        onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
         showsVerticalScrollIndicator={true}
         nestedScrollEnabled={true}
         contentContainerStyle={{ paddingBottom: 16 }}
@@ -68,11 +61,13 @@ export default function BidHistoryLog({
           return (
             <Text
               key={bid.identificador}
-              className="text-white text-base font-bold mb-3 tracking-wide"
+              className={`text-base font-bold mb-3 tracking-wide ${
+                bid.isMe ? 'text-[#38BDF8]' : 'text-white' 
+              }`}
             >
               {formatTime(bid.created_at)} -{" "}
-              <Text style={{ color: cat.color }}>[{cat.name}]</Text> Postor{" "}
-              {bid.identificador}: {formatMoney(bid.importe)}
+              <Text style={{ color: cat.color }}>[{cat.name}]</Text>{" "}
+              {bid.isMe ? "(Vos)" : `Postor ${bid.identificador}`}: {formatMoney(bid.importe)}
             </Text>
           );
         })}

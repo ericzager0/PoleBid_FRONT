@@ -8,6 +8,7 @@ interface BidInputProps {
   min: number;
   max: number;
   enabled?: boolean;
+  hasError?: boolean; 
 }
 
 export default function BidInput({
@@ -16,6 +17,7 @@ export default function BidInput({
   min,
   max,
   enabled = true,
+  hasError = false, 
 }: BidInputProps) {
   const [isFocused, setIsFocused] = useState<boolean>(false);
 
@@ -31,13 +33,18 @@ export default function BidInput({
       return;
     }
 
-    const formatted = parseInt(numericValue, 10).toLocaleString("en-US");
-    setValue(parseInt(formatted, 10));
+    setValue(parseInt(numericValue, 10));
   };
 
   const activeColor = "#E8B83C";
   const inactiveColor = "#757575";
-  const currentColor = isFocused ? activeColor : inactiveColor;
+  const errorColor = "#EF4444";
+
+  const currentColor = hasError 
+    ? errorColor 
+    : isFocused 
+      ? activeColor 
+      : inactiveColor;
 
   return (
     <View className="w-full my-2">
@@ -45,9 +52,11 @@ export default function BidInput({
         className={`flex-row items-center border-2 rounded-xl px-4 py-3 bg-[#36393F] ${
           !enabled
             ? "opacity-50 border-[#2A2B30] bg-[#2A2B30]"
-            : isFocused
-              ? "border-[#E8B83C]"
-              : "border-[#757575]"
+            : hasError
+              ? "border-[#EF4444]" 
+              : isFocused
+                ? "border-[#E8B83C]"
+                : "border-[#757575]"
         }`}
       >
         <Text
@@ -61,7 +70,7 @@ export default function BidInput({
           className="flex-1 text-2xl font-medium"
           style={{ color: !enabled ? inactiveColor : currentColor }}
           keyboardType="numeric"
-          value={String(value)}
+          value={value > 0 ? String(value) : ""}
           onChangeText={handleTextChange}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
