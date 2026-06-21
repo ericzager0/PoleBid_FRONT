@@ -18,7 +18,7 @@ import { useAuth } from "@/context/AuthContext";
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Keyboard,
@@ -31,69 +31,73 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-// Función a prueba de balas para interpretar las fechas
-const parseSafeDate = (dateStr: string | null | undefined): number => {
-  if (!dateStr) return 0;
-  try {
-    let safeStr = dateStr;
-    if (safeStr.includes('+')) safeStr = safeStr.split('+')[0];
-    if (safeStr.includes('.')) safeStr = safeStr.split('.')[0];
-    safeStr = safeStr.replace(" ", "T");
-    const parsed = new Date(`${safeStr}Z`).getTime();
-    return isNaN(parsed) ? 0 : parsed;
-  } catch (e) {
-    return 0;
-  }
-};
-
 export default function LiveAuctionScreen() {
   const router = useRouter();
   const { id, readonly } = useLocalSearchParams();
   const isReadOnly = readonly === "true";
-  
+  const [won, setWon] = useState(false);
   const { user } = useAuth();
   const isLogged = !!user;
-  
   const [currentItem, setCurrentItem] = useState<ItemType | null>(null);
   const [bidValue, setBidValue] = useState<number>(0);
   const [misPujasLocales, setMisPujasLocales] = useState<any[]>([]);
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
-  
-  // Alertas
   const [isAlertVisible, setIsAlertVisible] = useState(false);
-  const [alertContent, setAlertContent] = useState({ title: "", description: "" });
+  const [alertContent, setAlertContent] = useState({
+    title: "",
+    description: "",
+  });
   const [hasBidError, setHasBidError] = useState(false);
-  
-  // Tiempos y Estados
   const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [timeLeft, setTimeLeft] = useState<number>(0);
-  
-  // Control de Modales
   const [isAuctionFinished, setIsAuctionFinished] = useState(false);
-  const [won, setWon] = useState(false);
-  const [finalWinningBid, setFinalWinningBid] = useState<number>(0);
+  
   const [showItemFinished, setShowItemFinished] = useState(false);
-  const [hasEvaluatedEnd, setHasEvaluatedEnd] = useState(false);
 
-  const endTimeRef = useRef<number>(Date.now() + 180000); 
+  const isSold = currentItem?.subastado != null;
+
+  // 1. VARIABLE DE BLOQUEO: Solo se puede pujar si no es readonly, no se vendió y queda tiempo.
+  const canBid = !isReadOnly && !isSold && timeLeft > 0;
 
   const handleBidSubmit = async () => {
     if (!currentItem) return;
 
+    // Bloqueo duro interno por si logran burlar el botón de la UI
+    if (timeLeft === 0 || isSold) {
+      setAlertContent({
+        title: "Tiempo Agotado",
+        description: "El tiempo para pujar por este artículo ha finalizado.",
+      });
+      setHasBidError(true);
+      setIsAlertVisible(true);
+      return;
+    }
+
     if (bidValue <= 0) {
-      setAlertContent({ title: "Monto inválido", description: "El monto a pujar no puede ser cero o negativo." });
+      setAlertContent({
+        title: "Monto inválido",
+        description: "El monto a pujar no puede ser cero o negativo.",
+      });
       setHasBidError(true);
       setIsAlertVisible(true);
       return;
     }
+
     if (bidValue < minAllowed) {
-      setAlertContent({ title: "Puja muy baja", description: `La puja mínima para superar la oferta actual es de $${minAllowed.toLocaleString("en-US")}.` });
+      setAlertContent({
+        title: "Puja muy baja",
+        description: `La puja mínima para superar la oferta actual es de $${minAllowed.toLocaleString("en-US")}.`,
+      });
       setHasBidError(true);
       setIsAlertVisible(true);
       return;
     }
+
     if (bidValue > maxAllowed) {
-      setAlertContent({ title: "Límite excedido", description: `La puja máxima permitida para este artículo es de $${maxAllowed.toLocaleString("en-US")}.` });
+      setAlertContent({
+        title: "Límite excedido",
+        description: `La puja máxima permitida para este artículo es de $${maxAllowed.toLocaleString("en-US")}.`,
+      });
       setHasBidError(true);
       setIsAlertVisible(true);
       return;
@@ -103,8 +107,8 @@ export default function LiveAuctionScreen() {
       identificador: Date.now(),
       created_at: new Date().toISOString(),
       asistente: 0,
-      ganador: "no", 
-      clientId: user?.clientId, // Agregado para reconocimiento local seguro
+      ganador: "no",
+      clientId: user?.clientId, 
       importe: bidValue,
       categoria: "Comun",
       isMe: true,
@@ -121,10 +125,15 @@ export default function LiveAuctionScreen() {
     setBidValue(0);
   };
 
+  const handleAuctionEnd = async () => {
+    setIsAuctionFinished(true);
+  };
+
   const handleFinishedProceed = async () => {
     try {
       const guardado = await AsyncStorage.getItem("@mis_victorias");
       const listaVictorias = guardado ? JSON.parse(guardado) : [];
+
       setIsAuctionFinished(false);
 
       if (listaVictorias.length > 0) {
@@ -133,6 +142,7 @@ export default function LiveAuctionScreen() {
         router.replace("/");
       }
     } catch (error) {
+      console.error("Error al salir de subasta finalizada: ", error);
       setIsAuctionFinished(false);
       router.replace("/");
     }
@@ -140,28 +150,39 @@ export default function LiveAuctionScreen() {
 
   const fetchCurrentItem = async (bidsOnly: boolean) => {
     try {
-      const response = await auctionService.getCurrentItem(Number(id), bidsOnly);
+      const response = await auctionService.getCurrentItem(
+        Number(id),
+        bidsOnly,
+      );
 
+      // Si el backend viene vacío (null data), entonces no hay más ítems, se cierra la subasta
       if (!response || !response.data) {
-        setIsAuctionFinished(true);
+        await handleAuctionEnd();
         return false;
       }
 
       setCurrentItem((estadoAnterior) => {
-        if (!estadoAnterior) return response.data;
-        
-        if (estadoAnterior.itemId !== response.data.itemId) {
-           setMisPujasLocales([]);
-           setHasEvaluatedEnd(false); // Reseteamos la evaluación de victoria al cambiar de ítem
-           setWon(false);
-           setShowItemFinished(false);
+        if (!estadoAnterior) {
+          return response.data;
         }
 
-        return { ...estadoAnterior, ...response.data };
+        if (estadoAnterior.itemId !== response.data.itemId) {
+          setMisPujasLocales([]);
+          setWon(false);
+          setShowItemFinished(false);
+        }
+
+        return {
+          ...estadoAnterior,
+          ...response.data,
+        };
       });
     } catch (error) {
-      console.error("Error fetching current item: ", error);
-      setIsAuctionFinished(true);
+      // 2. SOLUCIÓN AL CRASHEO DEL CRON: 
+      // Si el fetch falla (porque el cron está manipulando DB o tira Error 500 temporal), 
+      // ya NO llamamos a "await handleAuctionEnd();". 
+      // Solo ignoramos el error, y el polling volverá a intentar en 3 segundos.
+      console.error("Error temporal recuperando data del servidor: ", error);
       return false;
     } finally {
       setIsInitialLoading(false);
@@ -173,10 +194,9 @@ export default function LiveAuctionScreen() {
     let isMounted = true;
 
     const fetchLoop = async () => {
-      // Detenemos el polling un momento si ya está evaluando el final, para evitar parpadeos
-      if (!isMounted || hasEvaluatedEnd) return;
+      if (!isMounted) return;
       await fetchCurrentItem(true);
-      if (isMounted && !hasEvaluatedEnd) {
+      if (isMounted) {
         timeoutId = setTimeout(fetchLoop, 3000);
       }
     };
@@ -192,17 +212,29 @@ export default function LiveAuctionScreen() {
       isMounted = false;
       clearTimeout(timeoutId);
     };
-  }, [id, hasEvaluatedEnd]);
+  }, [id]);
 
   const rawPujos = currentItem?.pujos;
-  const bidsBackend = Array.isArray(rawPujos) ? rawPujos : rawPujos ? [rawPujos] : [];
+  const bidsBackend = Array.isArray(rawPujos)
+    ? rawPujos
+    : rawPujos
+      ? [rawPujos]
+      : [];
 
   const basePrice = Number(currentItem?.precioBase || 0);
-  const maxBid = bidsBackend.length > 0 ? Math.max(...bidsBackend.map((bid) => bid.importe)) : 0;
-  const minAllowed = bidsBackend.length === 0 ? basePrice : maxBid + 0.1 * basePrice;
-  const maxAllowed = bidsBackend.length === 0 ? basePrice + 0.2 * basePrice : maxBid + 0.2 * basePrice;
+  const maxBid =
+    bidsBackend.length > 0
+      ? Math.max(...bidsBackend.map((bid) => bid.importe))
+      : 0;
 
-  const isSold = currentItem?.subastado != null;
+  const minAllowed =
+    bidsBackend.length === 0 ? basePrice : maxBid + 0.1 * basePrice;
+
+  const maxAllowed =
+    bidsBackend.length === 0
+      ? basePrice + 0.2 * basePrice
+      : maxBid + 0.2 * basePrice;
+
   const bidsBackendMarcadas = bidsBackend.map((bid) => ({
     ...bid,
     isMe: misPujasLocales.some((local) => local.importe === bid.importe),
@@ -214,13 +246,15 @@ export default function LiveAuctionScreen() {
   const bids = [...bidsBackendMarcadas, ...misPujasPendientes];
 
   const boughtByCompany = isSold && bidsBackend.length === 0;
-  
-  // === VALIDACIÓN CRÍTICA CORREGIDA: CHEQUEAMOS CONTRA user.clientId ===
-  const myWinningBid = isSold 
-    ? bidsBackend.find((bid) => bid.ganador?.toLowerCase() === "si" && Number(bid.clientId) === Number(user?.clientId)) 
+
+  const myWinningBid = isSold
+    ? bidsBackend.find(
+        (bid) => bid.ganador?.toLowerCase() === "si" && Number(bid.clientId) === Number(user?.clientId),
+      )
     : null;
+
   const iWonThisItem = !!myWinningBid;
-  
+
   const externalWinnerBid = isSold ? bidsBackend.find((bid) => bid.ganador?.toLowerCase() === "si") : null;
   const winnerName = boughtByCompany 
     ? "La Casa (Lote Desierto)" 
@@ -228,13 +262,58 @@ export default function LiveAuctionScreen() {
       ? `Asistente ${externalWinnerBid.asistente}` 
       : "Calculando...";
 
-  // Teclado
   useEffect(() => {
-    const showEvent = Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow";
-    const hideEvent = Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide";
+    const registrarYMostrarModales = async () => {
+      if (isSold && currentItem) {
+        if (iWonThisItem && myWinningBid) {
+          try {
+            const guardadoAnterior = await AsyncStorage.getItem("@mis_victorias");
+            let listaVictorias = guardadoAnterior
+              ? JSON.parse(guardadoAnterior)
+              : [];
+            const yaExiste = listaVictorias.some(
+              (item: any) => item.id === currentItem.itemId,
+            );
 
-    const keyboardDidShowListener = Keyboard.addListener(showEvent, () => setKeyboardVisible(true));
-    const keyboardDidHideListener = Keyboard.addListener(hideEvent, () => setKeyboardVisible(false));
+            if (!yaExiste) {
+              listaVictorias.push({
+                id: currentItem.itemId,
+                precio: myWinningBid.importe,
+              });
+
+              await AsyncStorage.setItem(
+                "@mis_victorias",
+                JSON.stringify(listaVictorias),
+              );
+            }
+          } catch (error) {
+            console.error("Error guardando la victoria localmente", error);
+          }
+          setWon(true);
+        } else {
+          setShowItemFinished(true);
+        }
+      } else {
+        setWon(false);
+        setShowItemFinished(false);
+      }
+    };
+
+    registrarYMostrarModales();
+  }, [isSold, iWonThisItem, currentItem?.itemId, myWinningBid]);
+
+  useEffect(() => {
+    const showEvent =
+      Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow";
+    const hideEvent =
+      Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide";
+
+    const keyboardDidShowListener = Keyboard.addListener(showEvent, () => {
+      setKeyboardVisible(true);
+    });
+    const keyboardDidHideListener = Keyboard.addListener(hideEvent, () => {
+      setKeyboardVisible(false);
+    });
 
     return () => {
       keyboardDidHideListener.remove();
@@ -242,85 +321,68 @@ export default function LiveAuctionScreen() {
     };
   }, []);
 
-  // 1. Recalcular la fecha máxima con cada puja
+  // === TIMER ORIGINAL QUE REACCIONA A CADA PUJA ===
   useEffect(() => {
     if (!currentItem) return;
 
-    let lastActivityMs = parseSafeDate((currentItem as any).updatedAt || (currentItem as any).updated_at);
-    if (lastActivityMs === 0) lastActivityMs = Date.now();
+    if (currentItem.subastado != null) {
+      setTimeLeft(0);
+      return;
+    }
 
-    bids.forEach(bid => {
-      const bidTime = parseSafeDate(bid.created_at || bid.createdAt);
-      if (bidTime > lastActivityMs) lastActivityMs = bidTime;
-    });
+    const rawPujosLocal = currentItem?.pujos;
+    const bidsBackendLocal = Array.isArray(rawPujosLocal)
+      ? rawPujosLocal
+      : rawPujosLocal
+        ? [rawPujosLocal]
+        : [];
 
-    endTimeRef.current = lastActivityMs + 180000;
-    const msRestantes = endTimeRef.current - Date.now();
-    setTimeLeft(msRestantes > 0 ? Math.floor(msRestantes / 1000) : 0);
-  }, [currentItem, misPujasLocales]);
+    const todasLasPujas = [...bidsBackendLocal, ...misPujasLocales];
 
-  // 2. El reloj visual
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const msRestantes = endTimeRef.current - Date.now();
-      setTimeLeft(msRestantes <= 0 ? 0 : Math.floor(msRestantes / 1000));
+    let inicioVentana: number;
+
+    if (todasLasPujas.length > 0) {
+      const tiemposPujas = todasLasPujas
+        .map((bid: any) => {
+          const fechaPuja = bid.createdAt || bid.created_at;
+          if (!fechaPuja) return null;
+          const tiempo = new Date(fechaPuja).getTime();
+          return isNaN(tiempo) ? null : tiempo;
+        })
+        .filter((t): t is number => t !== null);
+
+      inicioVentana =
+        tiemposPujas.length > 0 ? Math.max(...tiemposPujas) : Date.now();
+    } else {
+      const fechaItem =
+        (currentItem as any).updatedAt || (currentItem as any).updated_at;
+      inicioVentana = fechaItem ? new Date(fechaItem).getTime() : Date.now();
+    }
+
+    const endTime = inicioVentana + 60000;
+
+    const actualizarTimeLeft = () => {
+      const ahora = Date.now();
+      const diferenciaEnMilisegundos = endTime - ahora;
+
+      if (diferenciaEnMilisegundos <= 0) {
+        setTimeLeft(0);
+        return false;
+      }
+      setTimeLeft(Math.floor(diferenciaEnMilisegundos / 1000));
+      return true;
+    };
+
+    if (!actualizarTimeLeft()) return;
+
+    const timerInterval = setInterval(() => {
+      if (!actualizarTimeLeft()) {
+        clearInterval(timerInterval);
+      }
     }, 1000);
 
-    return () => clearInterval(interval);
-  }, []);
-
-  // 3. El Juez Evaluador
-  useEffect(() => {
-    if (isInitialLoading || !currentItem || hasEvaluatedEnd) return;
-
-    const isTimeOverLocally = timeLeft === 0 && endTimeRef.current <= Date.now();
-    
-    if (isSold || isTimeOverLocally) {
-      setHasEvaluatedEnd(true);
-
-      let iWonLocally = false;
-      let winningAmount = 0;
-
-      // Intentamos comprobar si el backend ya dictó ganador con nuestro clientId
-      if (isSold && myWinningBid) {
-        iWonLocally = true;
-        winningAmount = myWinningBid.importe;
-      } 
-      // Si el backend aún no actualizó pero el tiempo ya acabó, lo validamos usando clientId
-      else if (!boughtByCompany) {
-        const highestBid = bids.length > 0 
-          ? bids.reduce((prev, current) => (prev.importe > current.importe) ? prev : current) 
-          : null;
-        
-        if (highestBid && (highestBid.isMe || Number(highestBid.clientId) === Number(user?.clientId))) {
-          iWonLocally = true;
-          winningAmount = highestBid.importe;
-        }
-      }
-
-      // Desplegamos el modal correspondiente
-      if (iWonLocally) {
-        setFinalWinningBid(winningAmount);
-        
-        // Registrar victoria en local storage para el carrito
-        (async () => {
-          try {
-            const guardado = await AsyncStorage.getItem("@mis_victorias");
-            let lista = guardado ? JSON.parse(guardado) : [];
-            if (!lista.some((item: any) => item.id === currentItem.itemId)) {
-              lista.push({ id: currentItem.itemId, precio: winningAmount });
-              await AsyncStorage.setItem("@mis_victorias", JSON.stringify(lista));
-            }
-          } catch (e) {}
-        })();
-        
-        setWon(true);
-      } else {
-        // Yo no gané. Abrimos modal de perdedor a la espera del próximo ítem.
-        setShowItemFinished(true);
-      }
-    }
-  }, [timeLeft, isSold, isInitialLoading, currentItem, hasEvaluatedEnd, bids, myWinningBid, boughtByCompany, user]);
+    return () => clearInterval(timerInterval);
+  }, [currentItem, misPujasLocales]);
 
   if (isInitialLoading) {
     return (
@@ -333,13 +395,12 @@ export default function LiveAuctionScreen() {
     );
   }
 
-  // Cuando el backend deja de pasar artículos
   if (!currentItem) {
     return (
       <SafeAreaView className="flex-1 bg-[#14191C] items-center justify-center">
         <NoAuction
-          title="Subasta Finalizada"
-          text="Ya no quedan artículos activos en este evento."
+          title="Subasta no encontrada"
+          text="La subasta que buscas no existe o ya ha finalizado."
         />
         {isAuctionFinished && (
           <AuctionFinishedModal
@@ -353,7 +414,10 @@ export default function LiveAuctionScreen() {
 
   const articleDetails = [
     { label: "Fecha", value: currentItem.fecha },
-    { label: "ID", value: `A${currentItem.itemId}/${new Date().getFullYear()}` },
+    {
+      label: "ID",
+      value: `A${currentItem.itemId}/${new Date().getFullYear()}`,
+    },
   ];
 
   return (
@@ -375,7 +439,9 @@ export default function LiveAuctionScreen() {
         <ScrollView
           className="flex-1 px-4"
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: isKeyboardVisible ? 360 : 40 }}
+          contentContainerStyle={{
+            paddingBottom: isKeyboardVisible ? 360 : 40,
+          }}
           keyboardShouldPersistTaps="handled"
           automaticallyAdjustKeyboardInsets={true}
         >
@@ -408,14 +474,20 @@ export default function LiveAuctionScreen() {
                   Precio base:{" "}
                 </Text>
                 <Text className="text-gray-300">
-                  {isLogged && !isReadOnly ? "$" + basePrice.toLocaleString("en-US") : "No disponible"}
+                  {isLogged && !isReadOnly
+                    ? "$" + basePrice.toLocaleString("en-US")
+                    : "No disponible"}
                 </Text>
               </View>
               <View className="gap-y-3 mt-4">
                 <RoundedButton
                   variant="secondary"
                   label="Detalle Producto"
-                  onPress={() => router.push(`/auctionStarted/catalogue/product/${currentItem.identificador}?idSubasta=${id}`)}
+                  onPress={() =>
+                    router.push(
+                      `/auctionStarted/catalogue/product/${currentItem.identificador}?idSubasta=${id}`,
+                    )
+                  }
                 />
                 <LiveButton onPress={() => console.log("Viendo stream...")} />
               </View>
@@ -460,13 +532,13 @@ export default function LiveAuctionScreen() {
                   setValue={setBidValue}
                   min={minAllowed}
                   max={maxAllowed}
-                  enabled={!isReadOnly && !isSold && !hasEvaluatedEnd}
+                  enabled={canBid}
                   hasError={hasBidError}
                 />
                 <View className="mt-4">
                   <Button
                     label="Pujar"
-                    variant={isReadOnly || isSold || hasEvaluatedEnd ? "blocked" : "primary"}
+                    variant={canBid ? "primary" : "blocked"}
                     onPress={handleBidSubmit}
                   />
                 </View>
@@ -489,7 +561,7 @@ export default function LiveAuctionScreen() {
         <VictoryModal
           visible={won}
           itemName={currentItem.descripcioncatalogo || currentItem.descripcion}
-          winningBid={`$${(finalWinningBid || 0).toLocaleString("en-US")}`}
+          winningBid={`$${(myWinningBid?.importe || 0).toLocaleString("en-US")}`}
           onProceed={() => {
             setWon(false);
             router.push(`/auctionStarted/live/pay/${id}`);
