@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 
 type User = {
   id: string;
+  clientId: number;
   email: string;
   firstName: string;
   lastName: string;

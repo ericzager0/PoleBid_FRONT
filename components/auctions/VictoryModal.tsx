@@ -10,7 +10,6 @@ interface VictoryModalProps {
   itemName: string;
   winningBid: string;
   onProceed: () => void;
-  onClose: () => void;
 }
 
 export default function VictoryModal({
@@ -18,7 +17,6 @@ export default function VictoryModal({
   itemName,
   winningBid,
   onProceed,
-  onClose,
 }: VictoryModalProps) {
   const [showConfetti, setShowConfetti] = useState(false);
 
@@ -32,11 +30,7 @@ export default function VictoryModal({
   }, [visible]);
 
   return (
-    <Modal
-      visible={visible}
-      transparent={true}
-      animationType="fade"
-    >
+    <Modal visible={visible} transparent={true} animationType="fade">
       <View className="flex-1 bg-black/85 justify-center px-4">
         {showConfetti && (
           <ConfettiCannon
@@ -66,15 +60,9 @@ export default function VictoryModal({
             Tu puja de <Text className="text-[#E8B83C] font-bold">{winningBid}</Text> fue la más alta por el artículo <Text className="text-white font-bold italic">"{itemName}"</Text>.
           </Text>
 
-          <View className="w-full gap-y-3">
+          <View className="w-full">
             <Button label="Proceder al Pago" variant="primary" onPress={onProceed} />
-            <Button 
-              label="Seguir participando" 
-              variant="secondary" 
-              onPress={onClose} 
-            />
           </View>
-
         </View>
       </View>
     </Modal>
