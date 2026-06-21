@@ -270,39 +270,70 @@ export default function LiveAuctionScreen() {
 
   useEffect(() => {
     if (!currentItem) return;
-    const fechaItem = currentItem.updatedAt || currentItem.updatedAt;
+
+    // "bids" se recalcula en cada render (es un array nuevo siempre),
+    // así que NO puede ir como dependencia del effect: causaría que el
+    // interval se reinicie en cada render (incluso por el propio
+    // setTimeLeft) y el countdown se quede pegado. En vez de eso,
+    // dependemos de los datos "crudos" (currentItem y misPujasLocales)
+    // y recalculamos bidsBackend/bids acá adentro, ya estables.
+
+    const fechaItem = (currentItem as any).updatedAt || (currentItem as any).updated_at;
     let ultimaActividad = fechaItem ? new Date(fechaItem).getTime() : Date.now();
 
-    if (bids.length > 0) {
-      const tiemposPujas = bids.map((bid) => {
-        const fechaPuja = bid.createdAt || bid.created_at;
-        
-        if (!fechaPuja) return 0; 
-        
-        const tiempo = new Date(fechaPuja).getTime();
-        return isNaN(tiempo) ? 0 : tiempo; 
-      });
+    const rawPujosLocal = currentItem?.pujos;
+    const bidsBackendLocal = Array.isArray(rawPujosLocal)
+      ? rawPujosLocal
+      : rawPujosLocal
+        ? [rawPujosLocal]
+        : [];
 
-      const tiempoUltimoPujo = Math.max(...tiemposPujas);
-      ultimaActividad = Math.max(ultimaActividad, tiempoUltimoPujo);
+    const todasLasPujas = [...bidsBackendLocal, ...misPujasLocales];
+
+    if (todasLasPujas.length > 0) {
+      const tiemposPujas = todasLasPujas
+        .map((bid: any) => {
+          const fechaPuja = bid.createdAt || bid.created_at;
+          if (!fechaPuja) return null;
+          const tiempo = new Date(fechaPuja).getTime();
+          return isNaN(tiempo) ? null : tiempo;
+        })
+        .filter((t): t is number => t !== null);
+
+      if (tiemposPujas.length > 0) {
+        const tiempoUltimoPujo = Math.max(...tiemposPujas);
+        // El timer SIEMPRE arranca/resetea desde la puja más reciente
+        // (created_at), ya que el fetch no es real-time y updatedAt del
+        // item puede llegar "viejo" frente a una puja recién hecha.
+        ultimaActividad = Math.max(ultimaActividad, tiempoUltimoPujo);
+      }
     }
 
-    const endTime = ultimaActividad + 60000; 
+    const endTime = ultimaActividad + 60000;
 
-    const timerInterval = setInterval(() => {
+    const actualizarTimeLeft = () => {
       const ahora = Date.now();
       const diferenciaEnMilisegundos = endTime - ahora;
 
       if (diferenciaEnMilisegundos <= 0) {
         setTimeLeft(0);
-        clearInterval(timerInterval);
-      } else {
-        setTimeLeft(Math.floor(diferenciaEnMilisegundos / 1000));
+        return false;
       }
-    }, 1000); 
+      setTimeLeft(Math.floor(diferenciaEnMilisegundos / 1000));
+      return true;
+    };
+
+    // Seteo inmediato para que no se vea "trabado" hasta el primer tick
+    if (!actualizarTimeLeft()) return;
+
+    const timerInterval = setInterval(() => {
+      if (!actualizarTimeLeft()) {
+        clearInterval(timerInterval);
+      }
+    }, 1000);
 
     return () => clearInterval(timerInterval);
-  }, [currentItem, bids]); 
+  }, [currentItem, misPujasLocales]);
 
   if (isInitialLoading) {
     return (
