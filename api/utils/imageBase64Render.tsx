@@ -18,6 +18,10 @@ export const imageBase64Render = (productData: any) => {
     const formatted = formatImage(productData.foto);
     if (formatted) imagesToDisplay.push(formatted);
   }
+  else if (productData?.fotos && typeof productData.fotos === 'string') {
+    const formatted = formatImage(productData.fotos);
+    if (formatted) imagesToDisplay.push(formatted);
+  }
   else if (productData?.fotos && Array.isArray(productData.fotos)) {
     imagesToDisplay = productData.fotos
       .map((item: any) => formatImage(item.foto || item))
