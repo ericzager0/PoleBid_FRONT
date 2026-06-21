@@ -198,7 +198,7 @@ export default function PayProductScreen() {
               <Text className="text-gray-300">{isLogged ? '$' + precioBase.toLocaleString() : 'No disponible'}</Text>
             </View>
             <View className="flex-1">
-              <ImageCarousel images={imageBase64Render(item)} />
+              <ImageCarousel images={imageBase64Render(item?.fotos)} />
             </View>
           </View>
 
