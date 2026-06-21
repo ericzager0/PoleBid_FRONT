@@ -409,7 +409,7 @@ export default function LiveAuctionScreen() {
               <RoundedButton
                 variant="secondary"
                 label="Catalogo"
-                onPress={() => router.push(`/auctionStarted/catalogue/${id}`)}
+                onPress={() => router.replace(`/auctionStarted/catalogue/${id}`)}
               />
             </View>
           </View>
@@ -519,7 +519,7 @@ export default function LiveAuctionScreen() {
           winningBid={`$${(myWinningBid?.importe || 0).toLocaleString("en-US")}`}
           onProceed={() => {
             setWon(false);
-            router.push(`/auctionStarted/live/pay/${id}`);
+            router.replace(`/auctionStarted/live/pay/${currentItem.identificador}`);
           }}
         />
       )}

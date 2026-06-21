@@ -39,6 +39,9 @@ export const itemsService = {
   getItem: (id: number) => {
     return client.get(`/me/items/${id}`);
   },
+  getProductById: (id: number) => {
+    return client.get(`/auctions/products/${id}`);
+  },
   updateItem: (id: number, body: { estado: string }) => {
     return client.patch(`/me/items/${id}`, body);
   },

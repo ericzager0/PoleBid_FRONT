@@ -1,8 +1,8 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 // 1. Importamos KeyboardAvoidingView y Platform
-import { KeyboardAvoidingView, Platform, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, KeyboardAvoidingView, Platform, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import ConfirmPayModal from '@/components/auctions/ConfirmPayModal';
@@ -17,10 +17,11 @@ import CheckPlaceholder from '@/components/settings/CheckPlaceholder';
 import CreditCard from '@/components/settings/CreditCard';
 import PaymentCarousel from '@/components/settings/PaymentCarousel';
 
+import { itemsService, ItemType } from '@/api/services/items';
+import { imageBase64Render } from '@/api/utils/imageBase64Render';
 import { useAuth } from '@/context/AuthContext';
-import { f1AuctionsData } from "../../../data/auctions";
 
-export default function LiveAuctionScreen() {
+export default function PayProductScreen() {
   const router = useRouter();
   const { id } = useLocalSearchParams();
 
@@ -30,33 +31,70 @@ export default function LiveAuctionScreen() {
   const [calle, setCalle] = useState('');
   const [altura, setAltura] = useState('');
   const [ciudad, setCiudad] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
 
   const {user} = useAuth();
-  const [isLogged, setLogged] = useState(user ? true : false);
+  const isLogged = !!user;
 
-  const auction = f1AuctionsData.find((item) => item.id === id);
-  const live = auction?.live; 
-  const precioBase = 1000000;
+  const [item, setitem] = useState<ItemType | null>(null);
+  const fetchItems = async (id: number) => {
+      try {
+        const response = await itemsService.getProductById(id);
+        const { fotos, ...rest } = response.data;
+        console.log("Item data: ", rest);
+        setitem(response.data);
+      } catch (error) {
+        console.error("Error fetching items: ", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+  useEffect(() => {
+    fetchItems(Number(id));
+  }, [id]);
+  const precioBase = item?.precioBase || 0;  
 
-  if (!auction) {
+  if (isLoading) {
+      return (
+        <SafeAreaView className="flex-1 bg-[#14191C] items-center justify-center">
+          <ActivityIndicator size="large" color="#E8B83C" />
+          <Text className="text-white text-lg mt-4 font-bold tracking-wide">
+            Cargando el producto...
+          </Text>
+        </SafeAreaView>
+      );
+    }
+
+
+  if (!item && !isLoading) {
     return (
       <SafeAreaView className="flex-1 bg-[#14191C] items-center justify-center">
-        <NoAuction title="Subasta no encontrada" text="La subasta que buscas no existe o ya ha finalizado." />
+        <NoAuction title="Producto no encontrado" text="Problema al traer el producto" />
       </SafeAreaView>
     );
   }
 
   const articleDetails = [
-    { label: 'Fecha', value: auction.fecha },
-    { label: 'ID', value: `A1/${new Date().getFullYear()}` },
-    { label: 'Precio Base', value: '$1,000,000' },
-    { label: 'Comisión', value: '18%' },
+    { label: "Fecha", value: String(new Date().toLocaleDateString()) },
+    {
+      label: "ID",
+      value: `A${item?.itemId}/${new Date().getFullYear()}`,
+    },
+    {
+      label: "Comision",
+      value: (String((item?.comision || 0 )*100)+"%") || "No disponible",
+    },
+    {
+      label: "Precio Base",
+      value: ("$"+String(item?.precioBase)) || "No disponible",
+    },
+    {
+      label: "Precio final",
+      value: ("$"+String(25000)) || "No disponible",
+    }
   ];
 
-  const userCards = [
-    { bankName: 'Banco Nación', titular: 'Octavio Cosentino', cardNumber: '5282 3456 7890 1289', expiry: '09/25' },
-    { bankName: 'Santander', titular: 'Octavio Cosentino', cardNumber: '4539 8765 4321 5678', expiry: '11/24' }
-  ];
+  const userCards = user?.paymentMethods.cards || [];
   const userChecks = [
     { bankName: 'BANCO NACIONAL', titular: 'Octavio Cosentino', checkNumber: '00482931', currency: '$', monto: '125.000,00', emision: '16/04/2026' }
   ];
@@ -64,7 +102,14 @@ export default function LiveAuctionScreen() {
     { bankName: 'Banco Santander', titular: 'Octavio Cosentino', cuil: '20-12345678-9', accountNumber: '*** 4567' }
   ];
 
-  const CardPlaceholderData = { bankName: '---', titular: '---', cardNumber: '**** **** **** ****', expiry: '--/--' };
+  const CardPlaceholderData = {
+  brand: "---",
+  owner: "---",
+  lastFour: "****",
+  expMonth: "--",
+  expYear: "----",
+  };
+
   const CheckPlaceholderData = { bankName: '---', titular: '---', checkNumber: '---', currency: '$', monto: '0,00', emision: '--/--/----' };
   const BankPlaceholderData = { bankName: '---', titular: '---', cuil: '--', accountNumber: '*** ----' };
 
@@ -135,13 +180,13 @@ export default function LiveAuctionScreen() {
           <View className="flex-row justify-between items-center mb-6 mt-2">
             <Text className="text-white text-2xl">
               <Text className="font-bold">Subasta: </Text> 
-              {auction.title}
+              {item?.descripcioncatalogo}
             </Text>
           </View>
 
           <Text className="text-white text-xl mb-4">
-            <Text className="font-bold">Articulo 1: </Text> 
-            Livery Alpine 2025
+            <Text className="font-bold">Articulo: </Text> 
+            {item?.descripcioncompleta}
           </Text>
 
           <View className="flex-row mb-6">
@@ -153,7 +198,7 @@ export default function LiveAuctionScreen() {
               <Text className="text-gray-300">{isLogged ? '$' + precioBase.toLocaleString() : 'No disponible'}</Text>
             </View>
             <View className="flex-1">
-              <ImageCarousel images={auction.images} />
+              <ImageCarousel images={imageBase64Render(item)} />
             </View>
           </View>
 
