@@ -1,8 +1,6 @@
-import { Ionicons } from '@expo/vector-icons';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-// 1. Importamos KeyboardAvoidingView y Platform
-import { ActivityIndicator, KeyboardAvoidingView, Platform, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, BackHandler, KeyboardAvoidingView, Platform, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import ConfirmPayModal from '@/components/auctions/ConfirmPayModal';
@@ -25,7 +23,7 @@ export default function PayProductScreen() {
   const router = useRouter();
   const { id } = useLocalSearchParams();
 
-  const [selectedMethod, setSelectedMethod] = useState<PaymentMethod>('Tarjeta');
+  const [selectedMethod, setSelectedMethod] = useState<PaymentMethod | null>(null);
   const [isConfirmModalVisible, setConfirmModalVisible] = useState(false);
 
   const [calle, setCalle] = useState('');
@@ -41,7 +39,6 @@ export default function PayProductScreen() {
       try {
         const response = await itemsService.getProductById(id);
         const { fotos, ...rest } = response.data;
-        console.log("Item data: ", rest);
         setitem(response.data);
       } catch (error) {
         console.error("Error fetching items: ", error);
@@ -49,10 +46,20 @@ export default function PayProductScreen() {
         setIsLoading(false);
       }
     };
+
   useEffect(() => {
     fetchItems(Number(id));
   }, [id]);
-  const precioBase = item?.precioBase || 0;  
+
+  useEffect(() => {
+    const onBackPress = () => {
+      return true;
+    };
+    const subscription = BackHandler.addEventListener('hardwareBackPress', onBackPress);
+    return () => {
+      subscription.remove();
+    };
+  }, []);
 
   if (isLoading) {
       return (
@@ -113,7 +120,12 @@ export default function PayProductScreen() {
   const CheckPlaceholderData = { bankName: '---', titular: '---', checkNumber: '---', currency: '$', monto: '0,00', emision: '--/--/----' };
   const BankPlaceholderData = { bankName: '---', titular: '---', cuil: '--', accountNumber: '*** ----' };
 
+  const isDeliveryComplete = calle.trim() !== '' && altura.trim() !== '' && ciudad.trim() !== '';
+  const isFormValid = selectedMethod !== null && isDeliveryComplete;
+
   const renderPaymentCarousel = () => {
+    if (!selectedMethod) return null;
+
     switch (selectedMethod) {
       case 'Tarjeta':
         return (
@@ -156,15 +168,7 @@ export default function PayProductScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-[#14191C]">
-      <View className="px-4 pt-4 pb-2">
-        <TouchableOpacity 
-          onPress={() => router.back()} 
-          className="bg-[#1C1C1E] w-10 h-10 rounded-full items-center justify-center"
-        >
-          <Ionicons name="arrow-back" size={24} color="white" />
-        </TouchableOpacity>
-      </View>
-
+      <Stack.Screen options={{ gestureEnabled: false }} />
       <KeyboardAvoidingView 
         style={{ flex: 1 }} 
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -177,7 +181,7 @@ export default function PayProductScreen() {
           keyboardShouldPersistTaps="handled" 
         >
           
-          <View className="flex-row justify-between items-center mb-6 mt-2">
+          <View className="flex-row justify-between items-center mb-6 mt-8">
             <Text className="text-white text-2xl">
               <Text className="font-bold">Subasta: </Text> 
               {item?.descripcioncatalogo}
@@ -230,8 +234,10 @@ export default function PayProductScreen() {
           <View className="mb-4">
             <Button 
               label="Confirmar >" 
-              onPress={() => setConfirmModalVisible(true)} 
-              variant="primary" 
+              onPress={() => {
+                if (isFormValid) setConfirmModalVisible(true);
+              }} 
+              variant={isFormValid ? "primary" : "blocked"} 
             />
           </View>
 

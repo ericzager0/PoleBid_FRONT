@@ -5,7 +5,7 @@ import { Text, TouchableOpacity, View } from 'react-native';
 export type PaymentMethod = 'Tarjeta' | 'Cheque' | 'Cuenta de banco';
 
 interface PaymentsDropdownProps {
-  selectedMethod: PaymentMethod;
+  selectedMethod: PaymentMethod | null;
   onSelect: (method: PaymentMethod) => void;
 }
 
@@ -14,7 +14,6 @@ export default function PaymentsDropdown({
   onSelect,
 }: PaymentsDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
-
   const options: PaymentMethod[] = ['Tarjeta', 'Cheque', 'Cuenta de banco'];
 
   const getIconName = (method: PaymentMethod) => {
@@ -50,12 +49,12 @@ export default function PaymentsDropdown({
       >
         <View className="flex-row items-center gap-x-3">
           <MaterialCommunityIcons 
-            name={getIconName(selectedMethod)} 
+            name={getIconName(selectedMethod || 'Tarjeta')} 
             size={24} 
             color="#E8B83C" 
           />
           <Text className="text-white text-base font-medium">
-            {selectedMethod}
+            {selectedMethod ? selectedMethod : 'Selecciona un método de pago...'}
           </Text>
         </View>
         

@@ -26,6 +26,10 @@ export default function CreditCard({
     return LOGOS_DICT[normalizedName] || LOGOS_DICT["mastercard"];
   };
 
+  function toUpperCase(brand: string): React.ReactNode {
+    throw new Error("Function not implemented.");
+  }
+
   return (
     <View
       className="relative w-full aspect-[1.6] rounded-[32px] bg-[#10B981] overflow-hidden p-5 justify-between shadow-lg"
@@ -46,7 +50,7 @@ export default function CreditCard({
           numberOfLines={1}
           adjustsFontSizeToFit
         >
-          {brand}
+          {(brand).toUpperCase()}
         </Text>
 
         <View className="items-center justify-center">
