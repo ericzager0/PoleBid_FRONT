@@ -152,15 +152,15 @@ export default function LiveAuctionScreen() {
 
     const fetchLoop = async () => {
       if (!isMounted) return;
-      await fetchCurrentItem(true); // liviano: todo menos fotos
+      await fetchCurrentItem(true); 
       if (isMounted) {
         timeoutId = setTimeout(fetchLoop, 3000);
       }
     };
 
     const init = async () => {
-      await fetchCurrentItem(false); // primera vez: completo, con fotos
-      fetchLoop(); // recién acá arranca el polling reducido
+      await fetchCurrentItem(false); 
+      fetchLoop(); 
     };
 
     init();
@@ -177,14 +177,19 @@ export default function LiveAuctionScreen() {
     : rawPujos
       ? [rawPujos]
       : [];
-  const maxBid =
-    bidsBackend.length > 0
-      ? Math.max(...bidsBackend.map((bid) => bid.importe))
-      : 0;
 
   const basePrice = Number(currentItem?.precioBase || 0);
-  const minAllowed = maxBid + 0.1 * basePrice;
-  const maxAllowed = maxBid + 0.2 * basePrice;
+  const maxBid = bidsBackend.length > 0
+    ? Math.max(...bidsBackend.map((bid) => bid.importe))
+    : 0;
+
+  const minAllowed = bidsBackend.length === 0 
+    ? basePrice 
+    : maxBid + (0.1 * basePrice);
+
+  const maxAllowed = bidsBackend.length === 0
+    ? basePrice + (0.2 * basePrice)
+    : maxBid + (0.2 * basePrice);
 
   const isSold = currentItem?.subastado != null;
   const bidsBackendMarcadas = bidsBackend.map((bid) => ({
