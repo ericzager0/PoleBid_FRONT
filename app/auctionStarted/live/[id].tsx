@@ -16,7 +16,6 @@ import LiveButton from "@/components/home/LiveButton";
 import BidHistoryLog from "@/components/profile/BidHistoryLog";
 import { useAuth } from "@/context/AuthContext";
 import { Ionicons } from "@expo/vector-icons";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
@@ -62,7 +61,6 @@ export default function LiveAuctionScreen() {
   const handleBidSubmit = async () => {
     if (!currentItem) return;
 
-    // Bloqueo duro interno por si logran burlar el botón de la UI
     if (timeLeft === 0 || isSold) {
       setAlertContent({
         title: "Tiempo Agotado",
@@ -129,23 +127,9 @@ export default function LiveAuctionScreen() {
     setIsAuctionFinished(true);
   };
 
-  const handleFinishedProceed = async () => {
-    try {
-      const guardado = await AsyncStorage.getItem("@mis_victorias");
-      const listaVictorias = guardado ? JSON.parse(guardado) : [];
-
-      setIsAuctionFinished(false);
-
-      if (listaVictorias.length > 0) {
-        router.replace(`/auctionStarted/live/pay/${id}`);
-      } else {
-        router.replace("/");
-      }
-    } catch (error) {
-      console.error("Error al salir de subasta finalizada: ", error);
-      setIsAuctionFinished(false);
-      router.replace("/");
-    }
+  const handleFinishedProceed = () => {
+    setIsAuctionFinished(false);
+    router.replace("/");
   };
 
   const fetchCurrentItem = async (bidsOnly: boolean) => {
@@ -155,7 +139,6 @@ export default function LiveAuctionScreen() {
         bidsOnly,
       );
 
-      // Si el backend viene vacío (null data), entonces no hay más ítems, se cierra la subasta
       if (!response || !response.data) {
         await handleAuctionEnd();
         return false;
@@ -178,10 +161,6 @@ export default function LiveAuctionScreen() {
         };
       });
     } catch (error) {
-      // 2. SOLUCIÓN AL CRASHEO DEL CRON: 
-      // Si el fetch falla (porque el cron está manipulando DB o tira Error 500 temporal), 
-      // ya NO llamamos a "await handleAuctionEnd();". 
-      // Solo ignoramos el error, y el polling volverá a intentar en 3 segundos.
       console.error("Error temporal recuperando data del servidor: ", error);
       return false;
     } finally {
@@ -263,32 +242,9 @@ export default function LiveAuctionScreen() {
       : "Calculando...";
 
   useEffect(() => {
-    const registrarYMostrarModales = async () => {
+    const registrarYMostrarModales = () => {
       if (isSold && currentItem) {
         if (iWonThisItem && myWinningBid) {
-          try {
-            const guardadoAnterior = await AsyncStorage.getItem("@mis_victorias");
-            let listaVictorias = guardadoAnterior
-              ? JSON.parse(guardadoAnterior)
-              : [];
-            const yaExiste = listaVictorias.some(
-              (item: any) => item.id === currentItem.itemId,
-            );
-
-            if (!yaExiste) {
-              listaVictorias.push({
-                id: currentItem.itemId,
-                precio: myWinningBid.importe,
-              });
-
-              await AsyncStorage.setItem(
-                "@mis_victorias",
-                JSON.stringify(listaVictorias),
-              );
-            }
-          } catch (error) {
-            console.error("Error guardando la victoria localmente", error);
-          }
           setWon(true);
         } else {
           setShowItemFinished(true);
@@ -321,7 +277,6 @@ export default function LiveAuctionScreen() {
     };
   }, []);
 
-  // === TIMER ORIGINAL QUE REACCIONA A CADA PUJA ===
   useEffect(() => {
     if (!currentItem) return;
 
