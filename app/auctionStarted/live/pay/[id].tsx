@@ -78,7 +78,7 @@ export default function PayProductScreen() {
     { label: "Fecha", value: String(new Date().toLocaleDateString()) },
     {
       label: "ID",
-      value: `A${item?.itemId}/${new Date().getFullYear()}`,
+      value: `A${id}/${new Date().getFullYear()}`,
     },
     {
       label: "Comision",
@@ -90,7 +90,7 @@ export default function PayProductScreen() {
     },
     {
       label: "Precio final",
-      value: ("$"+String(25000)) || "No disponible",
+      value: ("$"+String(item?.precioFinal)) || "No disponible",
     }
   ];
 
@@ -192,10 +192,6 @@ export default function PayProductScreen() {
           <View className="flex-row mb-6">
             <View className="flex-1 pr-4 justify-between">
               <DetailsList data={articleDetails} />
-              <View className="mt-4">
-                <Text className="text-gray-400 text-base mb-1.5 leading-relaxed">Precio base: </Text>
-                <Text className="text-gray-300">{isLogged ? '$' + precioBase.toLocaleString() : 'No disponible'}</Text>
-              </View>
             </View>
             <View className="flex-1">
               <ImageCarousel images={imageBase64Render(item?.fotos)} />

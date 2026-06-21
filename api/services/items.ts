@@ -33,6 +33,7 @@ export type ItemType = {
   itemId: number;
   subastado: string;
   updatedAt: string;
+  precioFinal: number;
 };
 
 export const itemsService = {
