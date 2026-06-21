@@ -44,7 +44,7 @@ const BankPlaceholderData = {
 };
 
 export default function PaymentsScreen() {
-  const { user } = useAuth();
+  const { user,  signOut} = useAuth();
   const router = useRouter();
 
   const [showCardModal, setShowCardModal] = useState(false);
@@ -116,7 +116,7 @@ export default function PaymentsScreen() {
         <TouchableOpacity onPress={() => router.back()} className="p-2 -ml-2">
           <MaterialCommunityIcons name="arrow-left" size={28} color="white" />
         </TouchableOpacity>
-        <RoundedButton onPress={() => console.log("Cerrando sesión...")} />
+        <RoundedButton onPress={() => signOut()} />
       </View>
 
       <View className="px-5 pb-6">

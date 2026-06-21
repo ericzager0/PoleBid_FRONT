@@ -15,8 +15,6 @@ export default function PaymentDetailsScreen() {
   const { getMe } = useAuth();
 
   const handleConfirm = async (data: any) => {
-    console.log("Datos ingresados:", data);
-
     navigation.dispatch(
       CommonActions.reset({
         index: 0,

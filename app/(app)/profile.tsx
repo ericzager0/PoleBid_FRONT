@@ -45,7 +45,6 @@ export default function Home() {
         const response = await auctionService.getAuctions();
         setAuctions(response.data);
         setHistorial(user?.history || []);
-        console.log("Fetched auctions: ", response.data);
       } catch (error) {
         console.error("Error fetching auctions: ", error);
       }

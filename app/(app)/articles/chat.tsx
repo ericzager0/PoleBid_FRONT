@@ -98,7 +98,7 @@ export default function ChatScreen() {
               key={product?.identificador}
               title={product?.descripcioncatalogo || " - "}
               description={product?.descripcioncompleta || " - "}
-              price={product?.preciobase ? `$${product.preciobase}` : " - "}
+              price={product?.precioBase ? `$${product.precioBase}` : " - "}
               imageUrl={auction.foto}
               onPress={() => router.push(`/auctionStarted/catalogue/product/${product?.identificador}?isArticles=true`)}
           />
