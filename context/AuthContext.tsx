@@ -46,6 +46,7 @@ type User = {
       currency: string;
       amount: number;
       issueDate: string;
+      is_verified: boolean;
     }[];
   };
   products: {
