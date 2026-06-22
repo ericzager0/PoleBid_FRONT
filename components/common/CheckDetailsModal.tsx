@@ -2,18 +2,19 @@ import { Ionicons } from '@expo/vector-icons';
 import React, { useEffect, useState } from 'react';
 import { Modal, Text, TouchableOpacity, View } from 'react-native';
 
+import { paymentMethodService } from '@/api/services/paymentMethod';
 import Button from '../common/Button';
 import { Input } from '../common/Input';
 import KeyboardWrapper from '../common/KeyboardWrapper';
 import ErrorMessege from './ErrorMessege';
 
 export interface CheckData {
-  bankName: string;
-  titular: string;
-  checkNumber: string;
+  bank_name: string;
+  owner: string;
+  number: number;
   currency: string;
-  monto: string;
-  emision: string;
+  amount: number;
+  issueDate: string;
 }
 
 interface CheckDetailsModalProps {
@@ -42,15 +43,19 @@ export default function CheckDetailsModal({
   const [emision, setEmision] = useState('');
 
   const [error, setError] = useState<string | null>(null);
+  
+  // NUEVO: Solo los estados para marcar en rojo Moneda y Cheque
+  const [currencyError, setCurrencyError] = useState(false);
+  const [checkError, setCheckError] = useState(false);
 
   useEffect(() => {
     if (initialData) {
-      setBankName(initialData.bankName);
-      setTitular(initialData.titular);
-      setCheckNumber(initialData.checkNumber);
+      setBankName(initialData.bank_name);
+      setTitular(initialData.owner);
+      setCheckNumber(initialData.number.toString());
       setCurrency(initialData.currency);
-      setMonto(initialData.monto);
-      setEmision(initialData.emision);
+      setMonto(initialData.amount.toString());
+      setEmision(initialData.issueDate);
     } else {
       setBankName('');
       setTitular('');
@@ -60,17 +65,53 @@ export default function CheckDetailsModal({
       setEmision('');
     }
     setError(null);
+    setCurrencyError(false);
+    setCheckError(false);
   }, [initialData, visible]);
 
-  const handleConfirm = () => {
-    if (!bankName || !titular || !checkNumber || !currency || !monto || !emision) {
+  const handleConfirm = async () => {
+    const cleanCheckNumber = checkNumber.replace(/\D/g, ''); 
+    const cleanCurrency = currency.trim().toUpperCase();    
+
+    setCurrencyError(false);
+    setCheckError(false);
+
+    if (!bankName || !titular || !cleanCheckNumber || !cleanCurrency || !monto || !emision) {
       setError("Por favor, completá todos los campos.");
       return;
     }
 
-    setError(null);
-    onConfirm({ bankName, titular, checkNumber, currency, monto, emision });
-    onClose?.();
+    if (cleanCurrency !== "ARS") {
+      setError("Solo se aceptan cheques en pesos (ARS).");
+      setCurrencyError(true);
+      return;
+    }
+
+    if (cleanCheckNumber.length !== 8) {
+      setError("El número de cheque debe tener exactamente 8 dígitos.");
+      setCheckError(true);
+      return;
+    }
+
+    try {
+      setError(null);
+      await paymentMethodService.addCheck({
+        bankName: bankName,
+        owner: titular,
+        number: Number(cleanCheckNumber), 
+        currency: cleanCurrency,         
+        amount: Number(monto),
+        issueDate: emision
+      });
+
+      onConfirm({ bank_name: bankName, owner: titular, number: Number(cleanCheckNumber), currency: cleanCurrency, amount: Number(monto), issueDate: emision });
+      onClose?.();
+
+    } catch (e: any) {
+      setError(
+        "Error al agregar cheque: " + (e.response?.data?.message || e.message),
+      );
+    }
   };
 
   const handleFullDateChange = (text: string) => {
@@ -90,6 +131,8 @@ export default function CheckDetailsModal({
   const handleChangeText = (setter: (val: string) => void, val: string) => {
     setter(val);
     if (error) setError(null);
+    setCurrencyError(false);
+    setCheckError(false);
   };
 
   return (
@@ -146,6 +189,8 @@ export default function CheckDetailsModal({
                   value={checkNumber}
                   onChangeText={(val) => handleChangeText(setCheckNumber, val)}
                   keyboardType="numeric"
+                  maxLength={8}
+                  hasError={checkError}
                 />
 
                 <View className="flex-row gap-x-4">
@@ -153,11 +198,12 @@ export default function CheckDetailsModal({
                     <Input
                       label="Moneda"
                       variant="register"
-                      placeholder="ARS / USD"
+                      placeholder="ARS"
                       value={currency}
                       onChangeText={(val) => handleChangeText(setCurrency, val)}
                       autoCapitalize="characters"
                       maxLength={3}
+                      hasError={currencyError}
                     />
                   </View>
                   <View className="flex-[2]">
@@ -181,7 +227,6 @@ export default function CheckDetailsModal({
                   keyboardType="numeric"
                   maxLength={10}
                 />
-                
               </View>
 
               {error && (

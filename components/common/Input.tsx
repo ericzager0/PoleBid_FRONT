@@ -7,6 +7,7 @@ interface Props extends TextInputProps {
   error?: string;
   variant?: "register";
   isPassword?: boolean;
+  hasError?: boolean; // <-- Agregamos la propiedad
 }
 
 export function Input({
@@ -14,6 +15,7 @@ export function Input({
   error,
   variant,
   isPassword = false,
+  hasError = false, // <-- La recibimos por defecto en false
   onFocus,
   onBlur,
   ...props
@@ -25,9 +27,15 @@ export function Input({
       {label && <Text className="text-sm font-medium text-white">{label}</Text>}
       <TextInput
         secureTextEntry={isPassword}
-        className={`text-white py-3 ${
+        className={`text-white py-3 px-2 ${
           variant === "register" ? "border-b" : "border rounded-xl"
-        } ${isFocused ? "border-[#E8B83C]" : "border-gray-500"}`} 
+        } ${
+          hasError 
+            ? "border-red-500 bg-red-500/10" // Fondo rojizo y borde rojo si hay error
+            : isFocused 
+              ? "border-[#E8B83C] bg-transparent" // Dorado si está en foco
+              : "border-gray-500 bg-transparent"  // Gris normal
+        }`} 
         placeholderTextColor="#6b7280"
         onFocus={(e) => {
           setIsFocused(true);

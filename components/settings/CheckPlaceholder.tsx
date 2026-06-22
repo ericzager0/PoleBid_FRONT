@@ -5,28 +5,31 @@ import { Image, Text, TouchableOpacity, View } from 'react-native';
 import SimpleModal from '../common/SimpleModal';
 
 interface CheckPlaceholderProps {
-  bankName: string;
-  titular: string;
-  checkNumber: string;
+  bank_name: string;
+  owner: string;
+  number: string;
   currency: string;
-  monto: string;
-  emision: string;
-  isRevision?: boolean; 
+  amount: string;
+  issueDate: string;
+  is_verified?: boolean; 
 }
 
 export default function CheckPlaceholder({
-  bankName,
-  titular,
-  checkNumber,
+  bank_name,
+  owner,
+  number,
   currency,
-  monto,
-  emision,
-  isRevision = false,
+  amount,
+  issueDate,
+  is_verified = false,
 }: CheckPlaceholderProps) {
   const [infoModal, setInfoModal] = useState(false);
 
   const getLogo = (name: string) => {
-    const normalizedName = name.toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g, "");
+    if (!name) {
+      return LOGOS_DICT['mastercard'];
+    }
+    const normalizedName = String(name).toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g, "");
     return LOGOS_DICT[normalizedName] || LOGOS_DICT['mastercard'];
   };
 
@@ -36,11 +39,10 @@ export default function CheckPlaceholder({
     >
       <View className="absolute -top-16 -right-10 w-64 h-64 bg-[#374e54] rounded-full opacity-60" />
       <View className="absolute -bottom-16 -left-10 w-[120%] h-32 bg-[#223337] rounded-[100px] opacity-80" />
-
       <View className="flex-row justify-between items-start z-10">
         <View className="flex-row items-center flex-1 mr-3">
           <Image 
-            source={getLogo(bankName)} 
+            source={getLogo(bank_name)} 
             style={{ width: 45, height: 45, resizeMode: 'contain', marginRight: 10 }} 
           />
           <Text 
@@ -48,11 +50,11 @@ export default function CheckPlaceholder({
             numberOfLines={1} 
             adjustsFontSizeToFit
           >
-            {bankName}
+            {bank_name}
           </Text>
         </View>
         <Text className="text-gray-300 text-xs font-medium mt-1">
-          Nº {checkNumber}
+          Nº {number}
         </Text>
       </View>
 
@@ -65,7 +67,7 @@ export default function CheckPlaceholder({
           numberOfLines={1}
           adjustsFontSizeToFit
         >
-          {currency} {monto}
+          {currency} {amount}
         </Text>
       </View>
 
@@ -75,7 +77,7 @@ export default function CheckPlaceholder({
             Titular
           </Text>
           <Text className="text-white text-sm" numberOfLines={1} adjustsFontSizeToFit>
-            {titular}
+            {owner}
           </Text>
         </View>
         
@@ -84,13 +86,13 @@ export default function CheckPlaceholder({
             Emisión
           </Text>
           <Text className="text-white text-sm">
-            {emision}
+            {issueDate}
           </Text>
         </View>
       </View>
 
       {/* CAPA DE REVISIÓN */}
-      {isRevision && (
+      {is_verified && (
         <TouchableOpacity className="absolute top-0 bottom-0 left-0 right-0 bg-black/70 z-20 justify-center items-center" onPress={() => setInfoModal(true)}>
           <Ionicons name="time-outline" size={48} color="#E8B83C" />
           <Text className="text-[#E8B83C] text-sm font-bold tracking-widest uppercase mt-3">

@@ -1,5 +1,6 @@
 import Button from "@/components/common/Button";
 import ConfirmModal from "@/components/common/ConfirmModal";
+import { useAuth } from "@/context/AuthContext";
 import { Ionicons } from '@expo/vector-icons';
 import { CommonActions } from "@react-navigation/native";
 import { CameraView, useCameraPermissions } from "expo-camera";
@@ -13,7 +14,7 @@ export default function CheckPhoto() {
   const router = useRouter();
   const { isProfile } = useLocalSearchParams();
   const cameraRef = useRef<any>(null);
-  
+  const { getMe } = useAuth();  
   const isProfileBool = isProfile === 'true';
 
   const [permission, requestPermission] = useCameraPermissions();
@@ -46,8 +47,9 @@ export default function CheckPhoto() {
     setModalVisible(true);
   };
 
-  const handleContinue = () => {
+  const handleContinue = async () => {
     if (isProfileBool) {
+      await getMe(); // Refresca los datos del usuario para incluir el nuevo método de pago
       router.push("/(settings)/payments");
     } else {
       navigation.dispatch(

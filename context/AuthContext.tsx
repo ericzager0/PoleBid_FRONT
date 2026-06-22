@@ -40,12 +40,12 @@ type User = {
     ];
     checks: [
       id: string,
-      bankName: string,
-      titular: string,
-      checkNumber: string,
+      bank_name: string,
+      owner: string,
+      number: number,
       currency: string,
-      monto: string,
-      emision: string,
+      amount: number,
+      issueDate: string,
     ];
   };
   products: {

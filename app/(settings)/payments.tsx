@@ -29,12 +29,12 @@ const CardPlaceholderData = {
   expYear: "----",
 };
 const CheckPlaceholderData = {
-  bankName: "---",
-  titular: "---",
-  checkNumber: "---",
-  currency: "$",
-  monto: "0,00",
-  emision: "--/--/----",
+  bank_name: "---",
+  owner: "---",
+  number: 0,
+  currency: "ARS$",
+  amount: 0,
+  issueDate: "--/--/----",
 };
 const BankPlaceholderData = {
   bank_name: "---",
@@ -45,7 +45,7 @@ const BankPlaceholderData = {
 };
 
 export default function PaymentsScreen() {
-  const { user,  signOut} = useAuth();
+  const { user,  signOut, getMe} = useAuth();
   const router = useRouter();
 
   const [showCardModal, setShowCardModal] = useState(false);
@@ -57,29 +57,7 @@ export default function PaymentsScreen() {
 
   const [misTarjetas, setMisTarjetas] = useState<CardData[]>([]);
   const [misBancos, setMisBancos] = useState<BankData[]>([]);
-
-  const userChecks = [
-    {
-      bankName: "BANCO NACIONAL",
-      titular: "Martin Mazini",
-      checkNumber: "00482931",
-      currency: "$",
-      monto: "125000",
-      emision: "16/04/2026",
-      isRevision: true,
-    },
-    {
-      bankName: "visa",
-      titular: "Chiqui Tapia",
-      checkNumber: "00482931",
-      currency: "$",
-      monto: "500000",
-      emision: "16/04/2026",
-      isRevision: false,
-    },
-  ];
-
-  const userBankAccounts = user?.paymentMethods.banksAccounts || [];
+  const [misCheques, setMisCheques] = useState<CheckData[]>([]);
 
   useEffect(() => {
     if (user?.paymentMethods.cards) {
@@ -88,33 +66,44 @@ export default function PaymentsScreen() {
     if (user?.paymentMethods.banksAccounts) {
       setMisBancos(user.paymentMethods.banksAccounts as unknown as BankData[]);
     }
+    if (user?.paymentMethods.checks) {
+      setMisCheques(user.paymentMethods.checks as unknown as CheckData[]);
+    }
   }, [user]);
 
-  const handleAddCard = () => {
+  const handleAddCard = async () => {
     setCardToEdit(null);
     setShowCardModal(true);
+    await getMe();
   };
-  const handleEditCard = (card: CardData) => {
+
+  const handleEditCard = async (card: CardData) => {
     setCardToEdit(card);
     setShowCardModal(true);
+    await getMe();
   };
 
-  const handleAddCheck = () => {
+  const handleAddCheck = async () => {
     setCheckToEdit(null);
     setShowCheckModal(true);
-  };
-  const handleEditCheck = (check: CheckData) => {
-    setCheckToEdit(check);
-    setShowCheckModal(true);
+    await getMe();
   };
 
-  const handleAddBank = () => {
+  const handleEditCheck = async (check: CheckData) => {
+    setCheckToEdit(check);
+    setShowCheckModal(true);
+    await getMe();
+  };
+
+  const handleAddBank = async() => {
     setBankToEdit(null);
     setShowBankModal(true);
+    await getMe();
   };
-  const handleEditBank = (bank: BankData) => {
+  const handleEditBank = async (bank: BankData) => {
     setBankToEdit(bank);
     setShowBankModal(true);
+    await getMe();
   };
 
   return (
@@ -148,7 +137,7 @@ export default function PaymentsScreen() {
 
         <PaymentCarousel
           title="Administrar cheques:"
-          data={userChecks}
+          data={misCheques}
           placeholderData={CheckPlaceholderData}
           renderItem={(item) => <CheckPlaceholder {...item} />}
           onPressAdd={handleAddCheck}
@@ -187,8 +176,16 @@ export default function PaymentsScreen() {
           setShowCheckModal(false);
         }}
         onConfirm={(data) => {
-          console.log("Cheque confirmado:", data);
+          
+          if (checkToEdit) {
+            setMisCheques((prev) => prev.map(cheque => cheque.number === checkToEdit.number ? data : cheque));
+          } else {
+            setMisCheques((prev) => [...prev, data]);
+          }
+          
+          setShowCheckModal(false);
           router.push({ pathname: "/register/check-photo", params: { isProfile: "true" } });
+
         }}
       />
 

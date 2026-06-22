@@ -20,11 +20,11 @@ export const paymentMethodService = {
   },
   addCheck: async (body: {
     bankName: string;
-    titular: string;
-    checkNumber: string;
+    owner: string;
+    number: number;
     currency: string;
-    monto: string;
-    emision: string;
+    amount: number;
+    issueDate: string;
   }) => {
     return await client.post("/payment-methods/checks", body);
   },

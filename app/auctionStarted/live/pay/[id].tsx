@@ -112,7 +112,7 @@ export default function PayProductScreen() {
     expYear: "----",
   };
 
-  const CheckPlaceholderData = { bankName: '---', titular: '---', checkNumber: '---', currency: '$', monto: '0,00', emision: '--/--/----' };
+  const CheckPlaceholderData = { bank_name: '---', owner: '---', number: '---', currency: '$', amount: '0,00', issueDate: '--/--/----' };
   const BankPlaceholderData = { bank_name: '---', owner: '---', cuil_cuit: '--', cbu: '*** ----', reserved_funds: '$0,00' };
 
   const isDeliveryComplete = calle.trim() !== '' && altura.trim() !== '' && ciudad.trim() !== '';
