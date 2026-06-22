@@ -45,7 +45,7 @@ const BankPlaceholderData = {
 };
 
 export default function PaymentsScreen() {
-  const { user,  signOut} = useAuth();
+  const { user, signOut, getMe } = useAuth();
   const router = useRouter();
 
   const [showCardModal, setShowCardModal] = useState(false);
@@ -143,7 +143,7 @@ export default function PaymentsScreen() {
           placeholderData={CardPlaceholderData}
           renderItem={(item) => <CreditCard {...item} />}
           onPressAdd={handleAddCard}
-          onPressEdit={(item) => handleEditCard(item)} 
+          onPressEdit={(item) => handleEditCard(item)}
         />
 
         <PaymentCarousel
@@ -152,7 +152,7 @@ export default function PaymentsScreen() {
           placeholderData={CheckPlaceholderData}
           renderItem={(item) => <CheckPlaceholder {...item} />}
           onPressAdd={handleAddCheck}
-          onPressEdit={(item) => handleEditCheck(item)} 
+          onPressEdit={(item) => handleEditCheck(item)}
         />
 
         <PaymentCarousel
@@ -161,7 +161,7 @@ export default function PaymentsScreen() {
           placeholderData={BankPlaceholderData}
           renderItem={(item) => <BankPlaceholder {...item} />}
           onPressAdd={handleAddBank}
-          onPressEdit={(item) => handleEditBank(item)} 
+          onPressEdit={(item) => handleEditBank(item)}
         />
       </ScrollView>
 
@@ -170,13 +170,18 @@ export default function PaymentsScreen() {
         visible={showCardModal}
         initialData={cardToEdit}
         onClose={() => setShowCardModal(false)}
-        onConfirm={(data) => {
+        onConfirm={async (data) => {
           if (cardToEdit) {
-            setMisTarjetas((prev) => prev.map(tarjeta => tarjeta.lastFour === cardToEdit.lastFour ? data : tarjeta));
+            setMisTarjetas((prev) =>
+              prev.map((tarjeta) =>
+                tarjeta.lastFour === cardToEdit.lastFour ? data : tarjeta,
+              ),
+            );
           } else {
             setMisTarjetas((prev) => [...prev, data]);
           }
           setShowCardModal(false);
+          await getMe();
         }}
       />
 
@@ -188,7 +193,10 @@ export default function PaymentsScreen() {
         }}
         onConfirm={(data) => {
           console.log("Cheque confirmado:", data);
-          router.push({ pathname: "/register/check-photo", params: { isProfile: "true" } });
+          router.push({
+            pathname: "/register/check-photo",
+            params: { isProfile: "true" },
+          });
         }}
       />
 
@@ -196,13 +204,18 @@ export default function PaymentsScreen() {
         visible={showBankModal}
         initialData={bankToEdit}
         onClose={() => setShowBankModal(false)}
-        onConfirm={(data) => {
+        onConfirm={async (data) => {
           if (bankToEdit) {
-            setMisBancos((prev) => prev.map(banco => banco.cbu === bankToEdit.cbu ? data : banco));
+            setMisBancos((prev) =>
+              prev.map((banco) =>
+                banco.cbu === bankToEdit.cbu ? data : banco,
+              ),
+            );
           } else {
             setMisBancos((prev) => [...prev, data]);
           }
           setShowBankModal(false);
+          await getMe();
         }}
       />
     </SafeAreaView>

@@ -24,7 +24,7 @@ const BankPlaceholderData = {
 };
 
 export default function SellerScreen() {
-  const { user, signOut } = useAuth();
+  const { user, signOut, getMe } = useAuth();
   const aprrobedSeller = user?.isSeller || false;
   
   const router = useRouter();
@@ -132,9 +132,10 @@ export default function SellerScreen() {
         visible={showBankModal}
         initialData={bankToEdit}
         onClose={() => setShowBankModal(false)}
-        onConfirm={(nuevoBanco) => {
+        onConfirm={async (nuevoBanco) => {
           setMisBancos((bancosAnteriores) => [...bancosAnteriores, nuevoBanco]);
           setShowBankModal(false);
+          await getMe();
         }}
       />
     </SafeAreaView>

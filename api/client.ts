@@ -19,7 +19,13 @@ client.interceptors.response.use(
       await authStorage.removeToken();
       // aca deberiamos redirigir al login usando el router
     }
-    const message = error.response?.data?.message ?? "Error inesperado";
+    const data = error.response?.data;
+    const message =
+      data?.message ||
+      data?.error ||
+      (typeof data === "string" ? data : null) ||
+      error.message ||
+      "Error inesperado";
     return Promise.reject(new Error(message));
   },
 );
