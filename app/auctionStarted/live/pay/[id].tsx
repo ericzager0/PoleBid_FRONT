@@ -72,7 +72,6 @@ export default function PayProductScreen() {
       );
     }
 
-
   if (!item && !isLoading) {
     return (
       <SafeAreaView className="flex-1 bg-[#14191C] items-center justify-center">
@@ -102,23 +101,19 @@ export default function PayProductScreen() {
   ];
 
   const userCards = user?.paymentMethods.cards || [];
-  const userChecks = [
-    { bankName: 'BANCO NACIONAL', titular: 'Octavio Cosentino', checkNumber: '00482931', currency: '$', monto: '125.000,00', emision: '16/04/2026' }
-  ];
-  const userBankAccounts = [
-    { bankName: 'Banco Santander', titular: 'Octavio Cosentino', cuil: '20-12345678-9', accountNumber: '*** 4567' }
-  ];
+  const userChecks = user?.paymentMethods.checks || [];
+  const userBankAccounts = user?.paymentMethods.banksAccounts || [];
 
   const CardPlaceholderData = {
-  brand: "---",
-  owner: "---",
-  lastFour: "****",
-  expMonth: "--",
-  expYear: "----",
+    brand: "---",
+    owner: "---",
+    lastFour: "****",
+    expMonth: "--",
+    expYear: "----",
   };
 
   const CheckPlaceholderData = { bankName: '---', titular: '---', checkNumber: '---', currency: '$', monto: '0,00', emision: '--/--/----' };
-  const BankPlaceholderData = { bankName: '---', titular: '---', cuil: '--', accountNumber: '*** ----' };
+  const BankPlaceholderData = { bank_name: '---', owner: '---', cuil_cuit: '--', cbu: '*** ----', reserved_funds: '$0,00' };
 
   const isDeliveryComplete = calle.trim() !== '' && altura.trim() !== '' && ciudad.trim() !== '';
   const isFormValid = selectedMethod !== null && isDeliveryComplete;

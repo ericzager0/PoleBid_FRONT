@@ -16,10 +16,11 @@ import BankPlaceholder from '../../components/settings/BankPlaceholder';
 import PaymentCarousel from '../../components/settings/PaymentCarousel';
 
 const BankPlaceholderData = { 
-  bankName: '---', 
-  titular: '---', 
-  cuil: '--', 
-  accountNumber: '*** ----' 
+  bank_name: '---', 
+  owner: '---', 
+  cuil_cuit: '--', 
+  cbu: '*** ----', 
+  reserved_funds: '$0,00' 
 };
 
 export default function SellerScreen() {
@@ -31,13 +32,9 @@ export default function SellerScreen() {
   const [status, setStatus] = useState<UserStatus>('inactivo');
   const [showBankModal, setShowBankModal] = useState(false);
   const [bankToEdit, setBankToEdit] = useState<BankData | null>(null);
+  const [misBancos, setMisBancos] = useState<any[]>([]);
 
-  const userBankAccounts = [{ 
-    bankName: 'Banco Santander', 
-    titular: 'Alejandro Martínez Silva', 
-    cuil: '20-12345678-9', 
-    accountNumber: '*** 4567' 
-  }];
+  const userBankAccounts = user?.paymentMethods.banksAccounts || [];
   const userCobroAccounts: any[] = []; 
   
   const isFullyApproved = seller && aprrobedSeller;
@@ -63,6 +60,12 @@ export default function SellerScreen() {
       setStatus('inactivo');
     }
   }, [seller, aprrobedSeller]);
+
+  useEffect(() => {
+    if (user?.paymentMethods.banksAccounts) {
+      setMisBancos(user.paymentMethods.banksAccounts);
+    }
+  }, [user]);
 
   const handleToggleChange = async (value: boolean) => {
     setSeller(value); 
@@ -93,7 +96,6 @@ export default function SellerScreen() {
         </TouchableOpacity>
         <RoundedButton onPress={signOut} />
       </View>
-
       <ScrollView 
         contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 40, paddingTop: 16 }}
       >
@@ -105,7 +107,7 @@ export default function SellerScreen() {
           
           <PaymentCarousel 
             title="Administrar cuenta de Cobro:"
-            data={userCobroAccounts}
+            data={misBancos}
             placeholderData={BankPlaceholderData}
             showArrows={false}
             renderItem={(item) => (
@@ -115,7 +117,7 @@ export default function SellerScreen() {
               />
             )}
             onPressAdd={handleAddBank}
-            onPressEdit={() => handleEditBank(userBankAccounts[0])}
+            onPressEdit={(item) => handleEditBank(item as BankData)}
           />
           
           {seller ? <SafetyMessage /> : <ActivateSellerMessage />}
@@ -123,7 +125,6 @@ export default function SellerScreen() {
             <UserStatusCard isUser={true} status={status} />
           </View>
         </View>
-
       </ScrollView>
 
       {/* Modal */}
@@ -131,7 +132,10 @@ export default function SellerScreen() {
         visible={showBankModal}
         initialData={bankToEdit}
         onClose={() => setShowBankModal(false)}
-        onConfirm={(data) => console.log('Banco confirmado:', data)}
+        onConfirm={(nuevoBanco) => {
+          setMisBancos((bancosAnteriores) => [...bancosAnteriores, nuevoBanco]);
+          setShowBankModal(false);
+        }}
       />
     </SafeAreaView>
   );

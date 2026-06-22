@@ -1,6 +1,6 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -37,10 +37,11 @@ const CheckPlaceholderData = {
   emision: "--/--/----",
 };
 const BankPlaceholderData = {
-  bankName: "---",
-  titular: "---",
-  cuil: "--",
-  accountNumber: "*** ----",
+  bank_name: "---",
+  owner: "---",
+  cuil_cuit: "--",
+  cbu: "*** ----",
+  reserved_funds: "$0,00",
 };
 
 export default function PaymentsScreen() {
@@ -53,6 +54,9 @@ export default function PaymentsScreen() {
   const [cardToEdit, setCardToEdit] = useState<CardData | null>(null);
   const [checkToEdit, setCheckToEdit] = useState<CheckData | null>(null);
   const [bankToEdit, setBankToEdit] = useState<BankData | null>(null);
+
+  const [misTarjetas, setMisTarjetas] = useState<CardData[]>([]);
+  const [misBancos, setMisBancos] = useState<BankData[]>([]);
 
   const userChecks = [
     {
@@ -74,14 +78,17 @@ export default function PaymentsScreen() {
       isRevision: false,
     },
   ];
-  const userBankAccounts = [ 
-    {
-      bankName: "Banco Santander",
-      titular: "Alejandro Martínez Silva",
-      cuil: "20123456789",
-      accountNumber: "123456789",
-    },
-  ];
+
+  const userBankAccounts = user?.paymentMethods.banksAccounts || [];
+
+  useEffect(() => {
+    if (user?.paymentMethods.cards) {
+      setMisTarjetas(user.paymentMethods.cards as unknown as CardData[]);
+    }
+    if (user?.paymentMethods.banksAccounts) {
+      setMisBancos(user.paymentMethods.banksAccounts as unknown as BankData[]);
+    }
+  }, [user]);
 
   const handleAddCard = () => {
     setCardToEdit(null);
@@ -132,7 +139,7 @@ export default function PaymentsScreen() {
       >
         <PaymentCarousel
           title="Administrar Tarjetas:"
-          data={user?.paymentMethods.cards || []}
+          data={misTarjetas}
           placeholderData={CardPlaceholderData}
           renderItem={(item) => <CreditCard {...item} />}
           onPressAdd={handleAddCard}
@@ -150,7 +157,7 @@ export default function PaymentsScreen() {
 
         <PaymentCarousel
           title="Administrar cuenta Bancaria:"
-          data={userBankAccounts}
+          data={misBancos}
           placeholderData={BankPlaceholderData}
           renderItem={(item) => <BankPlaceholder {...item} />}
           onPressAdd={handleAddBank}
@@ -164,7 +171,12 @@ export default function PaymentsScreen() {
         initialData={cardToEdit}
         onClose={() => setShowCardModal(false)}
         onConfirm={(data) => {
-          console.log("Tarjeta confirmada:", data);
+          if (cardToEdit) {
+            setMisTarjetas((prev) => prev.map(tarjeta => tarjeta.lastFour === cardToEdit.lastFour ? data : tarjeta));
+          } else {
+            setMisTarjetas((prev) => [...prev, data]);
+          }
+          setShowCardModal(false);
         }}
       />
 
@@ -185,10 +197,14 @@ export default function PaymentsScreen() {
         initialData={bankToEdit}
         onClose={() => setShowBankModal(false)}
         onConfirm={(data) => {
-          console.log("Banco confirmado:", data)
+          if (bankToEdit) {
+            setMisBancos((prev) => prev.map(banco => banco.cbu === bankToEdit.cbu ? data : banco));
+          } else {
+            setMisBancos((prev) => [...prev, data]);
+          }
+          setShowBankModal(false);
         }}
       />
-
     </SafeAreaView>
   );
 }

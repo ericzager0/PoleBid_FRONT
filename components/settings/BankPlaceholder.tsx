@@ -4,21 +4,22 @@ import React from 'react';
 import { Image, Text, View } from 'react-native';
 
 interface BankPlaceholderProps {
-  bankName: string;
-  titular: string;
-  cuil: string;
-  accountNumber: string;
+  bank_name: string;
+  owner: string;
+  cuil_cuit: string;
+  cbu: string;
+  reserved_funds: string;
   blocked?: boolean; 
 }
 
 export default function BankPlaceholder({ 
-  bankName, 
-  titular, 
-  cuil, 
-  accountNumber,
+  bank_name, 
+  owner, 
+  cuil_cuit, 
+  cbu,
+  reserved_funds,
   blocked = false 
 }: BankPlaceholderProps) {
-
   const getLogo = (name: string) => {
     const normalizedName = name.toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g, "");
     return LOGOS_DICT[normalizedName] || LOGOS_DICT['mastercard'];
@@ -43,35 +44,44 @@ export default function BankPlaceholder({
       >
         <View className="absolute -bottom-24 -left-16 w-80 h-64 bg-[#C71545] rounded-full opacity-80" />
         <View className="absolute -top-32 -right-10 w-96 h-96 bg-[#FF3E78] rounded-full opacity-40" />
-
         <View className="flex-row justify-between items-start z-10">
-          <Text 
-            className="text-white/80 text-lg font-medium tracking-wide flex-1 mr-4" 
-            numberOfLines={1}
-            adjustsFontSizeToFit
-          >
-            {bankName}
-          </Text>
-
-          <View className="items-center justify-center">
+          <View className="flex-1 mr-4">
             <Image 
-              source={getLogo(bankName)} 
-              style={{ width: 45, height: 45, resizeMode: 'contain' }} 
+              source={getLogo(bank_name)} 
+              style={{ width: 35, height: 35, resizeMode: 'contain', marginBottom: 4 }} 
             />
+            <Text 
+              className="text-white/80 text-sm font-medium tracking-wide" 
+              numberOfLines={1}
+            >
+              {(bank_name).toUpperCase()}
+            </Text>
+          </View>
+
+          <View className="items-end bg-black/20 px-3 py-2 rounded-2xl border border-white/10">
+            <Text className="text-white/70 text-[9px] font-bold tracking-widest uppercase mb-1">
+              Fondos Reservados
+            </Text>
+            <Text 
+              className="text-[#E8B83C] text-lg font-bold tracking-wider"
+              numberOfLines={1}
+            >
+              {reserved_funds}
+            </Text>
           </View>
         </View>
 
-        <View className="flex-row items-center z-10">
+        <View className="flex-row items-center z-10 mt-2">
           <Text className="text-white/90 text-sm mr-2 tracking-widest uppercase">
             CBU:
           </Text>
           <Text 
-            className="text-white text-2xl tracking-widest shadow-sm flex-1"
+            className="text-white text-xl tracking-widest shadow-sm flex-1"
             style={{ fontFamily: 'SpaceMono-Regular' }}
             numberOfLines={1}
             adjustsFontSizeToFit
           >
-            {accountNumber}
+            {cbu}
           </Text>
         </View>
 
@@ -80,8 +90,8 @@ export default function BankPlaceholder({
             <Text className="text-white/60 text-[10px] font-bold tracking-widest uppercase mb-1">
               Titular
             </Text>
-            <Text className="text-white text-xs font-medium" numberOfLines={2}>
-              {titular}
+            <Text className="text-white text-xs font-medium" numberOfLines={1}>
+              {owner}
             </Text>
           </View>
           <View className="items-end">
@@ -89,7 +99,7 @@ export default function BankPlaceholder({
               CUIL
             </Text>
             <Text className="text-white text-xs font-medium tracking-wider">
-              {cuil}
+              {cuil_cuit}
             </Text>
           </View>
         </View>

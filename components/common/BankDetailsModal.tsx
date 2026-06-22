@@ -2,16 +2,19 @@ import { Ionicons } from '@expo/vector-icons';
 import React, { useEffect, useState } from 'react';
 import { Modal, Text, TouchableOpacity, View } from 'react-native';
 
+import { paymentMethodService } from '@/api/services/paymentMethod';
 import Button from './Button';
 import ErrorMessege from './ErrorMessege';
 import { Input } from './Input';
 import KeyboardWrapper from './KeyboardWrapper';
 
 export interface BankData {
-  bankName: string;
-  titular: string;
-  cuil: string;
-  accountNumber: string;
+  id?: string;
+  bank_name: string;
+  owner: string;
+  cuil_cuit: string;
+  cbu: string;
+  reserved_funds: string;
 }
 
 interface BankDetailsModalProps {
@@ -36,33 +39,51 @@ export default function BankDetailsModal({
   const [titular, setTitular] = useState('');
   const [cuil, setCuil] = useState('');
   const [accountNumber, setAccountNumber] = useState('');
+  const [reservedFunds, setReservedFunds] = useState('');
 
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (initialData) {
-      setBankName(initialData.bankName);
-      setTitular(initialData.titular);
-      setCuil(initialData.cuil);
-      setAccountNumber(initialData.accountNumber);
+      setBankName(initialData.bank_name);
+      setTitular(initialData.owner);
+      setCuil(initialData.cuil_cuit);
+      setAccountNumber(initialData.cbu);
+      setReservedFunds(initialData.reserved_funds);
     } else {
       setBankName('');
       setTitular('');
       setCuil('');
       setAccountNumber('');
+      setReservedFunds('');
     }
     setError(null);
   }, [initialData, visible]);
 
-  const handleConfirm = () => {
-    if (!bankName || !titular || !cuil || !accountNumber) {
+  const handleConfirm = async() => {
+    if (!bankName || !titular || !cuil || !accountNumber || !reservedFunds) {
       setError("Por favor, completá todos los campos.");
       return;
     }
 
-    setError(null);
-    onConfirm({ bankName, titular, cuil, accountNumber });
-    onClose?.();
+    try {
+      setError(null);
+      await paymentMethodService.addBank({
+        bankName: bankName,
+        owner: titular,
+        cuil: cuil,
+        cbu: accountNumber,
+        reservedFunds: Number(reservedFunds)
+      });
+
+      onConfirm({ bank_name: bankName, owner: titular, cuil_cuit: cuil, cbu: accountNumber, reserved_funds: reservedFunds });
+      onClose?.();
+
+    } catch (e: any) {
+      setError(
+        "Error al agregar cuenta bancaria: " + (e.response?.data?.message || e.message),
+      );
+    }
   };
 
   const handleChangeText = (setter: (val: string) => void, val: string) => {
@@ -150,6 +171,15 @@ export default function BankDetailsModal({
                   onChangeText={(val) => handleChangeText(setAccountNumber, val)}
                   keyboardType="numeric"
                 />
+
+                <Input
+                  label="Fondos reservados"
+                  variant="register"
+                  placeholder="$45000"
+                  value={reservedFunds}
+                  onChangeText={(val) => handleChangeText(setReservedFunds, val)}
+                  keyboardType="numeric"
+                />
               </View>
 
               {error && (
@@ -163,7 +193,6 @@ export default function BankDetailsModal({
                   onPress={handleConfirm} 
                 />
               </View>
-              
             </View>
           </View>
         </KeyboardWrapper>

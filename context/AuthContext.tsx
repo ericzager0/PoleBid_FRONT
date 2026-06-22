@@ -30,6 +30,23 @@ type User = {
       brand: string,
       owner: string,
     ];
+    banksAccounts: [
+      id: string,
+      bank_name: string,
+      owner: string,
+      cuil_cuit: string,
+      cbu: string,
+      reserved_funds: string,
+    ];
+    checks: [
+      id: string,
+      bankName: string,
+      titular: string,
+      checkNumber: string,
+      currency: string,
+      monto: string,
+      emision: string,
+    ];
   };
   products: {
     identificador: number;
