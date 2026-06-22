@@ -10,6 +10,8 @@ export const LOGOS_DICT: Record<string, any> = {
   'brubank': require('../../assets/images/brubank.png'),
   'uala': require('../../assets/images/uala.png'),
   'amex': require('../../assets/images/amex.png'),
+  'ammex': require('../../assets/images/amex.png'),
+  'american express': require('../../assets/images/amex.png'),
   'argencard': require('../../assets/images/argenCard.png'),
   'cabal': require('../../assets/images/cabal.png'),
 };
