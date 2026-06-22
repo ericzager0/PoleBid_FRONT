@@ -12,6 +12,7 @@ interface PaymentCarouselProps {
   showArrows?: boolean; 
   onPressAdd?: () => void;
   onPressEdit?: (item: any) => void;
+  onIndexChange?: (index: number) => void; // <-- Declarado en la interfaz
 }
 
 export default function PaymentCarousel({ 
@@ -23,7 +24,8 @@ export default function PaymentCarousel({
   showEditIcon = true, 
   showArrows = true, 
   onPressAdd, 
-  onPressEdit
+  onPressEdit,
+  onIndexChange // <-- Lo extraemos de las props
 }: PaymentCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -35,13 +37,17 @@ export default function PaymentCarousel({
 
   const handleNext = () => {
     if (!disableArrows) {
-      setCurrentIndex((prev) => (prev + 1) % data.length);
+      const nextIndex = (currentIndex + 1) % data.length;
+      setCurrentIndex(nextIndex);
+      onIndexChange?.(nextIndex); // <-- Le avisamos a la pantalla de pago el nuevo índice
     }
   };
 
   const handlePrev = () => {
     if (!disableArrows) {
-      setCurrentIndex((prev) => (prev - 1 + data.length) % data.length);
+      const prevIndex = (currentIndex - 1 + data.length) % data.length;
+      setCurrentIndex(prevIndex);
+      onIndexChange?.(prevIndex); // <-- Le avisamos a la pantalla de pago el nuevo índice
     }
   };
 
@@ -99,4 +105,4 @@ export default function PaymentCarousel({
       </View>
     </View>
   );
-};
+}
