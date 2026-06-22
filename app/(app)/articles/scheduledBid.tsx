@@ -1,17 +1,17 @@
-import { Ionicons } from '@expo/vector-icons';
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import React, { useEffect, useState } from 'react';
-import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
-import MapView, { Marker } from 'react-native-maps';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from "@expo/vector-icons";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import React, { useEffect, useState } from "react";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import MapView, { Marker } from "react-native-maps";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-import { itemsService, ItemType } from '@/api/services/items';
-import { imageBase64Render } from '@/api/utils/imageBase64Render';
-import ViewBidButton from '@/components/articles/ViewBidButton';
-import CommissionRow from '@/components/auctions/CommissionRow';
-import ChatInput from '@/components/chat/ChatInput';
-import ImageCarousel from '@/components/common/ImageCarousel';
-import KeyboardWrapper from '@/components/common/KeyboardWrapper';
+import { itemsService, ItemType } from "@/api/services/items";
+import { imageBase64Render } from "@/api/utils/imageBase64Render";
+import ViewBidButton from "@/components/articles/ViewBidButton";
+import CommissionRow from "@/components/auctions/CommissionRow";
+import ChatInput from "@/components/chat/ChatInput";
+import ImageCarousel from "@/components/common/ImageCarousel";
+import KeyboardWrapper from "@/components/common/KeyboardWrapper";
 
 export default function ScheduledBid() {
   const router = useRouter();
@@ -34,7 +34,7 @@ export default function ScheduledBid() {
     fetchproduct();
   }, [id]);
 
-  if(!product) {
+  if (!product) {
     return (
       <SafeAreaView className="flex-1 bg-[#14191C] items-center justify-center">
         <Text className="text-white">Producto no encontrado</Text>
@@ -51,7 +51,7 @@ export default function ScheduledBid() {
     <SafeAreaView className="flex-1 bg-[#14191C]">
       <View className="px-4 pt-4 pb-2">
         <TouchableOpacity
-          onPress={() => router.push('/(app)/articles/myArticles')}
+          onPress={() => router.push("/(app)/articles/myArticles")}
           className="bg-[#1C1C1E] w-10 h-10 rounded-full items-center justify-center"
         >
           <Ionicons name="arrow-back" size={24} color="white" />
@@ -88,13 +88,17 @@ export default function ScheduledBid() {
 
           <View className="items-center justify-center gap-4 mb-10">
             <ViewBidButton
-              label="Ver subasta" 
+              label="Ver subasta"
               className="self-center"
-              onPress={() => router.push(`/auctionStarted/${product.idSubasta}`)}
+              onPress={() =>
+                router.push(`/auctionStarted/${product.idSubasta}`)
+              }
             />
-          
+
             <View className="w-full mt-4 mb-8">
-                <CommissionRow percentage={product?.comision ? product.comision * 100 : 4} />
+              <CommissionRow
+                percentage={product?.comision ? product.comision * 100 : 4}
+              />
             </View>
 
             <Text className="w-full text-left text-[#D1D5DB] text-base font-semibold mb-3">
@@ -126,22 +130,55 @@ export default function ScheduledBid() {
             <Text className="w-full text-left text-[#9CA3AF] text-sm leading-5 mb-6">
               {epigrafo}
             </Text>
-            
-            <Text className="w-full text-left text-[#D1D5DB] text-base font-semibold mb-3">
-              Detalles de la póliza de seguro:
-            </Text>
-            <Text className="w-full text-left text-[#D1D5DB] text-sm leading-6">
-                {detallesPoliza}
-            </Text>
+
+            <View className="w-full bg-[#1F2937] rounded-2xl p-4 border border-[#374151]">
+              <View className="flex-row items-center mb-3">
+                <Ionicons
+                  name="shield-checkmark-outline"
+                  size={18}
+                  color="#9CA3AF"
+                />
+                <Text className="text-[#D1D5DB] text-base font-semibold ml-2">
+                  Detalles de la póliza de seguro
+                </Text>
+              </View>
+
+              <View className="flex-row justify-between mb-2">
+                <Text className="text-[#9CA3AF] text-sm">Nº de póliza</Text>
+                <Text className="text-[#E5E7EB] text-sm font-medium">
+                  {product.seguro.nropoliza ?? "—"}
+                </Text>
+              </View>
+
+              <View className="flex-row justify-between mb-2">
+                <Text className="text-[#9CA3AF] text-sm">Compañía</Text>
+                <Text className="text-[#E5E7EB] text-sm font-medium">
+                  {product.seguro.compania ?? "—"}
+                </Text>
+              </View>
+
+              <View className="flex-row justify-between border-t border-[#374151] pt-2 mt-1">
+                <Text className="text-[#9CA3AF] text-sm">Importe</Text>
+                <Text className="text-[#34D399] text-sm font-semibold">
+                  {product.seguro.importe != null
+                    ? `$${product.seguro.importe.toFixed(2)} ARS`
+                    : "—"}
+                </Text>
+              </View>
+            </View>
 
             <Text className="w-full text-left text-[#D1D5DB] text-base font-semibold mb-3">
               Comunicate con la empresa de seguro:
             </Text>
-            
-            <ChatInput onSend={(message) => router.push({
-                  pathname: '/articles/chat',
-                  params: { text: message, id: product.identificador }
-                })} />
+
+            <ChatInput
+              onSend={(message) =>
+                router.push({
+                  pathname: "/articles/chat",
+                  params: { text: message, id: product.identificador },
+                })
+              }
+            />
           </View>
         </ScrollView>
       </KeyboardWrapper>
