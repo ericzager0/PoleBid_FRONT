@@ -50,7 +50,7 @@ export default function LiveAuctionScreen() {
   const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [timeLeft, setTimeLeft] = useState<number>(0);
   const [isAuctionFinished, setIsAuctionFinished] = useState(false);
-  
+
   const [showItemFinished, setShowItemFinished] = useState(false);
 
   const isSold = currentItem?.subastado != null;
@@ -101,12 +101,33 @@ export default function LiveAuctionScreen() {
       return;
     }
 
+    if (user?.paymentMethods.cards.length === 0) {
+      const hasValidCheck = user.paymentMethods.checks.some(
+        (check) => check.amount >= bidValue,
+      );
+
+      const hasValidBankAccount = user.paymentMethods.banksAccounts.some(
+        (account) => Number(account.reserved_funds) >= bidValue,
+      );
+
+      if (!hasValidCheck && !hasValidBankAccount) {
+        setAlertContent({
+          title: "Fondos insuficientes",
+          description:
+            "No contás con un cheque o una cuenta bancaria con fondos suficientes para esta puja. Agregá una tarjeta o verificá tus fondos disponibles.",
+        });
+        setHasBidError(true);
+        setIsAlertVisible(true);
+        return;
+      }
+    }
+
     const pujaInstantanea = {
       identificador: Date.now(),
       created_at: new Date().toISOString(),
       asistente: 0,
       ganador: "no",
-      clientId: user?.clientId, 
+      clientId: user?.clientId,
       importe: bidValue,
       categoria: "Comun",
       isMe: true,
@@ -228,17 +249,21 @@ export default function LiveAuctionScreen() {
 
   const myWinningBid = isSold
     ? bidsBackend.find(
-        (bid) => bid.ganador?.toLowerCase() === "si" && Number(bid.clientId) === Number(user?.clientId),
+        (bid) =>
+          bid.ganador?.toLowerCase() === "si" &&
+          Number(bid.clientId) === Number(user?.clientId),
       )
     : null;
 
   const iWonThisItem = !!myWinningBid;
 
-  const externalWinnerBid = isSold ? bidsBackend.find((bid) => bid.ganador?.toLowerCase() === "si") : null;
-  const winnerName = boughtByCompany 
-    ? "La Casa (Lote Desierto)" 
-    : externalWinnerBid 
-      ? `Asistente ${externalWinnerBid.asistente}` 
+  const externalWinnerBid = isSold
+    ? bidsBackend.find((bid) => bid.ganador?.toLowerCase() === "si")
+    : null;
+  const winnerName = boughtByCompany
+    ? "La Casa (Lote Desierto)"
+    : externalWinnerBid
+      ? `Asistente ${externalWinnerBid.asistente}`
       : "Calculando...";
 
   useEffect(() => {
@@ -409,7 +434,9 @@ export default function LiveAuctionScreen() {
               <RoundedButton
                 variant="secondary"
                 label="Catalogo"
-                onPress={() => router.replace(`/auctionStarted/catalogue/${id}`)}
+                onPress={() =>
+                  router.replace(`/auctionStarted/catalogue/${id}`)
+                }
               />
             </View>
           </View>
@@ -519,16 +546,15 @@ export default function LiveAuctionScreen() {
           winningBid={`$${(myWinningBid?.importe || 0).toLocaleString("en-US")}`}
           onProceed={() => {
             setWon(false);
-            router.replace(`/auctionStarted/live/pay/${currentItem.identificador}`);
+            router.replace(
+              `/auctionStarted/live/pay/${currentItem.identificador}`,
+            );
           }}
         />
       )}
 
       {showItemFinished && !won && (
-        <ItemFinishedModal
-          visible={showItemFinished}
-          winnerName={winnerName}
-        />
+        <ItemFinishedModal visible={showItemFinished} winnerName={winnerName} />
       )}
     </SafeAreaView>
   );

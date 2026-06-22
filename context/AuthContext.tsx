@@ -6,7 +6,7 @@ export interface HistoryItemType {
   identificadorItemCatalogo: number;
   descCatalogo: string;
   importe: number;
-  ganador: "si" | "no"; 
+  ganador: "si" | "no";
   fecha: string;
 }
 
@@ -22,31 +22,31 @@ type User = {
   direccion: string;
   isSeller: boolean;
   paymentMethods: {
-    cards: [
-      id: string,
-      lastFour: string,
-      expMonth: string,
-      expYear: string,
-      brand: string,
-      owner: string,
-    ];
-    banksAccounts: [
-      id: string,
-      bank_name: string,
-      owner: string,
-      cuil_cuit: string,
-      cbu: string,
-      reserved_funds: string,
-    ];
-    checks: [
-      id: string,
-      bank_name: string,
-      owner: string,
-      number: number,
-      currency: string,
-      amount: number,
-      issueDate: string,
-    ];
+    cards: {
+      id: string;
+      lastFour: string;
+      expMonth: string;
+      expYear: string;
+      brand: string;
+      owner: string;
+    }[];
+    banksAccounts: {
+      id: string;
+      bank_name: string;
+      owner: string;
+      cuil_cuit: string;
+      cbu: string;
+      reserved_funds: string;
+    }[];
+    checks: {
+      id: string;
+      bank_name: string;
+      owner: string;
+      number: number;
+      currency: string;
+      amount: number;
+      issueDate: string;
+    }[];
   };
   products: {
     identificador: number;
