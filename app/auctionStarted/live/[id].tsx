@@ -22,6 +22,7 @@ import {
   ActivityIndicator,
   Keyboard,
   KeyboardAvoidingView,
+  Linking,
   Platform,
   ScrollView,
   Text,
@@ -55,7 +56,6 @@ export default function LiveAuctionScreen() {
 
   const isSold = currentItem?.subastado != null;
 
-  // 1. VARIABLE DE BLOQUEO: Solo se puede pujar si no es readonly, no se vendió y queda tiempo.
   const canBid = !isReadOnly && !isSold && timeLeft > 0;
 
   const handleBidSubmit = async () => {
@@ -471,7 +471,7 @@ export default function LiveAuctionScreen() {
                     )
                   }
                 />
-                <LiveButton onPress={() => console.log("Viendo stream...")} />
+                <LiveButton onPress={async() => {const url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"; await Linking.openURL(url);}} />
               </View>
             </View>
 
