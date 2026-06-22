@@ -33,7 +33,7 @@ const CheckPlaceholderData = {
   bank_name: "---",
   owner: "---",
   number: 0,
-  currency: "ARS$",
+  currency: "ARS",
   amount: 0,
   issueDate: "--/--/----",
 };
