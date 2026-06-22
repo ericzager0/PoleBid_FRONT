@@ -42,13 +42,16 @@ interface CategoryTextProps {
 export default function CategoryText({ categoryId }: CategoryTextProps) {
   const category = categories.find((c) => c.id === categoryId);
   return (
-    <View className="w-full px-6 mt-4 gap-y-6">
-      <View className="flex-row items-center gap-x-2">
+    <View className="w-full mt-4">
+      <View className="flex-row items-center justify-center gap-x-2">
         {category && (
-          <FontAwesome6 name="award" size={22} color={category.hex} />
+          <FontAwesome6 name="award" size={20} color={category.hex} />
         )}
 
-        <Text className={`text-lg font-bold ${category?.colorClass}`}>
+        <Text 
+          className={`text-lg font-bold ${category?.colorClass} mb-[2px]`}
+          style={{ includeFontPadding: false, textAlignVertical: 'center' }}
+        >
           Categoría {category?.name}
         </Text>
       </View>

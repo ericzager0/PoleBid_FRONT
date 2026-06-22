@@ -43,10 +43,8 @@ export default function BidLog({ date, name, won, bid, onPress }: BidLogProps) {
         >
           {name}
         </Text>
-        {won ? (
+        {won && (
           <MaterialCommunityIcons name="trophy" size={32} color="#E8B83C" />
-        ) : (
-          <MaterialCommunityIcons name="chevron-right" size={32} color="#9CA3AF" />
         )}
       </View>
 

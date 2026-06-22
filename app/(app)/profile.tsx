@@ -20,6 +20,7 @@ import * as ImagePicker from "expo-image-picker";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
+  ActivityIndicator,
   Image,
   Pressable,
   ScrollView,
@@ -38,21 +39,24 @@ export default function Home() {
   const { user } = useAuth();
 
   const [auctions, setAuctions] = useState<AuctionType[]>([]);
+  const [isLoadingHistory, setIsLoadingHistory] = useState(true);
   
   useEffect(() => {
     const fetchAuctions = async () => {
       try {
+        setIsLoadingHistory(true);
         const response = await auctionService.getAuctions();
         setAuctions(response.data);
         setHistorial(user?.history || []);
       } catch (error) {
         console.error("Error fetching auctions: ", error);
+      } finally {
+        setIsLoadingHistory(false); 
       }
     };
 
     fetchAuctions();
-  }, []);
-
+  }, [user]);
 
   const isBanned = false;
   const adeudado = 15000;
@@ -303,7 +307,14 @@ export default function Home() {
               </Text>
             </View>
 
-            {historial.length > 0 ? (
+            {isLoadingHistory ? (
+              <View className="py-8 items-center justify-center">
+                <ActivityIndicator size="large" color="#FFD874" />
+                <Text className="text-gray-400 mt-4 font-medium tracking-wider">
+                  Cargando historial...
+                </Text>
+              </View>
+            ) : historial.length > 0 ? (
               historial.map((item, index) => {
                 const isWinner = item.ganador === "si";
                 const myLastBid = `$ ${item.importe.toLocaleString()}`;
