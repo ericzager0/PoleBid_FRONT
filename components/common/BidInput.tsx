@@ -6,7 +6,7 @@ interface BidInputProps {
   value: number;
   setValue: (val: number) => void;
   min: number;
-  max: number;
+  max?: number | null;
   enabled?: boolean;
   hasError?: boolean; 
 }
@@ -91,7 +91,9 @@ export default function BidInput({
 
       <View className="flex-row justify-between px-2 mt-2">
         <Text className="text-[#9CA3AF] text-sm">Min: {formatMoney(min)}</Text>
-        <Text className="text-[#9CA3AF] text-sm">Max: {formatMoney(max)}</Text>
+        {max !== null && max !== undefined && (
+          <Text className="text-[#9CA3AF] text-sm">Max: {formatMoney(max)}</Text>
+        )}
       </View>
     </View>
   );

@@ -59,6 +59,10 @@ export default function LiveAuctionScreen() {
 
   const isSold = currentItem?.subastado != null;
 
+  const isGoldOrPlatinum =
+    currentItem?.categoria?.toLowerCase() === "oro" ||
+    currentItem?.categoria?.toLowerCase() === "platino";
+
   // NUEVO: si hay una puja en proceso, no se puede pujar de nuevo
   const canBid = !isReadOnly && !isSold && timeLeft > 0 && !isPlacingBid;
 
@@ -98,7 +102,7 @@ export default function LiveAuctionScreen() {
       return;
     }
 
-    if (bidValue > maxAllowed) {
+    if (!isGoldOrPlatinum && bidValue > maxAllowed) {
       setAlertContent({
         title: "Límite excedido",
         description: `La puja máxima permitida para este artículo es de $${maxAllowed.toLocaleString("en-US")}.`,
@@ -533,7 +537,7 @@ export default function LiveAuctionScreen() {
                   value={bidValue}
                   setValue={setBidValue}
                   min={minAllowed}
-                  max={maxAllowed}
+                  max={isGoldOrPlatinum ? null : maxAllowed}
                   enabled={canBid}
                   hasError={hasBidError}
                 />
