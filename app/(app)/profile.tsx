@@ -90,10 +90,6 @@ export default function Home() {
   const uploadPhotoToBackend = async (imageUri: string) => {
     try {
       console.log("Subiendo foto al servidor...", imageUri);
-      // ACÁ IRÁ TU CÓDIGO DEL FETCH AL ENDPOINT
-      // const formData = new FormData();
-      // formData.append("profileImage", { uri: imageUri, name: 'profile.jpg', type: 'image/jpeg' });
-      // await api.put("/user/avatar", formData);
     } catch (error) {
       console.error("Error al subir la foto", error);
       alert("Hubo un problema al subir la foto");
@@ -319,14 +315,17 @@ export default function Home() {
                     name={item.descCatalogo}
                     won={isWinner}
                     bid={myLastBid}
-                    onPress={() =>
-                      router.push({
-                        pathname: "/bidHistory",
-                        params: {
-                          id: item.identificadorItemCatalogo,
-                          won: isWinner ? "true" : "false",
-                        },
-                      })
+                    onPress={
+                      isWinner
+                        ? () =>
+                            router.push({
+                              pathname: "/bidHistory",
+                              params: {
+                                id: item.identificadorItemCatalogo,
+                                won: "true",
+                              },
+                            })
+                        : undefined
                     }
                   />
                 );
