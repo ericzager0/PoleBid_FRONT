@@ -9,7 +9,11 @@ export type ItemType = {
   descripcioncompleta: string;
   revisor: number;
   duenio: number;
-  seguro: string;
+  seguro: {
+    nropoliza: string;
+    compania: string;
+    importe: number;
+  };
   idSubasta: number;
   estado: string;
   motivo_rechazo: string;

@@ -78,6 +78,16 @@ export default function CardDetailsModal({
         expYear: `20${expiry.split("/")[1]}`,
         owner: titular,
       });
+
+      onConfirm({
+        brand: bankName,
+        lastFour: cardNumber,
+        owner: titular,
+        expMonth: expiry.split("/")[0],
+        expYear: `20${expiry.split("/")[1]}`,
+        cvv,
+      });
+      onClose?.();
     } catch (e: any) {
       setError(
         "Error al agregar tarjeta: " + (e.response?.data?.message || e.message),
@@ -85,16 +95,6 @@ export default function CardDetailsModal({
     } finally {
       // setLoading(false);
     }
-
-    onConfirm({
-      brand: bankName,
-      lastFour: cardNumber,
-      owner: titular,
-      expMonth: expiry.split("/")[0],
-      expYear: `20${expiry.split("/")[1]}`,
-      cvv,
-    });
-    onClose?.();
   };
 
   const handleCardNumberChange = (text: string) => {
