@@ -36,7 +36,6 @@ export default function SimpleModal({ visible, onClose, texto }: SimpleModalProp
           <Text className="text-white text-base text-center mt-6 mb-2">
             {texto}
           </Text>
-
         </View>
       </View>
     </Modal>

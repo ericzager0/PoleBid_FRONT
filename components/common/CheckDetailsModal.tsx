@@ -15,6 +15,7 @@ export interface CheckData {
   currency: string;
   amount: number;
   issueDate: string;
+  is_verified: boolean;
 }
 
 interface CheckDetailsModalProps {
@@ -44,7 +45,6 @@ export default function CheckDetailsModal({
 
   const [error, setError] = useState<string | null>(null);
   
-  // NUEVO: Solo los estados para marcar en rojo Moneda y Cheque
   const [currencyError, setCurrencyError] = useState(false);
   const [checkError, setCheckError] = useState(false);
 
@@ -101,10 +101,10 @@ export default function CheckDetailsModal({
         number: Number(cleanCheckNumber), 
         currency: cleanCurrency,         
         amount: Number(monto),
-        issueDate: emision
+        issueDate: emision,
       });
 
-      onConfirm({ bank_name: bankName, owner: titular, number: Number(cleanCheckNumber), currency: cleanCurrency, amount: Number(monto), issueDate: emision });
+      onConfirm({ bank_name: bankName, owner: titular, number: Number(cleanCheckNumber), currency: cleanCurrency, amount: Number(monto), issueDate: emision, is_verified: false });
       onClose?.();
 
     } catch (e: any) {

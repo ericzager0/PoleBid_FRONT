@@ -21,7 +21,7 @@ export default function CheckPlaceholder({
   currency,
   amount,
   issueDate,
-  is_verified = false,
+  is_verified = true, 
 }: CheckPlaceholderProps) {
   const [infoModal, setInfoModal] = useState(false);
 
@@ -91,8 +91,7 @@ export default function CheckPlaceholder({
         </View>
       </View>
 
-      {/* CAPA DE REVISIÓN */}
-      {is_verified && (
+      {!is_verified && (
         <TouchableOpacity className="absolute top-0 bottom-0 left-0 right-0 bg-black/70 z-20 justify-center items-center" onPress={() => setInfoModal(true)}>
           <Ionicons name="time-outline" size={48} color="#E8B83C" />
           <Text className="text-[#E8B83C] text-sm font-bold tracking-widest uppercase mt-3">

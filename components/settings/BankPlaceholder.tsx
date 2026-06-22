@@ -66,7 +66,7 @@ export default function BankPlaceholder({
               className="text-[#E8B83C] text-lg font-bold tracking-wider"
               numberOfLines={1}
             >
-              {reserved_funds}
+              $ {reserved_funds}
             </Text>
           </View>
         </View>

@@ -14,6 +14,7 @@ import BankDetailsModal, {
   BankData,
 } from "../../components/common/BankDetailsModal";
 
+import SimpleModal from "@/components/common/SimpleModal";
 import { useAuth } from "@/context/AuthContext";
 import RoundedButton from "../../components/common/RoundedButton";
 import BankPlaceholder from "../../components/settings/BankPlaceholder";
@@ -32,7 +33,7 @@ const CheckPlaceholderData = {
   bank_name: "---",
   owner: "---",
   number: 0,
-  currency: "ARS$",
+  currency: "ARS",
   amount: 0,
   issueDate: "--/--/----",
 };
@@ -42,6 +43,7 @@ const BankPlaceholderData = {
   cuil_cuit: "--",
   cbu: "*** ----",
   reserved_funds: "$0,00",
+  is_verified: true,
 };
 
 export default function PaymentsScreen() {
@@ -54,6 +56,8 @@ export default function PaymentsScreen() {
   const [cardToEdit, setCardToEdit] = useState<CardData | null>(null);
   const [checkToEdit, setCheckToEdit] = useState<CheckData | null>(null);
   const [bankToEdit, setBankToEdit] = useState<BankData | null>(null);
+
+  const [editModalVisible, setEditModalVisible] = useState(false);
 
   const [misTarjetas, setMisTarjetas] = useState<CardData[]>([]);
   const [misBancos, setMisBancos] = useState<BankData[]>([]);
@@ -84,12 +88,17 @@ export default function PaymentsScreen() {
   };
 
   const handleAddCheck = async () => {
+    
     setCheckToEdit(null);
     setShowCheckModal(true);
     await getMe();
   };
 
   const handleEditCheck = async (check: CheckData) => {
+    if (check.is_verified === false) {
+      setEditModalVisible(true);
+      return;
+    }
     setCheckToEdit(check);
     setShowCheckModal(true);
     await getMe();
@@ -210,6 +219,12 @@ export default function PaymentsScreen() {
           setShowBankModal(false);
           await getMe();
         }}
+      />
+
+      <SimpleModal
+        visible={editModalVisible}
+        onClose={() => setEditModalVisible(false)}
+        texto="Este cheque está siendo revisado por nuestro equipo y no puede ser editado en este momento."
       />
     </SafeAreaView>
   );
