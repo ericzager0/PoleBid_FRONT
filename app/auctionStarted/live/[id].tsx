@@ -54,12 +54,19 @@ export default function LiveAuctionScreen() {
 
   const [showItemFinished, setShowItemFinished] = useState(false);
 
+  // NUEVO: marca que la puja está en proceso (request en vuelo)
+  const [isPlacingBid, setIsPlacingBid] = useState(false);
+
   const isSold = currentItem?.subastado != null;
 
-  const canBid = !isReadOnly && !isSold && timeLeft > 0;
+  // NUEVO: si hay una puja en proceso, no se puede pujar de nuevo
+  const canBid = !isReadOnly && !isSold && timeLeft > 0 && !isPlacingBid;
 
   const handleBidSubmit = async () => {
     if (!currentItem) return;
+
+    // NUEVO: guarda extra para evitar doble submit (defensivo)
+    if (isPlacingBid) return;
 
     if (timeLeft === 0 || isSold) {
       setAlertContent({
@@ -122,20 +129,28 @@ export default function LiveAuctionScreen() {
       }
     }
 
-    const pujaInstantanea = {
-      identificador: Date.now(),
-      created_at: new Date().toISOString(),
-      asistente: 0,
-      ganador: "no",
-      clientId: user?.clientId,
-      importe: bidValue,
-      categoria: "Comun",
-      isMe: true,
-    };
+    // NUEVO: a partir de aquí se realiza la puja real -> se bloquea el botón
+    setIsPlacingBid(true);
 
-    setMisPujasLocales((prev) => [...prev, pujaInstantanea]);
-    await auctionService.placeBid(bidValue, Number(id), currentItem.itemId);
-    setBidValue(0);
+    try {
+      const pujaInstantanea = {
+        identificador: Date.now(),
+        created_at: new Date().toISOString(),
+        asistente: 0,
+        ganador: "no",
+        clientId: user?.clientId,
+        importe: bidValue,
+        categoria: "Comun",
+        isMe: true,
+      };
+
+      setMisPujasLocales((prev) => [...prev, pujaInstantanea]);
+      await auctionService.placeBid(bidValue, Number(id), currentItem.itemId);
+      setBidValue(0);
+    } finally {
+      // NUEVO: se reactiva el botón haya éxito o error
+      setIsPlacingBid(false);
+    }
   };
 
   const handleCloseAlert = () => {
@@ -471,7 +486,12 @@ export default function LiveAuctionScreen() {
                     )
                   }
                 />
-                <LiveButton onPress={async() => {const url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"; await Linking.openURL(url);}} />
+                <LiveButton
+                  onPress={async () => {
+                    const url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
+                    await Linking.openURL(url);
+                  }}
+                />
               </View>
             </View>
 
@@ -519,9 +539,10 @@ export default function LiveAuctionScreen() {
                 />
                 <View className="mt-4">
                   <Button
-                    label="Pujar"
+                    label={isPlacingBid ? "Pujando..." : "Pujar"}
                     variant={canBid ? "primary" : "blocked"}
                     onPress={handleBidSubmit}
+                    disabled={!canBid}
                   />
                 </View>
               </>
